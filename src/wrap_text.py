@@ -1,4 +1,4 @@
-phrase = "I am the very model of a modern major general! SOmething something something something something, I don't know the rest."
+phrase = "I am the very model of a modern major general! Something something something something something, I don't know the rest."
 phrase2 = "What if I was to go out to sea, and explore the world? Would you wait for me? I don't know that I would want you to... it wouldn't be fair"
 
 def fix_phrase(text, max_characters=20):

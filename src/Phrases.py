@@ -23,6 +23,10 @@ class Phrase(TimedDrawing):
         self.currently_printing = []
         self.my_font = pygame.font.Font("assets/PressStart2P-Regular.ttf", self.size)
 
+    def write_simple(self, screen, x, y):
+        my_font = pygame.font.Font("assets/PressStart2P-Regular.ttf", 10)
+        item = my_font.render(self.text, 1, (0, 0, 0))
+        screen.blit(item, (x + 200, y + 200))
 
     def write(self, screen):
 

@@ -2,18 +2,25 @@ from random import randint
 
 import pygame
 from data import *
+from keyboards import InGameKeyboardManager
+
 from loading import *
 from features import *
 from mapClasses import *
+from keyboards import *
 
 gd = GameData()
 gc = GameController(gd)
 em = EventsManager(gd, gc)
 picaso = Picaso(gd, gc)
 
+
 def main():
     init_game(gd, gc)
     run_game_loop()
+
+
+
 
 
 def run_game_loop():
@@ -34,100 +41,54 @@ def run_game_loop():
 
 
     while running:
-        pygame.draw.rect(gc.screen, (255, 255, 2), (0, 0, 500, 500))
+        pygame.draw.rect(gc.screen, (255, 255, 2), (0, 0, 1000, 10000))
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
 
             if gc.input:
                 if event.type == pygame.KEYDOWN:
+                    gc.current_keyboard_manager.parse_key(event.key)
 
-                    if event.key == pygame.K_1:
-                        current_phrase = Phrase1
-                        current_phrase.write_phrase_slowly(200)
-                        gc.LockInput()
+            # check to see if any events have occurred
+            for character in gd.room_list[gc.current_room].character_list:
+                try:
+                    if event.type == gd.character_list[character].initiate:
+                        if gd.character_list[character].state == "idle":
+                            gd.character_list[character].do_activity()
+                except AttributeError:
+                    pass
+                try:
+                    if event.type == gd.character_list[character].initiate1:
+                        if gd.character_list[character].state == "idle":
+                            gd.character_list[character].do_activity()
 
-                    if event.key == pygame.K_2:
-                        current_phrase = Phrase2
-                        current_phrase.write_phrase_slowly(200)
-                        gc.LockInput()
+                except AttributeError:
+                    pass
 
-                    if event.key == pygame.K_RIGHT:
-                        gd.player["Player"].turn_right()
-                        can_move = gd.positioner[gc.room].can_move(gd.player["Player"])
-                        if can_move:
-                            gd.player["Player"].walk_right()
-                            gd.player["Player"].walk_cycle()
-                            gc.LockInput()
-                        else:
-                            pass
-
-
-                    if event.key == pygame.K_LEFT:
-                        gd.player["Player"].turn_left()
-                        can_move = gd.positioner[gc.room].can_move(gd.player["Player"])
-                        if can_move:
-                            gd.player["Player"].walk_left()
-                            gd.player["Player"].walk_cycle()
-                            gc.LockInput()
-                        else:
-                            pass
-
-                    if event.key == pygame.K_UP:
-                        gd.player["Player"].turn_back()
-                        can_move = gd.positioner[gc.room].can_move(gd.player["Player"])
-                        if can_move:
-                            gd.player["Player"].walk_back()
-                            gd.player["Player"].walk_cycle()
-                            gc.LockInput()
-                        else:
-                            pass
-
-                    if event.key == pygame.K_DOWN:
-                        gd.player["Player"].turn_front()
-                        can_move = gd.positioner[gc.room].can_move(gd.player["Player"])
-                        if can_move:
-                            gd.player["Player"].walk_front()
-                            gd.player["Player"].walk_cycle()
-                            gc.LockInput()
-                        else:
-                            pass
-
-                    if event.key == pygame.K_RETURN:
-
-                        test_facing = gd.player["Player"].get_facing_tile()
-                        print("player facingx: " + (str(test_facing.x) + ", " + "player facingy: " + str(test_facing.y)))
-                        print("player x: " + str(gd.player["Player"].x) + ", " + "player y: " + str(gd.player["Player"].y))
-
-                    if event.key == pygame.K_SPACE:
-                        print("player x: " + str(gd.player["Player"].x))
-                        print("player imagex: " + str(gd.player["Player"].imagex))
-                        print("player y: " + str(gd.player["Player"].y))
-                        print("player imagey: " + str(gd.player["Player"].imagey))
-
-                        print("Tiles grid fill list:")
-                        for item in gd.room[gc.room].tiles_array:
-                            for x in item:
-                                print(str(x.x) + ", " + str(x.y) + ":" + x.object_filling)
-
-                        Drawables = gd.get_all_drawables()
-                        print(Drawables[1].x)
-                        print(Drawables[1].y)
-
-            # check to see if any events have occured
-            for character in gd.character:
-                if event.type == gd.character[character].initiate:
-                    if gd.character[character].state == "idle":
-                        gd.character[character].do_activity()
 
             #check for a single step in series of walk cycle steps for each character
-            for character in gd.character:
-                if event.type == gd.character[character].walk_clock:
-                    gd.character[character].check_if_walking()
+            for character in gd.room_list[gc.current_room].character_list:
+                try:
+                    if event.type == gd.character_list[character].walk_clock:
+                        gd.character_list[character].check_if_walking()
+                except AttributeError:
+                    pass
+
+                try:
+                    if event.type == gd.character_list[character].action_clock:
+                        gd.character_list[character].do_turn()
+                except AttributeError:
+                    pass
+
+
+
+
 
             # check for a single step in series of walk cycle steps for Player
             if event.type == player_steps_timer:
                 gd.player["Player"].check_if_walking()
+
 
 
         if current_phrase is not None:
