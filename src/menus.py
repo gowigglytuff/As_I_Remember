@@ -9,7 +9,7 @@ class Overlay(object):
         self.y = y
         self.name = name
         self.size = size
-        self.image = image
+        self.image = image.get_image(0, 0)
 
     def print_overlay(self):
         self.screen.blit(self.image, (self.x, self.y))

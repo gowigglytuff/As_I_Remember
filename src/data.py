@@ -77,7 +77,7 @@ class GameController(object):
         self.clock = pygame.time.Clock()
         self._FPS = GameData.settings["FPS"]
         self.input = True
-        self.current_room = "room3"
+        self.current_room = "room4"
         self.camera = [0, 0]
         self.current_overlay_list = ["top_bar"]
         self.current_menu = None # type: Menu

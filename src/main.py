@@ -77,7 +77,7 @@ def run_game_loop():
 
                 try:
                     if event.type == gd.character_list[character].action_clock:
-                        gd.character_list[character].do_turn()
+                        gd.character_list[character].check_if_walking()
                 except AttributeError:
                     pass
 

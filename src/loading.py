@@ -27,24 +27,20 @@ def init_game(gd, gc):
     gc.set_keyboard_manager(InGameKeyboardManager.ID)
 
     #load menus
-    gd.add_overlay("menu1", Overlay(gc, gd, "menu1", [], 700, 500,
-                                    pygame.image.load("assets/menu1/menu1.png")))
+    gd.add_overlay("menu1", Overlay(gc, gd, "menu1", [], 700, 500, Spritesheet("assets/menu1/menu1.png", 200, 100)))
     gd.add_menu("menu1", Menu(gc, gd, "menu1", ["hi", "hello", "yo"], True, "hi", "menu1"))
 
-    gd.add_overlay("menu2", Overlay(gc, gd, "menu2", [], 200, 500,
-                                    pygame.image.load("assets/menu1/menu1.png")))
+    gd.add_overlay("menu2", Overlay(gc, gd, "menu2", [], 200, 500, Spritesheet("assets/menu1/menu1.png", 200, 100)))
     gd.add_menu("menu2", Menu(gc, gd, "menu2", ["Clayton", "Adam", "Jim"], True, "hi", "menu2"))
 
-    gd.add_overlay("top_bar", Overlay(gc, gd, "top_bar", [], 100, 100,
-                              Spritesheet("assets/menu1/top_bar.png").image_at((0, 0, 700, 100))))
+    gd.add_overlay("top_bar", Overlay(gc, gd, "top_bar", [], 100, 100, Spritesheet("assets/menu1/top_bar.png", 700, 100)))
 
-    gd.add_overlay("text_box", Overlay(gc, gd, "text_box", [], 250, 550,
-                                    Spritesheet("assets/menu1/text_box.png").image_at((0, 0, 500, 150))))
+    gd.add_overlay("text_box", Overlay(gc, gd, "text_box", [], 250, 550, Spritesheet("assets/menu1/text_box.png", 500, 150)))
 
 
 
     # add the player to the game
-    gd.add_player("Player", Player(2, 3, 2, 3, 32, 40, ["assets/player/P_front.png"], "Bug", gc, gd))
+    gd.add_player("Player", Player(2, 3, 2, 3, 32, 40, Spritesheet("assets/player/player_sheet.png", 32, 40), "Bug", gc, gd))
 
 
 
@@ -69,45 +65,13 @@ def init_room_1(gc, gd):
     gd.room_list["room1"].add_room_door("room1_door2", Door("room1", "room3", 5, 0, 2, 4, "room1_door2"))
 
     # add the NPC characters to the game
-    gd.add_character("Walker", Walker(2, 3, 2, 3, 32, 40, [Spritesheet("assets/walk_left/f3.png").image_at((0, 0, 32, 40)),
-                                                           Spritesheet("assets/walk_left/f4.png").image_at((0, 0, 32, 40)),
-                                                           Spritesheet("assets/walk_left/f1.png").image_at((0, 0, 32, 40)),
-                                                           Spritesheet("assets/walk_left/f2.png").image_at((0, 0, 32, 40)),
-                                                           Spritesheet("assets/walk_left/f3.png").image_at((0, 0, 32, 40)),
-                                                           Spritesheet("assets/walk_left/f4.png").image_at((0, 0, 32, 40)),
-                                                           Spritesheet("assets/walk_left/f1.png").image_at((0, 0, 32, 40)),
-                                                           Spritesheet("assets/walk_left/f2.png").image_at((0, 0, 32, 40)),
-                                                           Spritesheet("assets/walk_right/right_3.png").image_at((0, 0, 32, 40)),
-                                                           Spritesheet("assets/walk_right/right_4.png").image_at((0, 0, 32, 40)),
-                                                           Spritesheet("assets/walk_right/right_1.png").image_at((0, 0, 32, 40)),
-                                                           Spritesheet("assets/walk_right/right_2.png").image_at((0, 0, 32, 40)),
-                                                           Spritesheet("assets/walk_right/right_3.png").image_at((0, 0, 32, 40)),
-                                                           Spritesheet("assets/walk_right/right_4.png").image_at((0, 0, 32, 40)),
-                                                           Spritesheet("assets/walk_right/right_1.png").image_at((0, 0, 32, 40)),
-                                                           Spritesheet("assets/walk_right/right_2.png").image_at((0, 0, 32, 40))],
-                                                        "Walker", gc, gd, "left"))
+    gd.add_character("Walker", Walker(2, 3, 2, 3, 32, 40, Spritesheet("assets/testing/sprite_sheet.png", 32, 40), "Walker", gc, gd, "left"))
 
-    gd.add_character("Pink_Walker", Walker(5, 5, 5, 5, 32, 40, [Spritesheet("assets/NPC2/pinkNPC_left_1.png").image_at((0, 0, 32, 40)),
-                                                                Spritesheet("assets/NPC2/pinkNPC_left_2.png").image_at((0, 0, 32, 40)),
-                                                                Spritesheet("assets/NPC2/pinkNPC_left_3.png").image_at((0, 0, 32, 40)),
-                                                                Spritesheet("assets/NPC2/pinkNPC_left_4.png").image_at((0, 0, 32, 40)),
-                                                                Spritesheet("assets/NPC2/pinkNPC_left_1.png").image_at((0, 0, 32, 40)),
-                                                                Spritesheet("assets/NPC2/pinkNPC_left_2.png").image_at((0, 0, 32, 40)),
-                                                                Spritesheet("assets/NPC2/pinkNPC_left_3.png").image_at((0, 0, 32, 40)),
-                                                                Spritesheet("assets/NPC2/pinkNPC_left_4.png").image_at((0, 0, 32, 40)),
-                                                                Spritesheet("assets/NPC2/pinkNPC_right_1.png").image_at((0, 0, 32, 40)),
-                                                                Spritesheet("assets/NPC2/pinkNPC_right_2.png").image_at((0, 0, 32, 40)),
-                                                                Spritesheet("assets/NPC2/pinkNPC_right_3.png").image_at((0, 0, 32, 40)),
-                                                                Spritesheet("assets/NPC2/pinkNPC_right_4.png").image_at((0, 0, 32, 40)),
-                                                                Spritesheet("assets/NPC2/pinkNPC_right_1.png").image_at((0, 0, 32, 40)),
-                                                                Spritesheet("assets/NPC2/pinkNPC_right_2.png").image_at((0, 0, 32, 40)),
-                                                                Spritesheet("assets/NPC2/pinkNPC_right_3.png").image_at((0, 0, 32, 40)),
-                                                                Spritesheet("assets/NPC2/pinkNPC_right_4.png").image_at((0, 0, 32, 40))],
-                                                             "Pink_Walker", gc, gd, "left"))
+    gd.add_character("Pink_Walker", Walker(5, 5, 5, 5, 32, 40, Spritesheet("assets/testing/sprite_sheet.png", 32, 40), "Pink_Walker", gc, gd, "left"))
 
     #add props to the game
-    gd.add_prop("Prop1", Prop(3, 3, 3, 3, 32, 40, ["assets/prop1.png"], "Prop1", gc, gd, 1, 1))
-    gd.add_prop("lamp", Prop(2, 5, 2, 5, 32, 40, ["assets/lamp.png"], "lamp", gc, gd, 1, 1))
+    gd.add_prop("Prop1", Prop(3, 3, 3, 3, 32, 40, Spritesheet("assets/prop1.png", 32, 40), "Prop1", gc, gd, 1, 1))
+    gd.add_prop("lamp", Prop(2, 5, 2, 5, 32, 40, Spritesheet("assets/lamp.png", 32, 40), "lamp", gc, gd, 1, 1))
 
     #add all the features to the current room
     gd.room_list["room1"].add_room_character("Walker")
@@ -135,11 +99,11 @@ def init_room_2(gc, gd):
 
 
     # add features for room 2
-    gd.add_prop("lamp4", Prop(1, 1, 1, 1, 32, 40, ["assets/lamp.png"], "lamp4", gc, gd, 1, 1))
-    gd.add_prop("lamp2", Prop(10, 5, 10, 5, 32, 40, ["assets/lamp.png"], "lamp2", gc, gd, 1, 1))
-    gd.add_prop("lamp3", Prop(8, 7, 8, 7, 32, 40, ["assets/lamp.png"], "lamp3", gc, gd, 1, 1))
+    gd.add_prop("lamp4", Prop(1, 1, 1, 1, 32, 40, Spritesheet("assets/lamp.png", 32, 40), "lamp4", gc, gd, 1, 1))
+    gd.add_prop("lamp2", Prop(10, 5, 10, 5, 32, 40, Spritesheet("assets/lamp.png", 32, 40), "lamp2", gc, gd, 1, 1))
+    gd.add_prop("lamp3", Prop(8, 7, 8, 7, 32, 40, Spritesheet("assets/lamp.png", 32, 40), "lamp3", gc, gd, 1, 1))
 
-    gd.add_decoration("Grass1", Decoration(2, 13, 2, 13, 32, 32, [Spritesheet("assets/grass.png").image_at((0, 0, 32, 32))], "Grass1", gc, gd, 1, 1, [[2, 13], [2, 14], [3, 13], [3, 14]]))
+    gd.add_decoration("Grass1", Decoration(2, 13, 2, 13, 32, 32, Spritesheet("assets/grass.png", 32, 32), "Grass1", gc, gd, 1, 1, [[2, 13], [2, 14], [3, 13], [3, 14]]))
 
     # attach all features to room
     gd.room_list["room2"].add_room_prop("lamp2")
@@ -152,37 +116,20 @@ def init_room_2(gc, gd):
     gd.positioner["room2"].fill_tiles("room2")
     gd.positioner["room2"].fill_doors("room2")
 
+
+
 def init_room_3(gc, gd):
     gd.add_room("room3", Room("room3", 1, 2, 3, 3, ["room3"]))
     gd.room_list["room3"].generate_room_grid()
     gd.room_list["room3"].add_room_BG("room3", BG(1, 1, "room3", [pygame.image.load("assets/backgrounds/Background3.png").convert_alpha()], gc, gd))
     gd.room_list["room3"].add_room_door("room3_door1", Door("room3", "room1", 2, 5, 5, 1, "room3_door1"))
 
-    gd.add_character("Pixie", Pixie(2, 2, 2, 2, 32, 40, Spritesheet2("assets/testing/sprite.png", 32, 40), [Spritesheet("assets/testing/sprite2.png").image_at((0, 0, 32, 40))], "Pixie", gc, gd))
+    gd.add_character("Pixie", Pixie(2, 2, 2, 2, 32, 40, Spritesheet("assets/testing/sprite_sheet.png", 32, 40), "Pixie", gc, gd))
 
-    #
-    #
-    # gd.add_character("Pixie_b", Pixie(3, 4, 3, 4, 32, 40,
-    #                                 [Spritesheet("assets/testing/sprite2.png").image_at((0, 0, 32, 40)),
-    #                                  Spritesheet("assets/testing/sprite2.png").image_at((32, 0, 32, 40)),
-    #                                  Spritesheet("assets/testing/sprite2.png").image_at((64, 0, 32, 40)),
-    #                                  Spritesheet("assets/testing/sprite2.png").image_at((96, 0, 32, 40)),
-    #                                  Spritesheet("assets/testing/sprite2.png").image_at((0, 0, 32, 40)),
-    #                                  Spritesheet("assets/testing/sprite2.png").image_at((0, 0, 32, 40)),
-    #                                  Spritesheet("assets/testing/sprite2.png").image_at((0, 0, 32, 40)),
-    #                                  Spritesheet("assets/testing/sprite2.png").image_at((0, 0, 32, 40)),
-    #                                  Spritesheet("assets/testing/sprite2.png").image_at((0, 0, 32, 40)),
-    #                                  Spritesheet("assets/testing/sprite2.png").image_at((0, 0, 32, 40)),
-    #                                  Spritesheet("assets/testing/sprite2.png").image_at((0, 0, 32, 40)),
-    #                                  Spritesheet("assets/testing/sprite2.png").image_at((0, 0, 32, 40)),
-    #                                  Spritesheet("assets/testing/sprite2.png").image_at((0, 0, 32, 40)),
-    #                                  Spritesheet("assets/testing/sprite2.png").image_at((0, 0, 32, 40)),
-    #                                  Spritesheet("assets/testing/sprite2.png").image_at((0, 0, 32, 40)),
-    #                                  Spritesheet("assets/testing/sprite2.png").image_at((0, 0, 32, 40))],
-    #                                 "Pixie_b", gc, gd))
-    #
+    gd.add_character("Pixie_b", Pixie(3, 4, 3, 4, 32, 40, Spritesheet("assets/testing/sprite2_sheet.png", 32, 40), "Pixie_b", gc, gd))
+
     gd.room_list["room3"].add_room_character("Pixie")
-    # gd.room_list["room3"].add_room_character("Pixie_b")
+    gd.room_list["room3"].add_room_character("Pixie_b")
 
 
     gd.add_positioner("room3", Position_Manager("room3", gc, gd))
@@ -198,34 +145,17 @@ def init_room_4(gc, gd):
     gd.add_room("room4", Room("room4", 1, 1, 100, 50, ["room4"]))
     gd.room_list["room4"].generate_room_grid()
 
-    big_map = TileMap("assets/map/big_map.csv")
+    big_map = TileMap("assets/map/big_map.csv", "grass", "water")
     gd.room_list["room4"].add_room_BG("room4", BG(1, 1, "room4", [big_map.return_map()], gc, gd))
     gd.room_list["room4"].add_room_BG("room4b", BG(51, 1, "room4b", [big_map.return_map()], gc, gd))
 
 
 
-    # for name in range(40):
-    #     rand_x = randrange(1, 100)
-    #     rand_y = randrange(1, 50)
-    #     gd.add_character(("Pixie" + str(name)), Pixie(rand_x, rand_y, rand_x, rand_y, 32, 40,
-    #                                      [Spritesheet("assets/testing/sprite2.png").image_at((0, 0, 32, 40)),
-    #                                       Spritesheet("assets/testing/sprite2.png").image_at((32, 0, 32, 40)),
-    #                                       Spritesheet("assets/testing/sprite2.png").image_at((64, 0, 32, 40)),
-    #                                       Spritesheet("assets/testing/sprite2.png").image_at((96, 0, 32, 40)),
-    #                                       Spritesheet("assets/testing/sprite2.png").image_at((0, 0, 32, 40)),
-    #                                       Spritesheet("assets/testing/sprite2.png").image_at((0, 0, 32, 40)),
-    #                                       Spritesheet("assets/testing/sprite2.png").image_at((0, 0, 32, 40)),
-    #                                       Spritesheet("assets/testing/sprite2.png").image_at((0, 0, 32, 40)),
-    #                                       Spritesheet("assets/testing/sprite2.png").image_at((0, 0, 32, 40)),
-    #                                       Spritesheet("assets/testing/sprite2.png").image_at((0, 0, 32, 40)),
-    #                                       Spritesheet("assets/testing/sprite2.png").image_at((0, 0, 32, 40)),
-    #                                       Spritesheet("assets/testing/sprite2.png").image_at((0, 0, 32, 40)),
-    #                                       Spritesheet("assets/testing/sprite2.png").image_at((0, 0, 32, 40)),
-    #                                       Spritesheet("assets/testing/sprite2.png").image_at((0, 0, 32, 40)),
-    #                                       Spritesheet("assets/testing/sprite2.png").image_at((0, 0, 32, 40)),
-    #                                       Spritesheet("assets/testing/sprite2.png").image_at((0, 0, 32, 40))],
-    #                                      ("Pixie" + str(name)), gc, gd))
-    #     gd.room_list["room4"].add_room_character(("Pixie" + str(name)))
+    for name in range(40):
+        rand_x = randrange(1, 100)
+        rand_y = randrange(1, 50)
+        gd.add_character(("Pixie" + str(name)), Pixie(rand_x, rand_y, rand_x, rand_y, 32, 40, Spritesheet("assets/testing/sprite_sheet.png", 32, 40), ("Pixie" + str(name)), gc, gd))
+        gd.room_list["room4"].add_room_character(("Pixie" + str(name)))
 
     gd.add_positioner("room4", Position_Manager("room4", gc, gd))
     gd.positioner["room4"].fill_tiles("room4")

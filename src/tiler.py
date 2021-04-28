@@ -8,17 +8,20 @@ class Tilling(object):
         self.rect = self.image.get_rect()
         self.rect.x, self.rect.y = x, y
 
+
     def draw_tile(self, surface):
         surface.blit(self.image, (self.rect.x, self.rect.y))
 
 class TileMap():
-    def __init__(self, filename):
+    def __init__(self, filename, tile1, tile2):
         self.tile_size = 32
+        self.tile_style_list = {"grass": "assets/map/G_tile.png", "water": "assets/map/W_tile.png"}
         self.start_x, self.start_y = 0, 0
-        self.tiles = self.load_tiles(filename)
+        self.tiles = self.load_tiles(filename, tile1, tile2)
         self.map_surface = pygame.Surface((self.map_w, self.map_h))
         self.map_surface.set_colorkey((0,0,0))
         self.load_map()
+
 
     def return_map(self):
         # surface.blit(self.map_surface, (0, 0))
@@ -36,7 +39,7 @@ class TileMap():
                 map.append(list(row))
         return map
 
-    def load_tiles(self, filename):
+    def load_tiles(self, filename, tile1, tile2):
         tiles = []
         map = self.read_csv(filename)
         x, y = 0, 0
@@ -44,9 +47,10 @@ class TileMap():
             x = 0
             for tile in row:
                 if tile == "0":
-                    tiles.append(Tilling("assets/map/G_tile.png", x * self.tile_size, y *self.tile_size))
+                    #tiles.append(Tilling("assets/map/G_tile.png", x * self.tile_size, y *self.tile_size))
+                    tiles.append(Tilling(self.tile_style_list[tile1], x * self.tile_size, y * self.tile_size))
                 elif tile == "1":
-                    tiles.append(Tilling("assets/map/W_tile.png", x * self.tile_size, y * self.tile_size))
+                    tiles.append(Tilling(self.tile_style_list[tile2], x * self.tile_size, y * self.tile_size))
                 x +=1
             y += 1
         self.map_w, self.map_h = x * self.tile_size, y * self.tile_size
