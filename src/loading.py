@@ -57,12 +57,14 @@ def init_room_1(gc, gd):
     # room #1
 
     # add the room #1, generate the grid, and add the background and doors
-    gd.add_room("room1", Room("room1", 1, 1, 6, 6, ["room1"]))
-    gd.room_list["room1"].generate_room_grid()
-    gd.room_list["room1"].add_room_BG("room1", BG(1, 0, "room1", [pygame.image.load("assets/backgrounds/room_1_background.png").convert_alpha()], gc, gd))
+    gd.add_room("room1", Room2("room1", 1, 2, 6, 6, 1, 1, 6, 6, gc, gd))
+    gd.room_list["room1"].add_room_plot("room1_1_1", Plot("room4", 1, 1, pygame.image.load("assets/backgrounds/room_1_background.png"), gc, gd))
+    gd.room_list["room1"].activate_plot("room1_1_1")
 
-    gd.room_list["room1"].add_room_door("room1_door1", Door("room1", "room2", 2, 1, 1, 14, "room1_door1"))
-    gd.room_list["room1"].add_room_door("room1_door2", Door("room1", "room4", 5, 0, 2, 4, "room1_door2"))
+    gd.room_list["room1"].generate_room_grid()
+
+    gd.room_list["room1"].add_room_door("room1_door1", Door("room1", "room2", 2, 2, 1, 14, "room1_door1"))
+    gd.room_list["room1"].add_room_door("room1_door2", Door("room1", "room4", 5, 1, 2, 4, "room1_door2"))
 
     # add the NPC characters to the game
     gd.add_character("Shuma", Pixie(2, 3, 2, 3, 32, 40, Spritesheet("assets/NPC_sprites/sprite_sheet.png", 32, 40), "Shuma", gc, gd, "Hi!"))
@@ -95,13 +97,18 @@ def init_room_2(gc, gd):
     # room#2
 
     # add the room #2, generate the grid, and add the background and doors
-    gd.add_room("room2", Room("room2", 1, 1, 15, 15, ["room2"], map_style="csv", CSV_BG="assets/csv_maps/room2.csv"))
+    gd.add_room("room2", Room2("room2", 1, 1, 15, 15, 1, 1, 15, 15, gc, gd, map_style="csv"))
+    gd.room_list["room2"].add_room_plot("room2_1_1", Plot("room2", 1, 1,
+                                                          pygame.image.load("assets/backgrounds/room_2_background.png"),
+                                                          gc, gd))
+    gd.room_list["room2"].activate_plot("room2_1_1")
     gd.room_list["room2"].generate_room_grid()
 
-    room2_map = TileMap("assets/csv_maps/room2.csv", "grass", "water")
-    gd.room_list["room2"].add_room_BG("room2", BG(1, 1, "room2_map", [room2_map.return_map()], gc, gd))
 
-    gd.room_list["room2"].add_room_door("room2_door1", Door("room2", "room1", 1, 15, 2, 2, "room2_door1"))
+
+    room2_map = TileMap("assets/csv_maps/room2.csv", "grass", "water")
+
+    gd.room_list["room2"].add_room_door("room2_door1", Door("room2", "room1", 1, 15, 2, 3, "room2_door1"))
     gd.room_list["room2"].add_room_door("room2_door2", Door("room2", "room3", 8, 12, 2, 4, "room2_door2"))
 
     # add features for room 2
@@ -129,10 +136,12 @@ def init_room_2(gc, gd):
     gd.positioner["room2"].fill_doors("room2")
 
 def init_room_3(gc, gd):
-    gd.add_room("room3", Room("room3", 1, 2, 3, 3, ["room3"]))
+    gd.add_room("room3", Room2("room3", 1, 2, 3, 3, 1, 1, 3, 3, gc, gd))
     gd.room_list["room3"].generate_room_grid()
-    gd.room_list["room3"].add_room_BG("room3", BG(1, 1, "room3", [pygame.image.load("assets/backgrounds/room_3_background.png").convert_alpha()], gc, gd))
+    gd.room_list["room3"].add_room_plot("room3_1_1", Plot("room3", 1, 1, pygame.image.load("assets/backgrounds/room_3_background.png"), gc, gd))
     gd.room_list["room3"].add_room_door("room3_door1", Door("room3", "room2", 2, 5, 8, 13, "room3_door1"))
+
+    gd.room_list["room3"].activate_plot("room3_1_1")
 
     gd.add_character("Pixie", Pixie(2, 2, 2, 2, 32, 40, Spritesheet("assets/NPC_sprites/sprite_sheet.png", 32, 40), "Pixie", gc, gd, "Hi!"))
 
@@ -158,13 +167,16 @@ def init_room_3(gc, gd):
 def init_room_4(gc, gd):
 
     # add room #4
-    gd.add_room("room4", Room("room4", 1, 1, 100, 50, ["room4"], map_style="csv", CSV_BG="assets/csv_maps/big_map.csv"))
+    gd.add_room("room4", Room2("room4", 1, 1, 100, 50, 2, 1, 50, 50, gc, gd))
+
+    big_map = TileMap("assets/csv_maps/big_map.csv", "grass", "water")
+    gd.room_list["room4"].add_room_plot("room4_1_1", Plot("room4", 1, 1, big_map.return_map(), gc, gd))
+    gd.room_list["room4"].add_room_plot("room4_1_2", Plot("room4", 2, 1, big_map.return_map(), gc, gd))
+    gd.room_list["room4"].activate_plot("room4_1_1")
+    gd.room_list["room4"].activate_plot("room4_1_2")
+
     gd.room_list["room4"].generate_room_grid()
 
-    # add CSV based csv_maps
-    big_map = TileMap("assets/csv_maps/big_map.csv", "grass", "water")
-    gd.room_list["room4"].add_room_BG("room4", BG(1, 1, "room4", [big_map.return_map()], gc, gd))
-    gd.room_list["room4"].add_room_BG("room4b", BG(51, 1, "room4b", [big_map.return_map()], gc, gd))
 
 
 

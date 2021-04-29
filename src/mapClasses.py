@@ -19,7 +19,6 @@ class Room(object):
         self.door_list = {}
         self.images_list = images_list
         self.tiles_array = []
-        self.tiles_list = []
         self.BG_list = {}
         self.character_list = []
         self.decoration_list = []
@@ -41,7 +40,6 @@ class Room(object):
             for number in range(self.height + 3):
                 spot_name = Tile(letter, number, False, "None", "None")
                 self.tiles_array[letter].append(spot_name)
-                self.tiles_list.append(spot_name)
 
     def add_room_BG(self, bg_name, bg_object):
         self.BG_list[bg_name] = bg_object
@@ -58,16 +56,106 @@ class Room(object):
     def add_room_door(self, door_name, door_object):
         self.door_list[door_name] = door_object
 
+class Room2(object):
+
+    def __init__(self, name, left_edge_x, top_edge_y, room_width, room_height, total_plots_x, total_plots_y, plot_size_x, plot_size_y, GameController, GameData, map_style="image"):
+        self.GameController = GameController
+        self.GameData = GameData
+
+        self.name = name
+        self.left_edge_x = left_edge_x
+        self.right_edge_x = left_edge_x + room_width - 1
+        self.top_edge_y = top_edge_y
+        self.bottom_edge_y = top_edge_y + room_height - 1
+        self.room_width = room_width
+        self.room_height = room_height
+        self.map_style = map_style
+        map_style = "image"
+
+        self.plot_list = {}
+        self.total_plots_x = total_plots_x
+        self.total_plots_y = total_plots_y
+        self.plot_size_x = plot_size_x
+        self.plot_size_y = plot_size_y
+        self.active_plots = []
+
+        self.tiles_array = []
+        self.active_tiles = []
+
+        self.door_list = {}
+        self.character_list = []
+        self.decoration_list = []
+        self.prop_list = []
+
+
+    def generate_room_grid(self):
+        """
+        adds an array to tiles_array which is a grid for the current room
+        :return: null
+        """
+        for section in range(self.room_width + 3):
+            section_name = []
+            self.tiles_array.append(section_name)
+
+        for letter in range(self.room_width + 2):
+            for number in range(self.room_height + 3):
+                spot_name = Tile(letter, number, False, "None", "None")
+                self.tiles_array[letter].append(spot_name)
+
+    def add_room_plot(self, plot_name, plot_object):
+        self.plot_list[plot_name] = plot_object
+
+    def add_room_character(self, character_name):
+        self.character_list.append(character_name)
+
+    def add_room_prop(self, prop_name):
+        self.prop_list.append(prop_name)
+
+    def add_room_decoration(self, decoration_name):
+        self.decoration_list.append(decoration_name)
+
+    def add_room_door(self, door_name, door_object):
+        self.door_list[door_name] = door_object
+
+    def activate_plot(self, plot_name):
+        self.active_plots.append(plot_name)
+
+    def draw_bg(self, screen):
+        for plot in self.active_plots:
+            self_x = (((((self.plot_list[plot].plot_x)-1)*self.plot_size_x + self.GameController.camera[0])+1) * self.GameData.square_size[0]) + self.GameData.base_locator_x
+            self_y = (((((self.plot_list[plot].plot_y)-1)*self.plot_size_y + self.GameController.camera[1])+1) * self.GameData.square_size[1]) + self.GameData.base_locator_y
+            screen.blit(self.plot_list[plot].plot_img, (self_x, self_y))
+
+    # def draw_bg(self, screen):
+    #     for plot in self.active_plots:
+    #         screen.blit(self.plot_list[plot].plot_img, (self.GameData.player["Player"].x, self.GameData.player["Player"].y))
+    #         print("drew " + self.plot_list[plot].name)
+class Plot(object):
+    '''
+    each room will be made up of a specified number of plots
+    '''
+    def __init__(self, room, plot_x, plot_y, plot_img, GameController, GameData):
+        self.GameController = GameController
+        self.GameData = GameData
+
+        self.room = room
+        self.plot_x = plot_x
+        self.plot_y = plot_y
+        self.name = self.room + "_" + str(plot_x) + "_"+ str(plot_y)
+        self.plot_img = plot_img
+        self.prop_list = []
+        self.character_list = []
+        self.decoration_list = []
+
+
 class Tile(object):
 
     DOOR = "Door"
     NPC = "NPC"
-
     PIXIE = "Pixie"
     PLAYER = "Player"
     NONE = "None"
     PROP = "Prop"
-
     OBSTACLE = "Obstacle"
     TILE_TYPE_LIST = [DOOR, NPC, PLAYER, PIXIE, PROP, NONE, OBSTACLE]
 
@@ -79,6 +167,9 @@ class Tile(object):
         self.object_filling = object_filling
         self.filling_type = filling_type
         self.item = item
+        self.name = "tile" + str(x) + "_" + str(y)
+
+
 
 class Door(object):
     def __init__(self, room_from, room_to, x, y, exit_x, exit_y, name):
@@ -135,21 +226,22 @@ class Position_Manager(object):
                         tile.full = True
 
     def fill_obstacles(self, filename, fillable_room):
-        map = self.read_csv(filename)
-        x, y = 0, 0
-        for row in map:
-            x = 0
-            for tile in row:
-                if tile == "0":
-                    pass
-                elif tile == "1":
-                    print(self.GameData.room_list[fillable_room].tiles_array[x][y].x, self.GameData.room_list[fillable_room].tiles_array[x][y].y)
-                    tile = self.GameData.room_list[fillable_room].tiles_array[x+1][y+1]
-                    tile.object_filling = "Obstacle"
-                    tile.filling_type = "Obstacle"
-                    tile.full = True
-                x += 1
-            y += 1
+        for plot in self.GameData.room_list[fillable_room].active_plots:
+            current_plot = self.GameData.room_list[fillable_room].plot_list[plot]
+            map = self.read_csv(filename)
+            x, y = (current_plot.plot_x-1) * self.GameData.room_list[fillable_room].plot_size_x, (current_plot.plot_y-1) * self.GameData.room_list[fillable_room].plot_size_y
+            for row in map:
+                x = (current_plot.plot_x-1) * self.GameData.room_list[fillable_room].plot_size_x
+                for tile in row:
+                    if tile == "0":
+                        pass
+                    elif tile == "1":
+                        tile = self.GameData.room_list[fillable_room].tiles_array[x+1][y+1]
+                        tile.object_filling = "Obstacle"
+                        tile.filling_type = "Obstacle"
+                        tile.full = True
+                    x += 1
+                y += 1
 
     def read_csv(self, filename):
         map = []
@@ -179,8 +271,9 @@ class Position_Manager(object):
         self.GameController.camera[1] += y_change
         self.GameController.set_room(door.room_to)
         self.empty_tiles(door.room_to)
-        if self.GameData.room_list[door.room_to].map_style == "csv":
-            self.fill_obstacles(self.GameData.room_list[door.room_to].CSV_BG, door.room_to)
+        #TODO: add this obstacle stuff back in
+        # if self.GameData.room_list[door.room_to].map_style == "csv":
+        #     self.fill_obstacles(self.GameData.room_list[door.room_to].plot_list, door.room_to)
         self.fill_tiles(door.room_to)
         self.fill_doors(door.room_to)
         self.fill_tile(self.GameData.player["Player"])

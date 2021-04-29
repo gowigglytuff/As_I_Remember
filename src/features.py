@@ -82,8 +82,11 @@ class Player(Person):
 
 
     def draw(self, screen):
+        self_x =(self.imagex * self.GameData.square_size[0])+self.GameData.base_locator_x
+        self_y = ((self.imagey * self.GameData.square_size[1])-self.offset_y)+self.GameData.base_locator_y
         screen.blit(self.img, [(self.imagex * self.GameData.square_size[0])+self.GameData.base_locator_x,
                                ((self.imagey * self.GameData.square_size[1])-self.offset_y)+self.GameData.base_locator_y])
+        print(self_x, self_y)
 
     def turn_left(self):
         self.set_image(0, 3)
@@ -234,7 +237,7 @@ class Player(Person):
 
         return facing_tile
 
-    def interact(self):
+    def interact_with(self):
         facing_tile = self.get_facing_tile()
         object_filling = facing_tile.object_filling
         filling_type = facing_tile.filling_type

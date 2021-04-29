@@ -151,20 +151,23 @@ class Picaso(object):
         return drawables_list
 
     def big_draw(self):
-        for bg in self.GameData.room_list[self.GameController.current_room].BG_list:
-            self.GameData.room_list[self.GameController.current_room].BG_list[bg].draw(self.GameController.screen)
-        drawable_list = self.get_all_drawable()
+        # Blits the background for the current room
+        self.GameData.room_list[self.GameController.current_room].draw_bg(self.GameController.screen)
 
+        # get's all the drawables and prints them in order of y and printing priority
+        drawable_list = self.get_all_drawable()
         for drawable in drawable_list:
             drawable.draw(self.GameController.screen)
 
+        # blits the menu that is active
         if self.GameController.current_menu != None:
             self.GameData.menu_list[self.GameController.current_menu].print_menu()
 
+        # blits any overlays that are always active and ons tghat are associated with currently active menus
         for overlay in self.GameController.current_overlay_list:
             self.GameData.overlay_list[overlay].print_overlay()
 
-
+        # TODO: Find some other better way to do this
         if self.GameController.current_speaker != None:
             self.GameData.overlay_list["text_box"].print_overlay()
             self.GameData.character_list[self.GameController.current_speaker].speak(self.GameData.character_list[self.GameController.current_speaker].current_phrase)

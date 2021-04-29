@@ -155,9 +155,7 @@ class InGameKeyboardManager(KeyboardManager):
 
     def key_return(self):
         # interacts with the feature that is in the tile that the player is facing
-        self.GameData.player["Player"].interact()
-
-
+        self.GameData.player["Player"].interact_with()
 
     def key_space(self):
         pass
