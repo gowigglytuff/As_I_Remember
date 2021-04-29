@@ -34,14 +34,14 @@ class Menu(object):
     def size(self):
         return len(self.menu_item_list)
     def print_cursor(self):
-        my_font = pygame.font.Font("assets/PressStart2P-Regular.ttf", 10)
+        my_font = pygame.font.Font(self.GameController.font, 10)
         item = my_font.render("-", 1, (0, 0, 0))
         self.screen.blit(item, (self.x - 15, (self.y+2) + (self.cursor_at * self.menu_spread)))
 
     def print_menu(self):
         self.GameData.overlay_list[self.overlay].print_overlay()
         for option in range(self.size):
-            my_font = pygame.font.Font("assets/PressStart2P-Regular.ttf", 10)
+            my_font = pygame.font.Font(self.GameController.font, 10)
             item = my_font.render(self.menu_item_list[option], 1, (0, 0, 0))
             self.screen.blit(item, (self.x, self.y + (option*self.menu_spread)))
         self.print_cursor()

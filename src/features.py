@@ -524,12 +524,12 @@ class Pixie(NPC):
 
     def speak(self, chosen_phrase):
         print("speaking")
-        my_font = pygame.font.Font("assets/PressStart2P-Regular.ttf", 10)
+        my_font = pygame.font.Font(self.GameController.font, 10)
         item = my_font.render(self.name + ":", 1, (0, 0, 0))
         self.GameController.screen.blit(item, (
         self.GameData.overlay_list["text_box"].x + 80, self.GameData.overlay_list["text_box"].y + 20))
 
-        my_font = pygame.font.Font("assets/PressStart2P-Regular.ttf", 10)
+        my_font = pygame.font.Font(self.GameController.font, 10)
         item = my_font.render(chosen_phrase, 1, (0, 0, 0))
         self.GameController.screen.blit(item, (self.GameData.overlay_list["text_box"].x + 80, self.GameData.overlay_list["text_box"].y + 40))
 

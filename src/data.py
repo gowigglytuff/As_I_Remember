@@ -32,11 +32,6 @@ class GameData(object):
         self.player = {}
         self.positioner = {}
 
-
-    # Is it possible to combine all the adds into one add that takes the type as a parameter??
-    # def add_detail(self, classification, this_name, this_object):
-    #     classification[this_name] = this_object
-
     def get_all_drawables(self):
         return list(self.character_list.values()) + list(self.player.values()) + list(self.prop_list.values())
 
@@ -76,6 +71,7 @@ class GameController(object):
         self.screen = pygame.display.set_mode(GameData.settings["resolution"])
         self.clock = pygame.time.Clock()
         self._FPS = GameData.settings["FPS"]
+        self.font = "assets/fonts/PressStart2P-Regular.ttf"
         self.input = True
         self.current_room = "room1"
         self.camera = [0, 0]

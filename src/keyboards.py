@@ -164,7 +164,7 @@ class InGameKeyboardManager(KeyboardManager):
 
     def key_control(self):
         self.GameController.set_keyboard_manager(InMenuKeyboardManager.ID)
-        self.GameController.set_menu("menu1")
+        self.GameController.set_menu("testing_menu")
 
     def key_shift(self):
         self.GameController.set_keyboard_manager(InStartMenuKeyboardManager.ID)
@@ -189,11 +189,11 @@ class InMenuKeyboardManager(KeyboardManager):
 
     def key_up(self):
         print("up")
-        menu = self.GameData.menu_list["menu1"].menu_item_list
+        menu = self.GameData.menu_list["testing_menu"].menu_item_list
         menu.append(menu.pop(menu.index(menu[0])))
 
     def key_down(self):
-        menu = self.GameData.menu_list["menu1"].menu_item_list
+        menu = self.GameData.menu_list["testing_menu"].menu_item_list
         menu.insert(0, menu.pop(-1))
 
     def key_return(self):
