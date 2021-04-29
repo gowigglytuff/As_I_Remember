@@ -44,10 +44,9 @@ class Person(Feature):
         self.printing_priority = 2
         self.feature_type = feature_type
 
-
     def update_behaviour(self, some_parameter=None):
         '''
-        Updates character behavior based onn timer
+        Updates character behavior based on timer
         :param some_parameter: some useless parameter
         :return: time until next update in milliseconds
         '''
@@ -66,15 +65,6 @@ class Person(Feature):
             self.change_red()
 
         return time_to_next_update
-    #
-    # def change_green(self):
-    #     self.set_image(0)
-    #
-    # def change_red(self):
-    #     self.set_image(1)
-    #
-    # def change_blue(self):
-    #     self.set_image(2)
 
 class Player(Person):
     def __init__(self, x, y, imagex, imagey, width, height, spritesheet, name, GameController, GameData):
@@ -85,6 +75,10 @@ class Player(Person):
         self.right = ["assets/player/P_right_1.png", "assets/player/P_right_2.png", "assets/player/P_right_3.png", "assets/player/P_right_4.png", "assets/player/P_right_1.png", "assets/player/P_right_2.png", "assets/player/P_right_3.png", "assets/player/P_right_4.png"]
         self.state = "idle"
         self.printing_priority = 2
+        self.step_timer = pygame.USEREVENT + 7
+
+    def activate_timer(self):
+        pygame.time.set_timer(self.step_timer, 20)
 
 
     def draw(self, screen):
@@ -143,7 +137,7 @@ class Player(Person):
                 self.cur_img = 0
                 self.set_image(self.cur_img, 3)
                 self.GameController.camera[0] += 1 / 4
-                self.state = "idle"
+                self.set_state("idle")
                 self.GameController.UnlockInput()
 
             else:
@@ -160,7 +154,7 @@ class Player(Person):
                 self.cur_img = 0
                 self.set_image(self.cur_img, 2)
                 self.GameController.camera[0] -= 1 / 4
-                self.state = "idle"
+                self.set_state("idle")
                 self.GameController.UnlockInput()
 
             else:
@@ -177,7 +171,7 @@ class Player(Person):
                 self.cur_img = 0
                 self.set_image(self.cur_img, 0)
                 self.GameController.camera[1] -= 1 / 4
-                self.state = "idle"
+                self.set_state("idle")
                 self.GameController.UnlockInput()
 
             else:
@@ -196,7 +190,7 @@ class Player(Person):
                 self.cur_img = 0
                 self.set_image(self.cur_img, 1)
                 self.GameController.camera[1] += 1 / 4
-                self.state = "idle"
+                self.set_state("idle")
                 self.GameController.UnlockInput()
 
             else:
@@ -259,34 +253,48 @@ class Player(Person):
             else:
                 pass
 
+    def set_state(self, state_to_set):
+        self.state = state_to_set
+
 class NPC(Person):
+
+    NPC_TIMER_ID = 10
+    
+
     def __init__(self, x, y, imagex, imagey, width, height, spritesheet, name, GameController, GameData, facing, feature_type, offset_y):
 
         super().__init__(x, y, imagex, imagey, width, height, spritesheet, name, GameController, GameData, facing, feature_type, offset_y)
 
-        self.state = "idle"
+        self.set_state("idle")
         self.facing = "front"
+        self.initiate = pygame.USEREVENT + NPC.NPC_TIMER_ID
+        self.action_clock = pygame.USEREVENT + NPC.NPC_TIMER_ID + 1
         self.printing_priority = 2
+
+        NPC.NPC_TIMER_ID += 2
+
+    # TODO: make sets of walking behaviour types that different NPC can have (back and forth/look around/square/etc.)
 
     def turn_left(self):
         self.set_image(0, 3)
         self.facing = "left"
-        self.state = "idle"
+        self.set_state("idle")
+        self.set_state("idle")
 
     def turn_right(self):
         self.set_image(1, 2)
         self.facing = "right"
-        self.state = "idle"
+        self.set_state("idle")
 
     def turn_front(self):
         self.set_image(0, 0)
         self.facing = "front"
-        self.state = "idle"
+        self.set_state("idle")
 
     def turn_back(self):
         self.set_image(0, 1)
         self.facing = "back"
-        self.state = "idle"
+        self.set_state("idle")
 
     def check_if_walking(self):
         if self.state == "walk_left":
@@ -303,28 +311,28 @@ class NPC(Person):
 
         elif self.state == "say_hi":
             print("Hello everyone!")
-            self.state = "idle"
+            self.set_state("idle")
 
     def walk_left(self):
-        self.state = "walk_left"
+        self.set_state("walk_left")
         self.GameData.positioner[self.GameController.current_room].empty_tile(self)
         self.x -= 1
         self.GameData.positioner[self.GameController.current_room].fill_tile(self)
 
     def walk_right(self):
-        self.state = "walk_right"
+        self.set_state("walk_right")
         self.GameData.positioner[self.GameController.current_room].empty_tile(self)
         self.x += 1
         self.GameData.positioner[self.GameController.current_room].fill_tile(self)
 
     def walk_front(self):
-        self.state = "walk_front"
+        self.set_state("walk_front")
         self.GameData.positioner[self.GameController.current_room].empty_tile(self)
         self.y += 1
         self.GameData.positioner[self.GameController.current_room].fill_tile(self)
 
     def walk_back(self):
-        self.state = "walk_back"
+        self.set_state("walk_back")
         self.GameData.positioner[self.GameController.current_room].empty_tile(self)
         self.y -= 1
         self.GameData.positioner[self.GameController.current_room].fill_tile(self)
@@ -340,7 +348,7 @@ class NPC(Person):
                 self.cur_img = 0
                 self.set_image(self.cur_img, 3)
                 self.imagex -= 1 / 4
-                self.state = "idle"
+                self.set_state("idle")
 
             else:
                 self.cur_img = 0
@@ -356,7 +364,7 @@ class NPC(Person):
                 self.cur_img = 0
                 self.set_image(self.cur_img, 2)
                 self.imagex += 1 / 4
-                self.state = "idle"
+                self.set_state("idle")
 
             else:
                 self.cur_img = 3
@@ -372,7 +380,7 @@ class NPC(Person):
                 self.set_image(self.cur_img, 0)
                 self.cur_img = 0
                 self.imagey += 1 / 4
-                self.state = "idle"
+                self.set_state("idle")
 
             else:
                 self.cur_img = 0
@@ -387,7 +395,7 @@ class NPC(Person):
                 self.cur_img = 0
                 self.set_image(self.cur_img, 1)
                 self.imagey -= 1 / 4
-                self.state = "idle"
+                self.set_state("idle")
 
             else:
                 self.cur_img = 0
@@ -424,81 +432,34 @@ class NPC(Person):
                                                                 * self.GameData.square_size[
                                                                     1] - self.offset_y) + self.GameData.base_locator_y])
 
-class Walker(NPC):
-    def __init__(self, x, y, imagex, imagey, width, height, img_file_name_list, name, GameController, GameData, facing):
-        super().__init__(x, y, imagex, imagey, width, height, img_file_name_list, name, GameController, GameData, facing, feature_type="Walker", offset_y=10)
+    def set_phrase(self, phrase_to_set):
+        self.current_phrase = phrase_to_set
 
-        self.actions = ["walk_left", "walk_right", "walk_front", "walk_back"]
-        self.walk_clock = pygame.USEREVENT + 4
-        self.initiate = pygame.USEREVENT + 6
-        self.available_actions = ["walk_left", "walk_right", "walk_front", "walk_back"]
+    def set_state(self, state_to_set):
+        self.state = state_to_set
 
-
-    def activate_timers(self):
-        pygame.time.set_timer(self.initiate, 2000)
-        pygame.time.set_timer(self.walk_clock, 60)
-
-    def do_activity(self):
-        if self.state == "idle":
-                result = choice(self.actions)
-                # self.state = result
-                print(self.state)
-                print(result)
-                if result == "walk_left":
-                    self.facing = "left"
-                    can_walk = self.GameData.positioner[self.GameController.current_room].can_move(self)
-                    if can_walk:
-                        self.walk_left()
-
-                elif result == "walk_right":
-                    self.facing = "right"
-                    can_walk = self.GameData.positioner[self.GameController.current_room].can_move(self)
-                    if can_walk:
-                        self.walk_right()
-
-                elif result == "walk_front":
-                    self.facing = "front"
-                    can_walk = self.GameData.positioner[self.GameController.current_room].can_move(self)
-                    if can_walk:
-                        self.walk_front()
-
-                elif result == "walk_back":
-                    self.facing = "back"
-                    can_walk = self.GameData.positioner[self.GameController.current_room].can_move(self)
-                    if can_walk:
-                        self.walk_back()
-
-                elif result == "turning_front":
-                    self.turn_front()
-
-                elif result == "turning_back":
-                    self.turn_back()
-
-                elif result == "turning_left":
-                    self.turn_left()
-
-                elif result == "turning_right":
-                    self.turn_right()
-
-
-    def get_interacted_with(self):
-        self.GameController.set_keyboard_manager(InTextKeyboardManager.ID)
-        self.GameController.set_text_box("text_box")
-
-        #self.screen.blit(self.phrase, (self.x +20, self.y +20 + (option*25)))
 
 class Pixie(NPC):
-    type = "Pixie"
+    WALK_LEFT = "walk_left"
+    WALK_RIGHT = "walk_right"
+    WALK_FRONT = "walk_front"
+    WALK_BACK = "walk_back"
+    TURNING_LEFT = "turning_left"
+    TURNING_FRONT = "turning_front"
+    TURNING_RIGHT = "turning_right"
+    TURNING_BACK = "turning_back"
+    IDLE = "idle"
+    AVAILABLE_STATES = [WALK_BACK, WALK_RIGHT, WALK_BACK, WALK_FRONT, TURNING_BACK, TURNING_RIGHT, TURNING_FRONT, TURNING_LEFT, IDLE]
 
-    def __init__(self, x, y, imagex, imagey, width, height, spritesheet, name, GameController, GameData):
-
+    def __init__(self, x, y, imagex, imagey, width, height, spritesheet, name, GameController, GameData, current_phrase):
         super().__init__(x, y, imagex, imagey, width, height, spritesheet, name, GameController, GameData, facing = "front", feature_type="Pixie", offset_y=10)
-
-        self.initiate = pygame.USEREVENT + 14
-        self.action_clock = pygame.USEREVENT + 15
+        assert self.state in self.AVAILABLE_STATES
         self.actions = ["walk_left", "walk_right", "walk_front", "walk_back", "turning_left", "turning_front", "turning_right", "turning_back"]
         self.available_actions = ["turn"]
         self.spritesheet = spritesheet
+        self.current_phrase = "Hi, how are you today??"
+        self.state = "idle"
+        self.current_phrase = current_phrase
 
     def activate_timers(self):
         pygame.time.set_timer(self.initiate, 1000)
@@ -508,8 +469,7 @@ class Pixie(NPC):
         if self.state == "idle":
             result = choice(self.actions)
             #self.state = result
-            print(self.state)
-            print(result)
+
             if result == "walk_left":
                 self.facing = "left"
                 can_walk = self.GameData.positioner[self.GameController.current_room].can_move(self)
@@ -547,7 +507,7 @@ class Pixie(NPC):
                 self.turn_right()
 
     def get_interacted_with(self):
-        print(self.name)
+        # TODO: Fix all of this mess - make their picture pop up in their speech bubble thing
         if self.state == "idle":
             if self.GameData.player["Player"].facing == "back":
                 self.turn_front()
@@ -557,16 +517,26 @@ class Pixie(NPC):
                 self.turn_right()
             elif self.GameData.player["Player"].facing == "right":
                 self.turn_left()
-            self.GameController.set_keyboard_manager(InTextKeyboardManager.ID)
-            self.GameController.set_text_box("text_box")
-            # self.phrase.write_simple(self.GameController.screen, 200, 200)
-            #, (self.GameData.overlay_list["text_box"].x, self.GameData.overlay_list["text_box"].x)
-            # self.screen.blit(self.phrase, (self.x +20, self.y +20 + (option*25)))
+            self.GameController.set_keyboard_manager(InTalkingMenuKeyboardManager.ID)
+            self.GameController.set_menu("character_interact_menu")
+            self.set_state("talking")
+
+
+    def speak(self, chosen_phrase):
+        print("speaking")
+        my_font = pygame.font.Font("assets/PressStart2P-Regular.ttf", 10)
+        item = my_font.render(self.name + ":", 1, (0, 0, 0))
+        self.GameController.screen.blit(item, (
+        self.GameData.overlay_list["text_box"].x + 80, self.GameData.overlay_list["text_box"].y + 20))
+
+        my_font = pygame.font.Font("assets/PressStart2P-Regular.ttf", 10)
+        item = my_font.render(chosen_phrase, 1, (0, 0, 0))
+        self.GameController.screen.blit(item, (self.GameData.overlay_list["text_box"].x + 80, self.GameData.overlay_list["text_box"].y + 40))
 
 
 class Prop(Feature):
-    def __init__(self, x, y, imagex, imagey, width, height, spritesheet, name, GameController, GameData, size_x, size_y):
-        super().__init__(x, y, imagex, imagey, width, height, spritesheet, name, GameController, GameData, offset_y=10)
+    def __init__(self, x, y, imagex, imagey, width, height, spritesheet, name, GameController, GameData, size_x, size_y, offset_y=10):
+        super().__init__(x, y, imagex, imagey, width, height, spritesheet, name, GameController, GameData, offset_y)
         self.printing_priority = 1
         self.size_x = size_x
         self.size_y = size_y

@@ -15,7 +15,7 @@ class Tilling(object):
 class TileMap():
     def __init__(self, filename, tile1, tile2):
         self.tile_size = 32
-        self.tile_style_list = {"grass": "assets/map/G_tile.png", "water": "assets/map/W_tile.png"}
+        self.tile_style_list = {"grass": "assets/csv_maps/csv_tiles/grass_tile.png", "water": "assets/csv_maps/csv_tiles/water_tile.png"}
         self.start_x, self.start_y = 0, 0
         self.tiles = self.load_tiles(filename, tile1, tile2)
         self.map_surface = pygame.Surface((self.map_w, self.map_h))
@@ -47,7 +47,6 @@ class TileMap():
             x = 0
             for tile in row:
                 if tile == "0":
-                    #tiles.append(Tilling("assets/map/G_tile.png", x * self.tile_size, y *self.tile_size))
                     tiles.append(Tilling(self.tile_style_list[tile1], x * self.tile_size, y * self.tile_size))
                 elif tile == "1":
                     tiles.append(Tilling(self.tile_style_list[tile2], x * self.tile_size, y * self.tile_size))

@@ -5,7 +5,7 @@ import pygame
 from keyboards import KeyboardManager
 from spritesheet import *
 from Phrases import*
-from tiler import *
+from TileMap import *
 from menus import *
 
 class Game(object):
@@ -77,13 +77,15 @@ class GameController(object):
         self.clock = pygame.time.Clock()
         self._FPS = GameData.settings["FPS"]
         self.input = True
-        self.current_room = "room4"
+        self.current_room = "room1"
         self.camera = [0, 0]
         self.current_overlay_list = ["top_bar"]
         self.current_menu = None # type: Menu
         self.current_text_box = None # type: Overlay
+        self.current_speaker = None
         self.keyboard_manager_list = {}
         self.current_keyboard_manager = None # type: KeyboardManager
+
 
     def add_keyboard_manager(self, keyboard_manager_name, keyboard_manager_object):
         self.keyboard_manager_list[keyboard_manager_name] = keyboard_manager_object
@@ -99,6 +101,9 @@ class GameController(object):
 
     def set_text_box(self, active_text_box):
         self.current_text_box = active_text_box
+
+    def set_speaker(self, active_speaker):
+        self.current_speaker = active_speaker
 
     def tick(self):
         self.clock.tick(self._FPS)
@@ -134,16 +139,6 @@ class Picaso(object):
         self.GameController = GameController
 
     def get_all_drawable(self):
-        # drawables_list = {}
-        # for character in self.GameData.room[self.GameController.room].character_list:
-        #     drawables_list[character] = self.GameData.character[character]
-        # drawables_list["Player"] = self.GameData.player["Player"]
-        # drawables_list = sorted(drawables_list, key=lambda x: (x.y, x.printing_priority))
-        # # print(drawables_list["Walker"].y)
-        # # print(drawables_list["Pink_Walker"].y)
-        # # print(drawables_list["Player"].y)
-        # print(drawables_list)
-        # return drawables_list
 
         drawables_list = []
         for character in self.GameData.room_list[self.GameController.current_room].character_list:
@@ -173,9 +168,10 @@ class Picaso(object):
         for overlay in self.GameController.current_overlay_list:
             self.GameData.overlay_list[overlay].print_overlay()
 
-        if self.GameController.current_text_box != None:
-            self.GameData.overlay_list["text_box"].print_overlay()
 
+        if self.GameController.current_speaker != None:
+            self.GameData.overlay_list["text_box"].print_overlay()
+            self.GameData.character_list[self.GameController.current_speaker].speak(self.GameData.character_list[self.GameController.current_speaker].current_phrase)
 
 
 

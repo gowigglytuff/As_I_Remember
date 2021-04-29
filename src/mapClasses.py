@@ -1,8 +1,13 @@
-import pygame
+import pygame, csv, os
 
 
 class Room(object):
-    def __init__(self, name, left_edge_x, top_edge_y, width, height, images_list):
+    CSV = "csv"
+    IMG = "image"
+    available_map_style = [CSV, IMG]
+
+    def __init__(self, name, left_edge_x, top_edge_y, width, height, images_list, map_style="image", CSV_BG=None):
+        assert map_style in self.available_map_style
         self.name = name
         self.left_edge_x = left_edge_x
         self.right_edge_x = left_edge_x + width - 1
@@ -19,6 +24,8 @@ class Room(object):
         self.character_list = []
         self.decoration_list = []
         self.prop_list = []
+        self.map_style = map_style
+        self.CSV_BG = CSV_BG
 
 
     def generate_room_grid(self):
@@ -55,12 +62,14 @@ class Tile(object):
 
     DOOR = "Door"
     NPC = "NPC"
-    WALKER = "Walker"
+
     PIXIE = "Pixie"
     PLAYER = "Player"
     NONE = "None"
     PROP = "Prop"
-    TILE_TYPE_LIST = [DOOR, NPC, PLAYER, WALKER, PIXIE, PROP, NONE]
+
+    OBSTACLE = "Obstacle"
+    TILE_TYPE_LIST = [DOOR, NPC, PLAYER, PIXIE, PROP, NONE, OBSTACLE]
 
     def __init__(self, x, y, full, object_filling, filling_type, item=None):
         assert filling_type in self.TILE_TYPE_LIST
@@ -112,11 +121,43 @@ class Position_Manager(object):
             for tile in tile_list:
                 drawable_list = self.GameController.get_current_drawables(fillable_room)
                 for drawable in drawable_list:
-                    if drawable.x == tile.x and drawable.y == tile.y:
+                    if drawable.feature_type == "Prop" and drawable.x == tile.x and drawable.y == tile.y:
+                        print(drawable.name)
+                        for size_x in range(drawable.size_x):
+                            for size_y in range(drawable.size_y):
+                                    self.GameData.room_list[fillable_room].tiles_array[drawable.x + size_x][drawable.y + size_y].object_filling = drawable.name
+                                    self.GameData.room_list[fillable_room].tiles_array[drawable.x + size_x][drawable.y + size_y].filling_type = drawable.feature_type
+                                    self.GameData.room_list[fillable_room].tiles_array[drawable.x + size_x][drawable.y + size_y].full = True
+
+                    elif drawable.feature_type != "Prop" and drawable.x == tile.x and drawable.y == tile.y:
                         tile.object_filling = drawable.name
-                        #TODO: make filling_type a constant and reactivate assertion
                         tile.filling_type = drawable.feature_type
                         tile.full = True
+
+    def fill_obstacles(self, filename, fillable_room):
+        map = self.read_csv(filename)
+        x, y = 0, 0
+        for row in map:
+            x = 0
+            for tile in row:
+                if tile == "0":
+                    pass
+                elif tile == "1":
+                    print(self.GameData.room_list[fillable_room].tiles_array[x][y].x, self.GameData.room_list[fillable_room].tiles_array[x][y].y)
+                    tile = self.GameData.room_list[fillable_room].tiles_array[x+1][y+1]
+                    tile.object_filling = "Obstacle"
+                    tile.filling_type = "Obstacle"
+                    tile.full = True
+                x += 1
+            y += 1
+
+    def read_csv(self, filename):
+        map = []
+        with open(os.path.join(filename)) as data:
+            data = csv.reader(data, delimiter=',')
+            for row in data:
+                map.append(list(row))
+        return map
 
     def fill_doors(self, fillable_room):
         for tile_list in self.GameData.room_list[fillable_room].tiles_array:
@@ -138,6 +179,8 @@ class Position_Manager(object):
         self.GameController.camera[1] += y_change
         self.GameController.set_room(door.room_to)
         self.empty_tiles(door.room_to)
+        if self.GameData.room_list[door.room_to].map_style == "csv":
+            self.fill_obstacles(self.GameData.room_list[door.room_to].CSV_BG, door.room_to)
         self.fill_tiles(door.room_to)
         self.fill_doors(door.room_to)
         self.fill_tile(self.GameData.player["Player"])
