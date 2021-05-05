@@ -31,6 +31,8 @@ class GameData(object):
         self.character_list = {}
         self.player = {}
         self.positioner = {}
+        self.item_list = {}
+        self.key_item_list = {}
 
     def get_all_drawables(self):
         return list(self.character_list.values()) + list(self.player.values()) + list(self.prop_list.values())
@@ -59,6 +61,12 @@ class GameData(object):
     def add_prop(self, prop_name, prop_object):
         self.prop_list[prop_name] = prop_object
 
+    def add_item(self, item_name, item_object):
+        self.item_list[item_name] = item_object
+
+    def add_key_item(self, key_item_name, key_item_object):
+        self.key_item_list[key_item_name] = key_item_object
+
     def add_menu(self, menu_name, menu_object):
         self.menu_list[menu_name] = menu_object
 
@@ -66,14 +74,17 @@ class GameData(object):
         self.overlay_list[overlay_name] = overlay_object
 
 class GameController(object):
-    def __init__(self, GameData):
+    def __init__(self, GameData, MenuManager):
         self.GameData = GameData
+        self.MenuManager = MenuManager
+        self.inventory = None
         self.screen = pygame.display.set_mode(GameData.settings["resolution"])
         self.clock = pygame.time.Clock()
         self._FPS = GameData.settings["FPS"]
         self.font = "assets/fonts/PressStart2P-Regular.ttf"
         self.input = True
         self.current_room = "room1"
+        self.key_held = False
         self.camera = [0, 0]
         self.current_overlay_list = ["top_bar"]
         self.current_menu = None # type: Menu
@@ -94,6 +105,15 @@ class GameController(object):
 
     def set_room(self, active_room):
         self.current_room = active_room
+
+    def add_current_overlay(self, overlay_name):
+        self.current_overlay_list.append(overlay_name)
+
+    def remove_current_overlay(self, overlay_name):
+        self.current_overlay_list.remove(overlay_name)
+
+    def set_inventory(self, inv):
+        self.inventory = inv
 
     def set_text_box(self, active_text_box):
         self.current_text_box = active_text_box
@@ -147,7 +167,7 @@ class Picaso(object):
             drawables_list.append(self.GameData.decoration_list[decoration])
 
         drawables_list.append(self.GameData.player["Player"])
-        drawables_list = sorted(drawables_list, key=lambda x: (x.y, x.printing_priority))
+        drawables_list = sorted(drawables_list, key=lambda x: (x.y, x.drawing_priority))
         return drawables_list
 
     def big_draw(self):
@@ -159,19 +179,29 @@ class Picaso(object):
         for drawable in drawable_list:
             drawable.draw(self.GameController.screen)
 
-        # blits the menu that is active
-        if self.GameController.current_menu != None:
-            self.GameData.menu_list[self.GameController.current_menu].print_menu()
+        # give the menus ability to print
+        if self.GameController.MenuManager.character_interact_menu:
+            self.GameData.menu_list["character_interact_menu"].display_menu()
+
+        if self.GameController.MenuManager.start_menu:
+            self.GameData.menu_list["start_menu"].display_menu()
+
+        if self.GameController.MenuManager.key_inventory_menu:
+            self.GameData.menu_list["key_inventory_menu"].display_menu()
+
+        if self.GameController.MenuManager.inventory_menu:
+            self.GameData.menu_list["inventory_menu"].display_menu()
+
+        if self.GameController.MenuManager.use_menu:
+            self.GameData.menu_list["use_menu"].display_menu()
 
         # blits any overlays that are always active and ons tghat are associated with currently active menus
         for overlay in self.GameController.current_overlay_list:
-            self.GameData.overlay_list[overlay].print_overlay()
+            self.GameData.overlay_list[overlay].display_overlay()
 
-        # TODO: Find some other better way to do this
         if self.GameController.current_speaker != None:
-            self.GameData.overlay_list["text_box"].print_overlay()
-            self.GameData.character_list[self.GameController.current_speaker].speak(self.GameData.character_list[self.GameController.current_speaker].current_phrase)
-
+            self.GameData.overlay_list["text_box"].display_overlay()
+            self.GameData.overlay_list["text_box"].display_phrase(self.GameController.current_speaker)
 
 
 class Camera(object):

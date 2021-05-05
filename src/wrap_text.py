@@ -20,20 +20,7 @@ def fix_phrase(text, max_characters=20):
 
     output_list.append(text)
     return output_list
-phrase_fixed = fix_phrase(phrase)
-phrase2_fixed = fix_phrase(phrase2)
 
-for x in phrase_fixed:
-    print(x)
-
-for x in phrase2_fixed:
-    print(x)
-
-print(phrase2_fixed)
-
-import textwrap
-
-print(textwrap.wrap(phrase2, 20))
 
 
 

@@ -2,61 +2,6 @@ import pygame, csv, os
 
 
 class Room(object):
-    CSV = "csv"
-    IMG = "image"
-    available_map_style = [CSV, IMG]
-
-    def __init__(self, name, left_edge_x, top_edge_y, width, height, images_list, map_style="image", CSV_BG=None):
-        assert map_style in self.available_map_style
-        self.name = name
-        self.left_edge_x = left_edge_x
-        self.right_edge_x = left_edge_x + width - 1
-        self.top_edge_y = top_edge_y
-        self.bottom_edge_y = top_edge_y + height - 1
-
-        self.width = width
-        self.height = height
-        self.door_list = {}
-        self.images_list = images_list
-        self.tiles_array = []
-        self.BG_list = {}
-        self.character_list = []
-        self.decoration_list = []
-        self.prop_list = []
-        self.map_style = map_style
-        self.CSV_BG = CSV_BG
-
-
-    def generate_room_grid(self):
-        """
-        adds an array to tiles_array which is a grid for the current room
-        :return: null
-        """
-        for section in range(self.width + 3):
-            section_name = []
-            self.tiles_array.append(section_name)
-
-        for letter in range(self.width + 2):
-            for number in range(self.height + 3):
-                spot_name = Tile(letter, number, False, "None", "None")
-                self.tiles_array[letter].append(spot_name)
-
-    def add_room_BG(self, bg_name, bg_object):
-        self.BG_list[bg_name] = bg_object
-
-    def add_room_character(self, character_name):
-        self.character_list.append(character_name)
-
-    def add_room_prop(self, prop_name):
-        self.prop_list.append(prop_name)
-
-    def add_room_decoration(self, decoration_name):
-        self.decoration_list.append(decoration_name)
-
-    def add_room_door(self, door_name, door_object):
-        self.door_list[door_name] = door_object
-
-class Room2(object):
 
     def __init__(self, name, left_edge_x, top_edge_y, room_width, room_height, total_plots_x, total_plots_y, plot_size_x, plot_size_y, GameController, GameData, map_style="image"):
         self.GameController = GameController
@@ -70,7 +15,6 @@ class Room2(object):
         self.room_width = room_width
         self.room_height = room_height
         self.map_style = map_style
-        map_style = "image"
 
         self.plot_list = {}
         self.total_plots_x = total_plots_x
@@ -126,15 +70,11 @@ class Room2(object):
             self_y = (((((self.plot_list[plot].plot_y)-1)*self.plot_size_y + self.GameController.camera[1])+1) * self.GameData.square_size[1]) + self.GameData.base_locator_y
             screen.blit(self.plot_list[plot].plot_img, (self_x, self_y))
 
-    # def draw_bg(self, screen):
-    #     for plot in self.active_plots:
-    #         screen.blit(self.plot_list[plot].plot_img, (self.GameData.player["Player"].x, self.GameData.player["Player"].y))
-    #         print("drew " + self.plot_list[plot].name)
 class Plot(object):
     '''
     each room will be made up of a specified number of plots
     '''
-    def __init__(self, room, plot_x, plot_y, plot_img, GameController, GameData):
+    def __init__(self, room, plot_x, plot_y, plot_img, GameController, GameData, csv_file):
         self.GameController = GameController
         self.GameData = GameData
 
@@ -143,6 +83,7 @@ class Plot(object):
         self.plot_y = plot_y
         self.name = self.room + "_" + str(plot_x) + "_"+ str(plot_y)
         self.plot_img = plot_img
+        self.csv_file = csv_file
         self.prop_list = []
         self.character_list = []
         self.decoration_list = []
@@ -168,7 +109,7 @@ class Tile(object):
         self.filling_type = filling_type
         self.item = item
         self.name = "tile" + str(x) + "_" + str(y)
-
+        self.elevation = 1
 
 
 class Door(object):
@@ -213,7 +154,6 @@ class Position_Manager(object):
                 drawable_list = self.GameController.get_current_drawables(fillable_room)
                 for drawable in drawable_list:
                     if drawable.feature_type == "Prop" and drawable.x == tile.x and drawable.y == tile.y:
-                        print(drawable.name)
                         for size_x in range(drawable.size_x):
                             for size_y in range(drawable.size_y):
                                     self.GameData.room_list[fillable_room].tiles_array[drawable.x + size_x][drawable.y + size_y].object_filling = drawable.name
@@ -228,7 +168,7 @@ class Position_Manager(object):
     def fill_obstacles(self, filename, fillable_room):
         for plot in self.GameData.room_list[fillable_room].active_plots:
             current_plot = self.GameData.room_list[fillable_room].plot_list[plot]
-            map = self.read_csv(filename)
+            map = self.read_csv(self.GameData.room_list[fillable_room].plot_list[plot].csv_file)
             x, y = (current_plot.plot_x-1) * self.GameData.room_list[fillable_room].plot_size_x, (current_plot.plot_y-1) * self.GameData.room_list[fillable_room].plot_size_y
             for row in map:
                 x = (current_plot.plot_x-1) * self.GameData.room_list[fillable_room].plot_size_x
@@ -261,19 +201,20 @@ class Position_Manager(object):
                         tile.full = True
 
     def through_door(self, door):
-        print("hi")
         self.empty_tile(self.GameData.player["Player"])
         x_change = self.GameData.player["Player"].x - door.exit_x
         y_change = self.GameData.player["Player"].y - door.exit_y
         self.GameData.player["Player"].x = door.exit_x
         self.GameData.player["Player"].y = door.exit_y
+        self.GameData.player["Player"].turn_front()
         self.GameController.camera[0] += x_change
         self.GameController.camera[1] += y_change
         self.GameController.set_room(door.room_to)
         self.empty_tiles(door.room_to)
-        #TODO: add this obstacle stuff back in
-        # if self.GameData.room_list[door.room_to].map_style == "csv":
-        #     self.fill_obstacles(self.GameData.room_list[door.room_to].plot_list, door.room_to)
+        #TODO: Make all maps in CSV Style?
+        if self.GameData.room_list[door.room_to].map_style == "csv":
+            for plot in self.GameData.room_list[door.room_to].plot_list:
+                self.fill_obstacles(self.GameData.room_list[door.room_to].plot_list[plot].csv_file, door.room_to)
         self.fill_tiles(door.room_to)
         self.fill_doors(door.room_to)
         self.fill_tile(self.GameData.player["Player"])
@@ -327,7 +268,6 @@ class Position_Manager(object):
 
     def check_door(self, mover):
         is_door = False
-        print("is it a door?")
         facing_tile = mover.get_facing_tile()
         if facing_tile.filling_type == "Door":
             is_door = True
@@ -344,12 +284,5 @@ class Position_Manager(object):
         self.GameData.room_list[self.GameController.current_room].tiles_array[mover.x][mover.y].object_filling = mover.name
         self.GameData.room_list[self.GameController.current_room].tiles_array[mover.x][mover.y].filling_type = mover.feature_type
 
-        # if mover.facing == "left":
-        #     self.GameData.room[self.GameController.room].tiles_array[mover.x-1][mover.y].full = True
-        # if mover.facing == "right":
-        #     self.GameData.room[self.GameController.room].tiles_array[mover.x+1][mover.y].full = True
-        # if mover.facing == "front":
-        #     self.GameData.room[self.GameController.room].tiles_array[mover.x][mover.y+1].full = True
-        # if mover.facing == "back":
-        #     self.GameData.room[self.GameController.room].tiles_array[mover.x][mover.y-1].full = True
+
 

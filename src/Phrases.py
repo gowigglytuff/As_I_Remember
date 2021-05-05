@@ -2,10 +2,6 @@ import pygame
 import time
 
 class TimedDrawing(object):
-
-
-
-
     pass
 
 class Phrase(TimedDrawing):
@@ -20,7 +16,7 @@ class Phrase(TimedDrawing):
         self.colour = colour
         self.size = size
         self.current_state = 0
-        self.currently_printing = []
+        self.currently_displaying = []
         self.my_font = pygame.font.Font("assets/fonts/PressStart2P-Regular.ttf", self.size)
 
     def write_simple(self, screen, x, y):
@@ -39,7 +35,7 @@ class Phrase(TimedDrawing):
             pygame.display.update()
 
     def write_phrase_slowly(self, delay_ms=100):
-        self.currently_printing.clear()
+        self.currently_displaying.clear()
         pygame.time.set_timer(self.UPDATE_TEXT_EVENT, delay_ms)
 
     def stop_writing(self):
@@ -49,7 +45,7 @@ class Phrase(TimedDrawing):
     def draw_frame(self, screen):
         for index, letter in enumerate(self.text):
             if index == self.current_state:
-                self.currently_printing.append(letter)
+                self.currently_displaying.append(letter)
 
 
         if self.current_state != len(self.text) - 1:
@@ -60,6 +56,6 @@ class Phrase(TimedDrawing):
             return False
 
     def write_current_phrase(self, screen):
-        for letter in range(len(self.currently_printing)):
-            label = self.my_font.render(self.currently_printing[letter], True, self.colour)
+        for letter in range(len(self.currently_displaying)):
+            label = self.my_font.render(self.currently_displaying[letter], True, self.colour)
             screen.blit(label, (self.X + (letter * 20), self.Y))

@@ -15,7 +15,7 @@ class Tilling(object):
 class TileMap():
     def __init__(self, filename, tile1, tile2):
         self.tile_size = 32
-        self.tile_style_list = {"grass": "assets/csv_maps/csv_tiles/grass_tile.png", "water": "assets/csv_maps/csv_tiles/water_tile.png"}
+        self.tile_style_list = {"grass": "assets/csv_maps/csv_tiles/grass_tile.png", "water": "assets/csv_maps/csv_tiles/water2_tile.png"}
         self.start_x, self.start_y = 0, 0
         self.tiles = self.load_tiles(filename, tile1, tile2)
         self.map_surface = pygame.Surface((self.map_w, self.map_h))
@@ -54,3 +54,7 @@ class TileMap():
             y += 1
         self.map_w, self.map_h = x * self.tile_size, y * self.tile_size
         return tiles
+
+class TileSet(object):
+    def __init__(self, filename, number_of_tiles, tile_width, tile_height):
+        pass

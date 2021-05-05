@@ -8,11 +8,17 @@ from loading import *
 from features import *
 from mapClasses import *
 from keyboards import *
+from inventory import *
+from menus import *
 
+mm = MenuManager()
 gd = GameData()
-gc = GameController(gd)
+gc = GameController(gd, mm)
 em = EventsManager(gd, gc)
 picaso = Picaso(gd, gc)
+inv = Inventory(gc, gd)
+gc.set_inventory(inv)
+
 
 
 def main():
@@ -40,6 +46,9 @@ def run_game_loop():
             if gc.input:
                 if event.type == pygame.KEYDOWN:
                     gc.current_keyboard_manager.parse_key(event.key)
+
+            if event.type == pygame.KEYUP:
+                gc.key_held = False
 
             # check to see if any events have occurred
             for character in gd.room_list[gc.current_room].character_list:
