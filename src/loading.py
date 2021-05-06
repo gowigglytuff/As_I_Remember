@@ -26,6 +26,10 @@ def init_game(gd, gc):
 
     load_key_items(gc, gd)
 
+    # Load the Tileset
+    T = TileSet("assets/csv_maps/csv_tiles/tileset.png", 32, 32, 3, 5)
+    gd.add_tile_dict(T.load_tile_images())
+
     # add the player to the game
     gd.add_player("Player", Player(2, 3, 2, 3, 32, 40, Spritesheet("assets/NPC_sprites/Shuma.png", 32, 40), "Bug", gc, gd))
     gd.player["Player"].activate_timer()
@@ -33,9 +37,9 @@ def init_game(gd, gc):
     # run functions that initiate all rooms
     init_room_1(gc, gd)
     init_room_2(gc, gd)
-    init_room_3(gc, gd)
+    # init_room_3(gc, gd)
     init_room_4(gc, gd)
-    init_room_5(gc, gd)
+    # init_room_5(gc, gd)
 
 def load_keyboard_managers(gc, gd):
     # load all keyboard managers
@@ -165,7 +169,7 @@ def init_room_2(gc, gd):
     # add the room #2, generate the grid, and add the background and doors
     gd.add_room("room2", Room("room2", 1, 1, 15, 15, 1, 1, 15, 15, gc, gd, map_style="csv"))
     gd.room_list["room2"].add_room_plot("room2_1_1", Plot("room2", 1, 1,
-                                                          TileMap("assets/csv_maps/room2.csv", "grass", "water").return_map(),
+                                                          TileMap("assets/csv_maps/room2.0.csv", gd.tiles_img_dict).return_map(),
                                                           gc, gd, "assets/csv_maps/room2.csv"))
     gd.room_list["room2"].activate_plot("room2_1_1")
     gd.room_list["room2"].generate_room_grid()
@@ -240,7 +244,7 @@ def init_room_4(gc, gd):
     # add room #4
     gd.add_room("room4", Room("room4", 1, 1, 100, 50, 2, 1, 50, 50, gc, gd, map_style="csv"))
 
-    big_map = TileMap("assets/csv_maps/big_map.csv", "grass", "water")
+    big_map = TileMap("assets/csv_maps/csv_tiles/big_map2.0.csv", gd.tiles_img_dict)
     gd.room_list["room4"].add_room_plot("room4_1_1", Plot("room4", 1, 1, big_map.return_map(), gc, gd, "assets/csv_maps/big_map.csv"))
     gd.room_list["room4"].add_room_plot("room4_1_2", Plot("room4", 2, 1, big_map.return_map(), gc, gd, "assets/csv_maps/big_map.csv"))
     gd.room_list["room4"].activate_plot("room4_1_1")

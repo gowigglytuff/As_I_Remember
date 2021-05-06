@@ -33,6 +33,7 @@ class GameData(object):
         self.positioner = {}
         self.item_list = {}
         self.key_item_list = {}
+        self.tiles_img_dict = {}
 
     def get_all_drawables(self):
         return list(self.character_list.values()) + list(self.player.values()) + list(self.prop_list.values())
@@ -72,6 +73,9 @@ class GameData(object):
 
     def add_overlay(self, overlay_name, overlay_object):
         self.overlay_list[overlay_name] = overlay_object
+
+    def add_tile_dict(self, tiles_dict):
+        self.tiles_img_dict = tiles_dict
 
 class GameController(object):
     def __init__(self, GameData, MenuManager):
