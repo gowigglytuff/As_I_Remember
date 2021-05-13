@@ -2,7 +2,7 @@ from random import randint
 
 import pygame
 from data import *
-from keyboards import InGameKeyboardManager
+from keyboards import InGame
 
 from loading import *
 from features import *
@@ -38,7 +38,6 @@ def run_game_loop():
     pygame.time.set_timer(printout, 500)
 
     while running:
-        print(gd.tiles_img_dict)
         pygame.draw.rect(gc.screen, (0, 0, 0), (0, 0, 1000, 10000))
         for event in pygame.event.get():
             if event.type == pygame.QUIT:

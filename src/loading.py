@@ -15,19 +15,25 @@ def init_game(gd, gc):
     :type gd: GameData
     :return:
     '''
+    # initialize pygame
     pygame.init()
-    pygame.display.set_caption('NPC')
+    pygame.display.set_caption('As I Remember')
 
+    # Load all the differnt keyboard modes that the you encounter when in different things like the menus and stuff
     load_keyboard_managers(gc, gd)
 
+    # load all the different menus
     load_menus(gc, gd)
 
+    # load the full list of items that are available in the game
     load_items(gc, gd)
 
+    # load the full list of key items that are available in the game
     load_key_items(gc, gd)
 
     # Load the Tileset
     T = TileSet("assets/csv_maps/csv_tiles/tileset.png", 32, 32, 3, 5)
+    # store each tile in a dictionary in GameData that will be accessed by the TileMap function
     gd.add_tile_dict(T.load_tile_images())
 
     # add the player to the game
@@ -44,55 +50,59 @@ def init_game(gd, gc):
 def load_keyboard_managers(gc, gd):
     # load all keyboard managers
     # TODO: add other possible Keyboard_managers
-    gc.add_keyboard_manager(InGameKeyboardManager.ID, InGameKeyboardManager(gc, gd))
-    gc.add_keyboard_manager(InMenuKeyboardManager.ID, InMenuKeyboardManager(gc, gd))
-    gc.add_keyboard_manager(InStartMenuKeyboardManager.ID, InStartMenuKeyboardManager(gc, gd))
-    gc.add_keyboard_manager(InConversationKeyboardManager.ID, InConversationKeyboardManager(gc, gd))
-    gc.add_keyboard_manager(InTalkingMenuKeyboardManager.ID, InTalkingMenuKeyboardManager(gc, gd))
-    gc.add_keyboard_manager(InInventoryMenuKeyboardManager.ID, InInventoryMenuKeyboardManager(gc, gd))
-    gc.add_keyboard_manager(InKeyInventoryMenuKeyboardManager.ID, InKeyInventoryMenuKeyboardManager(gc, gd))
-    gc.add_keyboard_manager(InUseInventoryMenuKeyboardManager.ID, InUseInventoryMenuKeyboardManager(gc, gd))
-    gc.add_keyboard_manager(InUseKeyInventoryMenuKeyboardManager.ID, InUseKeyInventoryMenuKeyboardManager(gc, gd))
-    gc.add_keyboard_manager(InProfileKeyboardManager.ID, InProfileKeyboardManager(gc, gd))
+    gc.add_keyboard_manager(InGame.ID, InGame(gc, gd))
+    gc.add_keyboard_manager(InStartMenu.ID, InStartMenu(gc, gd))
+    gc.add_keyboard_manager(InConversation.ID, InConversation(gc, gd))
+    gc.add_keyboard_manager(InConversationOptions.ID, InConversationOptions(gc, gd))
+    gc.add_keyboard_manager(InInventory.ID, InInventory(gc, gd))
+    gc.add_keyboard_manager(InKeyInventory.ID, InKeyInventory(gc, gd))
+    gc.add_keyboard_manager(InUseInventory.ID, InUseInventory(gc, gd))
+    gc.add_keyboard_manager(InUseKeyInventory.ID, InUseKeyInventory(gc, gd))
+    gc.add_keyboard_manager(InToDoList.ID, InToDoList(gc, gd))
 
-    gc.set_keyboard_manager(InGameKeyboardManager.ID)
+    gc.add_keyboard_manager(InProfile.ID, InProfile(gc, gd))
+
+    # sets the initial Keyboard Manager to be the InGame Manager
+    gc.set_keyboard_manager(InGame.ID)
 
 def load_menus(gc, gd):
-    # load menus
-    gd.add_overlay("testing_menu", Overlay(gc, gd, "testing_menu", 700, 500,
-                                           Spritesheet("assets/menu_images/testing_menu.png", 200, 100)))
-    gd.add_menu("testing_menu", Menu(gc, gd, "testing_menu", ["hi", "hello", "yo"], True, "testing_menu"))
-
-    gd.add_overlay("menu2",
-                   Overlay(gc, gd, "menu2", 200, 500, Spritesheet("assets/menu_images/testing_menu.png", 200, 100)))
-    gd.add_menu("menu2", Menu(gc, gd, "menu2", ["Clayton", "Adam", "Jim"], True, "menu2"))
-
+    # load menus - stores all the information for the various menus in the game in GameData
+    # The start menu which pops up when the player presses left control
     gd.add_overlay("start_menu", Overlay(gc, gd, "start_menu", 700, 200, Spritesheet("assets/menu_images/start_menu.png", 150, 400)))
     gd.add_menu("start_menu", StartMenu(gc, gd, "start_menu", ["Chore List", "Map", "Bag", "Outfits", "Profile", "Save", "Options", "Vibes"], True, "start_menu"))
 
+    # the menu which pops up when the player has selected bag from the start menu
     gd.add_overlay("inventory_menu", Overlay(gc, gd, "inventory_menu", 700, 200, Spritesheet("assets/menu_images/inventory_menu.png", 200, 400)))
     gd.add_menu("inventory_menu", InventoryMenu(gc, gd, "inventory_menu", gc.inventory.current_items, True, "inventory_menu"))
 
+    # the menu which pops up when the player has selected bag from the start menu and scrolls left or right
     gd.add_overlay("key_inventory_menu", Overlay(gc, gd, "key_inventory_menu", 700, 200, Spritesheet("assets/menu_images/inventory_menu.png", 200, 400)))
     gd.add_menu("key_inventory_menu", KeyInventoryMenu(gc, gd, "key_inventory_menu", gc.inventory.current_key_items, True, "key_inventory_menu"))
 
-    gd.add_overlay("top_bar", Overlay(gc, gd, "top_bar", 100, 100, Spritesheet("assets/menu_images/top_bar.png", 700, 100)))
-
-    gd.add_overlay("text_box", Overlay(gc, gd, "text_box", 250, 550, Spritesheet("assets/menu_images/text_box.png", 500, 150)))
-
+    # the menu that pops up when a player selects an item from the inventory or key inventory
     gd.add_overlay("use_menu", Overlay(gc, gd, "use_menu", 590, 200, Spritesheet("assets/menu_images/use_menu.png", 100, 100)))
     gd.add_menu("use_menu", StartMenu(gc, gd, "use_menu", ["Use", "Toss"], True, "use_menu"))
 
+    # Add non-menu overlays
+    # the overlay that presents the profile card
     gd.add_overlay("ID_card", ProfileCard(gc, gd, "ID_Card", 350, 300, Spritesheet("assets/misc_sprites/ID.png", 300, 200)))
+
+    gd.add_overlay("To_do_list", ToDoList(gc, gd, "To_do_list", 350, 200, Spritesheet("assets/misc_sprites/to_do_list.png", 300, 400)))
+
+    # the overlay that is always present at the top of the screen containing current statur information
+    #TODO: Make this actually a thing
+    gd.add_overlay("top_bar", Overlay(gc, gd, "top_bar", 100, 100, Spritesheet("assets/menu_images/top_bar.png", 700, 100)))
 
     #TODO: Fix this
     gd.add_overlay("text_box",
                    TextBox(gc, gd, "text_box", 250, 550, Spritesheet("assets/menu_images/text_box.png", 500, 150)))
 
+    # the menu that pops up when you talk to an NPC and have to decide how to interact with them
     gd.add_menu("character_interact_menu",
                 TalkingMenu(gc, gd, "character_interact_menu", ["Talk", "Give Gift"], True, "text_box"))
 
 def load_items(gc, gd):
+    # adds all the items that exist in the game to the storage in GameData
     gd.add_item("Cheese", Item("Cheese", gd, gc))
     gd.add_item("Mask", Item("Mask", gd, gc))
     gd.add_item("Stick", Item("Stick", gd, gc))
@@ -102,6 +112,8 @@ def load_items(gc, gd):
     gd.add_item("Bottle", Item("Bottle", gd, gc))
     gd.add_item("Coin", Item("Coin", gd, gc))
     gd.add_item("Paper", Item("Paper", gd, gc))
+
+    # adds the number of items to your inventory - temporary - for testing purposes
     gc.inventory.get_item("Cheese", 9)
     gc.inventory.get_item("Mask", 102)
     gc.inventory.get_item("Stick", 91)
@@ -113,15 +125,41 @@ def load_items(gc, gd):
     gc.inventory.get_item("Paper", 91)
 
 def load_key_items(gc, gd):
+    # adds all the key items that exist in the game to the storage in GameData
     gd.add_key_item("Hammer", Item("Hammer", gd, gc))
     gd.add_key_item("Shovel", Item("Shovel", gd, gc))
     gd.add_key_item("Clippers", Item("Clippers", gd, gc))
 
+    # adds the key item to your key item inventory - for testing purposes
     gc.inventory.get_key_item("Hammer")
     gc.inventory.get_key_item("Shovel")
     gc.inventory.get_key_item("Clippers")
 
 
+"""
+initiate the rooms following this process:
+1. add the room to the storage in GameData using: gd.add_room
+2. add the plots that make up the room to the list in the room class using: gd.room_list[room name].add_room_plot
+3. activate the plot - this means that it appears in the current plot list of the room and will be 
+    displayed using: gd.room_list[room name].activate_plot
+4. generate the grid of the room which is stored in an dictionary in the room 
+    class using: gd.room_list[room name].generate_room_grid()
+5. add any doors in the room to the list in the room class using: gd.room_list[room name].add_room_door
+6. add any characters in the room to the storage in GameData using: gd.add_character 
+7. add any props and decorations in the room to the storage in GameData using:  gd.add_prop and gd.add_decoration
+8. attach the characters and doors to the room using add_room_character and add_room_prop to add their names to a list 
+    in the room class using: gd.room_list[room name].add_room_character and gd.room_list["room1"].add_room_prop 
+9. add the position manager that's in charge of managing the positions of all the features in the room to the storage 
+    in GameData using:  gd.add_positioner
+10. fill out the tile grid with all the "obstacles" (places that can't be walked) that are in the room based on a csv 
+    file that matches the room using: gd.positioner[room name].fill_obstacles
+11. fill out the tile grid with all the features that have been placed in the room thus 
+    far using: gd.positioner[room name].fill_tiles
+11. fill out the tile grid with all the doors that were setup earlier in the 
+    list using: gd.positioner[room name].fill_doors
+12. activate the animation and action timers for all of the characters that are in the 
+    room using: a for loop and gd.character_list[character].activate_timers()
+"""
 def init_room_1(gc, gd):
     # room #1
 
@@ -130,17 +168,17 @@ def init_room_1(gc, gd):
     gd.room_list["room1"].add_room_plot("room1_1_1", Plot("room4", 1, 1, pygame.image.load("assets/backgrounds/room_1_background.png"), gc, gd, None))
     gd.room_list["room1"].activate_plot("room1_1_1")
 
+    # generate the grid for the room
     gd.room_list["room1"].generate_room_grid()
 
+    #add the door to the room
     gd.room_list["room1"].add_room_door("room1_door1", Door("room1", "room2", 2, 2, 1, 14, "room1_door1"))
     gd.room_list["room1"].add_room_door("room1_door2", Door("room1", "room4", 5, 1, 2, 4, "room1_door2"))
     gd.room_list["room1"].add_room_door("room1_door3", Door("room1", "room5", 1, 7, 1, 2, "room1_door3"))
 
     # add the NPC characters to the game
     gd.add_character("Shuma", Pixie(2, 4, 2, 4, 32, 40, Spritesheet("assets/NPC_sprites/Shuma.png", 32, 40), "Shuma", gc, gd, "Your dad have manure for sale? I'd really love to get my hands on a couple bags of it. It's great for the turnips and the kale! Though I think I might get some nitrogen fixed stuff from the co-op for the lettuce..."))
-
     gd.add_character("Maggie", Pixie(5, 5, 5, 5, 32, 40, Spritesheet("assets/NPC_sprites/Maggie.png", 32, 40), "Maggie", gc, gd, "This outfit makes me feel really cool and powerful, so I've decided I'm going to wear it everywhere."))
-
     gd.add_character("Laurie", Pixie(4, 3, 4, 3, 32, 40, Spritesheet("assets/NPC_sprites/Laurie.png", 32, 40), "Laurie", gc, gd, "Have you seen my drink anywhere?"))
 
     #add props to the game
@@ -182,9 +220,6 @@ def init_room_2(gc, gd):
                                   "Hey Shuma, so nice to see you again!, I should probably be in the studio, but when I'm low on inspiration I like to come out here and walk by the water. "))
 
     # add features for room 2
-    gd.add_prop("lamp4", Prop(1, 1, 1, 1, 32, 40, Spritesheet("assets/prop_sprites/lamp.png", 32, 40), "lamp4", gc, gd, 1, 1))
-    gd.add_prop("lamp2", Prop(10, 5, 10, 5, 32, 40, Spritesheet("assets/prop_sprites/lamp.png", 32, 40), "lamp2", gc, gd, 1, 1))
-    gd.add_prop("lamp3", Prop(8, 7, 8, 7, 32, 40, Spritesheet("assets/prop_sprites/lamp.png", 32, 40), "lamp3", gc, gd, 1, 1))
     gd.add_prop("house", Prop(4, 10, 4, 10, 192, 128, Spritesheet("assets/prop_sprites/House.png", 192, 128), "house", gc, gd, 6, 3, offset_y=32))
     gd.add_prop("tree", Prop(6, 6, 6, 6, 64, 96, Spritesheet("assets/prop_sprites/tree.png", 64, 96), "tree", gc, gd, 2, 1, offset_y=64))
     gd.add_prop("tree2", Prop(9, 5, 9, 5, 64, 96, Spritesheet("assets/prop_sprites/tree.png", 64, 96), "tree2", gc, gd, 2, 1, offset_y=64))
@@ -193,9 +228,6 @@ def init_room_2(gc, gd):
     gd.add_decoration("Grass1", Decoration(2, 13, 2, 13, 32, 32, Spritesheet("assets/decoration_sprites/grass.png", 32, 32), "Grass1", gc, gd, 1, 1, [[2, 13], [2, 14], [3, 13], [3, 14]]))
 
     # attach all features to room
-    # gd.room_list["room2"].add_room_prop("lamp2")
-    # gd.room_list["room2"].add_room_prop("lamp3")
-    # gd.room_list["room2"].add_room_prop("lamp4")
     gd.room_list["room2"].add_room_prop("house")
     gd.room_list["room2"].add_room_prop("tree")
     gd.room_list["room2"].add_room_prop("tree2")
@@ -207,6 +239,8 @@ def init_room_2(gc, gd):
     # add position manager to it's room and make it tell the tile array what it's filled with, then populate doors
     gd.add_positioner("room2", Position_Manager("room2", gc, gd))
     gd.positioner["room2"].fill_obstacles("assets/csv_maps/room2.csv", "room2")
+    #TODO: Fill out terrain for all other levels
+    gd.positioner["room2"].fill_terrain("assets/csv_maps/room2.csv", "room2")
     gd.positioner["room2"].fill_tiles("room2")
     gd.positioner["room2"].fill_doors("room2")
 
@@ -268,28 +302,23 @@ def init_room_4(gc, gd):
     gd.positioner["room4"].fill_doors("room4")
 
 def init_room_5(gc, gd):
-
+    #TODO: Fix this room
    # add the room #5, generate the grid, and add the background and doors
     gd.add_room("room5", Room("room5", 1, 1, 20, 10, 1, 1, 20, 10, gc, gd, map_style="csv"))
     gd.room_list["room5"].add_room_plot("room5_1_1", Plot("room5", 1, 1,
                                                           TileMap("assets/csv_maps/room5.csv", "grass", "water").return_map(),
                                                           gc, gd, "assets/csv_maps/room5.csv"))
 
-
     gd.add_prop("house2", Prop(13, 3, 13, 3, 192, 128, Spritesheet("assets/prop_sprites/House.png", 192, 128), "house2", gc, gd, 6, 3, offset_y=32))
     gd.room_list["room5"].add_room_prop("house2")
 
     gd.room_list["room5"].activate_plot("room5_1_1")
 
-
     gd.room_list["room5"].generate_room_grid()
-
 
     gd.add_positioner("room5", Position_Manager("room5", gc, gd))
 
-
     gd.room_list["room5"].add_room_door("room5_door1", Door("room5", "room1", 1, 1, 1, 6, "room5_door1"))
-
 
     gd.positioner["room5"].fill_obstacles("assets/csv_maps/room5.csv", "room5")
     gd.positioner["room5"].fill_tiles("room5")

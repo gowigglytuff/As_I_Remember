@@ -110,6 +110,7 @@ class Tile(object):
         self.item = item
         self.name = "tile" + str(x) + "_" + str(y)
         self.elevation = 1
+        self.terrain = None
 
 
 class Door(object):
@@ -165,10 +166,11 @@ class Position_Manager(object):
                         tile.filling_type = drawable.feature_type
                         tile.full = True
 
+    # TODO make the obstacles have types, water, trees, etc.
     def fill_obstacles(self, filename, fillable_room):
         for plot in self.GameData.room_list[fillable_room].active_plots:
             current_plot = self.GameData.room_list[fillable_room].plot_list[plot]
-            map = self.read_csv(self.GameData.room_list[fillable_room].plot_list[plot].csv_file)
+            map = self.read_csv(filename)
             x, y = (current_plot.plot_x-1) * self.GameData.room_list[fillable_room].plot_size_x, (current_plot.plot_y-1) * self.GameData.room_list[fillable_room].plot_size_y
             for row in map:
                 x = (current_plot.plot_x-1) * self.GameData.room_list[fillable_room].plot_size_x
@@ -176,10 +178,32 @@ class Position_Manager(object):
                     if tile == "0":
                         pass
                     elif tile == "1":
-                        tile = self.GameData.room_list[fillable_room].tiles_array[x+1][y+1]
-                        tile.object_filling = "Obstacle"
-                        tile.filling_type = "Obstacle"
-                        tile.full = True
+                        filling_tile = self.GameData.room_list[fillable_room].tiles_array[x+1][y+1]
+                        filling_tile.object_filling = "Obstacle"
+                        filling_tile.filling_type = "Obstacle"
+                        filling_tile.full = True
+                    x += 1
+                y += 1
+
+    def fill_terrain(self, filename, fillable_room):
+        for plot in self.GameData.room_list[fillable_room].active_plots:
+            current_plot = self.GameData.room_list[fillable_room].plot_list[plot]
+            map = self.read_csv(filename)
+            x, y = (current_plot.plot_x-1) * self.GameData.room_list[fillable_room].plot_size_x, (current_plot.plot_y-1) * self.GameData.room_list[fillable_room].plot_size_y
+
+            for row in map:
+                x = (current_plot.plot_x-1) * self.GameData.room_list[fillable_room].plot_size_x
+                for tile in row:
+                    if tile == "0":
+                        filling_tile = self.GameData.room_list[fillable_room].tiles_array[x + 1][y + 1]
+                        filling_tile.terrain = "Ground"
+                    elif tile == "1":
+                        filling_tile = self.GameData.room_list[fillable_room].tiles_array[x + 1][y + 1]
+                        filling_tile.terrain = "Water"
+
+                    elif tile == "3":
+                        filling_tile = self.GameData.room_list[fillable_room].tiles_array[x + 1][y + 1]
+                        filling_tile.terrain = "Floor"
                     x += 1
                 y += 1
 

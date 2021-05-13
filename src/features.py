@@ -638,7 +638,7 @@ class Pixie(NPC):
                 self.turn_right()
             elif self.GameData.player["Player"].facing == "right":
                 self.turn_left()
-            self.GameController.set_keyboard_manager(InTalkingMenuKeyboardManager.ID)
+            self.GameController.set_keyboard_manager(InConversationOptions.ID)
             # self.GameController.set_menu("character_interact_menu")
             self.GameController.MenuManager.character_interact_menu = True
             self.GameData.menu_list["character_interact_menu"].set_talking_to(self.name)

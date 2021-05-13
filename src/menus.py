@@ -3,7 +3,7 @@ import pygame
 class Overlay(object):
     def __init__(self, GameController, GameData, name, x, y, image):
         self.GameController = GameController
-        self. GameData = GameData
+        self.GameData = GameData
         self.screen = self.GameController.screen
         self.x = x
         self.y = y
@@ -12,6 +12,26 @@ class Overlay(object):
 
     def display_overlay(self):
         self.screen.blit(self.image, (self.x, self.y))
+
+class ToDoList(Overlay):
+    def __init__(self, GameController, GameData, name, x, y, image):
+        super().__init__(GameController, GameData, name, x, y, image)
+        self.to_dos = ["say hi to your mom", "kiss your cat", "eat a pear", "say hi to your mom", "kiss your cat", "eat a pear", "say hi to your mom", "kiss your cat", "eat a pear", "say hi to your mom", "kiss your cat", "eat a pear"]
+        self.page = 1
+
+    def display_overlay(self):
+        self.screen.blit(self.image, (self.x, self.y))
+        my_font = pygame.font.Font(self.GameController.font, 20)
+        item = my_font.render("To Do List", 1, (0, 0, 0))
+        self.GameController.screen.blit(item, (self.x + 45, self.y + 40))
+
+        item_number = 0
+        item_number = 1
+        for item in self.to_dos:
+            my_font = pygame.font.Font(self.GameController.font, 10)
+            item = my_font.render(str(item_number) + ". " + item, 1, (0, 0, 0))
+            self.GameController.screen.blit(item, (self.x + 45, self.y + 50 + (20 * item_number)))
+            item_number += 1
 
 class ProfileCard(Overlay):
     def __init__(self, GameController, GameData, name, x, y, image):
