@@ -1,6 +1,13 @@
 from abc import ABC, abstractmethod
+from enum import Enum
 
 import pygame
+
+class Direction(Enum):
+    LEFT = 1
+    RIGHT = 2
+    UP = 3
+    DOWN = 4
 
 #TODO add other keyboards
 class KeyboardManager(ABC):
@@ -10,20 +17,52 @@ class KeyboardManager(ABC):
     def ID(self):
         pass
 
-    def parse_key(self, key_pressed):
+    def parse_key_pressed(self, key_pressed):
         self.key_pushed()
 
         if key_pressed == pygame.K_RIGHT:
-            self.key_right()
+            self.direction_key_pressed(Direction.RIGHT)
+            print("right")
 
         if key_pressed == pygame.K_LEFT:
-            self.key_left()
+            self.direction_key_pressed(Direction.LEFT)
+            print("left")
 
         if key_pressed == pygame.K_DOWN:
-            self.key_down()
+            self.direction_key_pressed(Direction.DOWN)
 
         if key_pressed == pygame.K_UP:
-            self.key_up()
+            self.direction_key_pressed(Direction.UP)
+
+        if key_pressed == pygame.K_RETURN:
+            self.key_return()
+
+        if key_pressed == pygame.K_SPACE:
+            self.key_space()
+
+        if key_pressed == pygame.K_LCTRL:
+            self.key_control()
+
+        if key_pressed == pygame.K_LSHIFT:
+            self.key_shift()
+
+        if key_pressed == pygame.K_CAPSLOCK:
+            self.key_caps()
+
+    def parse_key_released(self, key_pressed):
+        self.key_pushed()
+
+        if key_pressed == pygame.K_RIGHT:
+            self.direction_key_released(Direction.RIGHT)
+
+        if key_pressed == pygame.K_LEFT:
+            self.direction_key_released(Direction.LEFT)
+
+        if key_pressed == pygame.K_DOWN:
+            self.direction_key_released(Direction.DOWN)
+
+        if key_pressed == pygame.K_UP:
+            self.direction_key_released(Direction.UP)
 
         if key_pressed == pygame.K_RETURN:
             self.key_return()
@@ -43,19 +82,25 @@ class KeyboardManager(ABC):
     def key_pushed(self):
         pass
 
-    @abstractmethod
+    def direction_key_released(self, key):
+        pass
+
+    def direction_key_pressed(self, direction):
+        pass
+
+
     def key_right(self):
         pass
 
-    @abstractmethod
+
     def key_left(self):
         pass
 
-    @abstractmethod
+
     def key_down(self):
         pass
 
-    @abstractmethod
+
     def key_up(self):
         pass
 
@@ -63,6 +108,9 @@ class KeyboardManager(ABC):
     def key_return(self):
         pass
 
+
+    def key_caps(self):
+        pass
 
     @abstractmethod
     def key_space(self):
@@ -84,21 +132,31 @@ class InGame(KeyboardManager):
     def __init__(self, GameController, GameData):
         self.GameController = GameController
         self.GameData = GameData
+        self.current_direction_key = None
 
-    def key_pushed(self):
-        self.GameController.key_held = True
+    def direction_key_released(self, direction):
+        if self.current_direction_key == direction:
+            self.current_direction_key = None
 
-    def key_right(self):
-        self.GameData.player["Player"].try_walk_right()
+    def direction_key_pressed(self, direction):
+        self.current_direction_key = direction
 
-    def key_left(self):
-        self.GameData.player["Player"].try_walk_left()
-
-    def key_up(self):
-        self.GameData.player["Player"].try_walk_back()
-
-    def key_down(self):
-        self.GameData.player["Player"].try_walk_front()
+    #
+    # def key_right(self):
+    #     # self.GameData.player["Player"].try_walk_right()
+    #     self.current_direction_key = Direction.RIGHT
+    #
+    # def key_left(self):
+    #     # self.GameData.player["Player"].try_walk_left()
+    #     self.current_direction_key = Direction.LEFT
+    #
+    # def key_up(self):
+    #     # self.GameData.player["Player"].try_walk_back()
+    #     self.current_direction_key = Direction.UP
+    #
+    # def key_down(self):
+    #     # self.GameData.player["Player"].try_walk_front()
+    #     self.current_direction_key = Direction.DOWN
 
     def key_return(self):
         # interacts with the feature that is in the tile that the player is facing

@@ -4,6 +4,8 @@ from random import choice
 from keyboards import *
 import textwrap
 
+
+
 class Feature(object):
     def __init__(self, x, y, imagex, imagey, width, height, spritesheet, name, GameController, GameData, offset_y):
         self.x = x
@@ -79,7 +81,7 @@ class Player(Person):
         self.step_timer = pygame.USEREVENT + 7
 
     def activate_timer(self):
-        pygame.time.set_timer(self.step_timer, 50)
+        pygame.time.set_timer(self.step_timer, 60)
 
 
     def draw(self, screen):
@@ -87,6 +89,16 @@ class Player(Person):
         self_y = ((self.imagey * self.GameData.square_size[1])-self.offset_y)+self.GameData.base_locator_y
         screen.blit(self.img, [(self.imagex * self.GameData.square_size[0])+self.GameData.base_locator_x,
                                ((self.imagey * self.GameData.square_size[1])-self.offset_y)+self.GameData.base_locator_y])
+
+    def try_walk(self, direction):
+        if direction is Direction.LEFT:
+            self.try_walk_left()
+        elif direction is Direction.RIGHT:
+            self.try_walk_right()
+        elif direction is Direction.UP:
+            self.try_walk_back()
+        elif direction is Direction.DOWN:
+            self.try_walk_front()
 
     def try_walk_left(self):
         success = False
@@ -317,7 +329,7 @@ class Player(Person):
                 self.cur_img = 0
                 self.set_image(0, 1)
 
-    def check_if_walking(self):
+    def continue_walking(self):
         if self.state == "walk_left":
             self.walk_cycle()
 
@@ -329,6 +341,12 @@ class Player(Person):
 
         elif self.state == "walk_front":
             self.walk_cycle()
+
+    def check_if_walking(self):
+        if self.state in ["walk_left", "walk_right", "walk_back", "walk_front"]:
+            return True
+        else:
+            return False
 
     def get_facing_tile(self):
 

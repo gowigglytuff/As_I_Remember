@@ -18,6 +18,7 @@ def init_game(gd, gc):
     # initialize pygame
     pygame.init()
     pygame.display.set_caption('As I Remember')
+    pygame.key.set_repeat()
 
     # Load all the differnt keyboard modes that the you encounter when in different things like the menus and stuff
     load_keyboard_managers(gc, gd)

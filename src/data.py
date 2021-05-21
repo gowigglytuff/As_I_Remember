@@ -96,6 +96,7 @@ class GameController(object):
         self.current_speaker = None
         self.keyboard_manager_list = {}
         self.current_keyboard_manager = None # type: KeyboardManager
+        self.current_key_pressed = None
 
 
     def add_keyboard_manager(self, keyboard_manager_name, keyboard_manager_object):

@@ -43,18 +43,19 @@ def run_game_loop():
             if event.type == pygame.QUIT:
                 running = False
 
-            if gc.input:
-                if event.type == pygame.KEYDOWN:
-                    gc.current_keyboard_manager.parse_key(event.key)
+            #if gc.input:
+            if event.type == pygame.KEYDOWN:
+                gc.current_keyboard_manager.parse_key_pressed(event.key)
 
             if event.type == pygame.KEYUP:
+                gc.current_keyboard_manager.parse_key_released(event.key)
                 gc.key_held = False
 
             # check to see if any events have occurred
             for character in gd.room_list[gc.current_room].character_list:
-                    if event.type == gd.character_list[character].initiate:
-                        if gd.character_list[character].state == "idle":
-                            gd.character_list[character].do_activity()
+                if event.type == gd.character_list[character].initiate:
+                    if gd.character_list[character].state == "idle":
+                        gd.character_list[character].do_activity()
 
             #check for a single step in series of walk cycle steps for each character
             for character in gd.room_list[gc.current_room].character_list:
@@ -66,7 +67,14 @@ def run_game_loop():
 
             # check for a single step in series of walk cycle steps for Player
             if event.type == gd.player["Player"].step_timer:
-                gd.player["Player"].check_if_walking()
+                gd.player["Player"].continue_walking()
+
+        if isinstance(gc.current_keyboard_manager, InGame):
+            if gc.current_keyboard_manager.current_direction_key is not None:
+                if not gd.player["Player"].check_if_walking():
+                    gd.player["Player"].try_walk(gc.current_keyboard_manager.current_direction_key)
+
+
 
         picaso.big_draw()
         pygame.display.update()
