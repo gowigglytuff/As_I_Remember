@@ -1,5 +1,7 @@
 import pygame, csv, os
 
+from keyboards import Direction
+
 
 class Room(object):
 
@@ -228,9 +230,9 @@ class Position_Manager(object):
         self.empty_tile(self.GameData.player["Player"])
         x_change = self.GameData.player["Player"].x - door.exit_x
         y_change = self.GameData.player["Player"].y - door.exit_y
+        self.GameData.player["Player"].turn_player(Direction.DOWN)
         self.GameData.player["Player"].x = door.exit_x
         self.GameData.player["Player"].y = door.exit_y
-        self.GameData.player["Player"].turn_front()
         self.GameController.camera[0] += x_change
         self.GameController.camera[1] += y_change
         self.GameController.set_room(door.room_to)

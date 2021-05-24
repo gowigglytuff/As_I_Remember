@@ -86,9 +86,7 @@ class GameController(object):
         self.clock = pygame.time.Clock()
         self._FPS = GameData.settings["FPS"]
         self.font = "assets/fonts/PressStart2P-Regular.ttf"
-        self.input = True
         self.current_room = "room1"
-        self.key_held = False
         self.camera = [0, 0]
         self.current_overlay_list = ["top_bar"]
         self.current_menu = None # type: Menu
@@ -128,12 +126,6 @@ class GameController(object):
 
     def tick(self):
         self.clock.tick(self._FPS)
-
-    def LockInput(self):
-        self.input = False
-
-    def UnlockInput(self):
-        self.input = True
 
     def get_current_drawables(self, fillable):
         drawables_list = []

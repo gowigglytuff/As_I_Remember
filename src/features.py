@@ -83,151 +83,55 @@ class Player(Person):
     def activate_timer(self):
         pygame.time.set_timer(self.step_timer, 60)
 
-
     def draw(self, screen):
         self_x =(self.imagex * self.GameData.square_size[0])+self.GameData.base_locator_x
         self_y = ((self.imagey * self.GameData.square_size[1])-self.offset_y)+self.GameData.base_locator_y
         screen.blit(self.img, [(self.imagex * self.GameData.square_size[0])+self.GameData.base_locator_x,
                                ((self.imagey * self.GameData.square_size[1])-self.offset_y)+self.GameData.base_locator_y])
 
+    def try_door(self):
+
+        the_tile = self.get_facing_tile().object_filling
+        self.GameData.positioner[self.GameController.current_room].through_door(
+            self.GameData.room_list[self.GameController.current_room].door_list[the_tile])
+
+    #TODO: Fix this so that it doesn't screw up when you go through a door
     def try_walk(self, direction):
+        # checks mapClasses - position_manager to see if the player is acing a wall or another object
+        can_move = self.GameData.positioner[self.GameController.current_room].can_move(self.GameData.player["Player"])
+        # moves the player a single step if they are able to
+        if can_move:
+            self.walk_player(direction)
+
+    def turn_player(self, direction):
         if direction is Direction.LEFT:
-            self.try_walk_left()
+            self.set_image(0, 3)
+            self.facing = "left"
         elif direction is Direction.RIGHT:
-            self.try_walk_right()
+            self.set_image(0, 2)
+            self.facing = "right"
         elif direction is Direction.UP:
-            self.try_walk_back()
+            self.set_image(0, 1)
+            self.facing = "back"
         elif direction is Direction.DOWN:
-            self.try_walk_front()
+            self.set_image(0, 0)
+            self.facing = "front"
 
-    def try_walk_left(self):
-        success = False
-        # changes players direction
-        self.turn_left()
-        # checks mapClasses - position_manager to see if the player is acing a wall or another object
-        can_move = self.GameData.positioner[self.GameController.current_room].can_move(self.GameData.player["Player"])
-        # checks mapClasses - positioner to see if player is facing a door
-        is_door = self.GameData.positioner[self.GameController.current_room].check_door(self.GameData.player["Player"])
-        # moves the player a single step if they are able to
-        if can_move:
-            success = True
-            self.walk_left()
-            self.GameController.LockInput()
-        # moves the player through door to it's exit location in its exit room
-        elif is_door:
-            success = False
-            the_tile = self.get_facing_tile().object_filling
-            self.GameData.positioner[self.GameController.current_room].through_door(self.GameData.room_list[self.GameController.current_room].door_list[the_tile])
-        else:
-            success = False
-
-        return success
-
-
-    def try_walk_right(self):
-        # changes players direction
-        self.turn_right()
-
-        # checks mapClasses - position_manager to see if the player is acing a wall or another object
-        can_move = self.GameData.positioner[self.GameController.current_room].can_move(self.GameData.player["Player"])
-
-        # checks mapClasses - positioner to see if player is facing a door
-        is_door = self.GameData.positioner[self.GameController.current_room].check_door(self.GameData.player["Player"])
-
-        # moves the player a single step if they are able to
-        if can_move:
-            success = True
-            self.walk_right()
-            self.GameController.LockInput()
-
-        # moves the player through door to it's exit location in its exit room
-        elif is_door:
-            success = False
-            the_tile = self.get_facing_tile().object_filling
-            self.GameData.positioner[self.GameController.current_room].through_door(
-                self.GameData.room_list[self.GameController.current_room].door_list[the_tile])
-        else:
-            success = False
-
-        return success
-
-    def try_walk_back(self):
-        self.turn_back()
-        can_move = self.GameData.positioner[self.GameController.current_room].can_move(self.GameData.player["Player"])
-        is_door = self.GameData.positioner[self.GameController.current_room].check_door(self.GameData.player["Player"])
-        if can_move:
-            success = True
-            self.walk_back()
-            self.GameController.LockInput()
-        elif is_door:
-            success = False
-            the_tile = self.get_facing_tile().object_filling
-            self.GameData.positioner[self.GameController.current_room].through_door(self.GameData.room_list[self.GameController.current_room].door_list[the_tile])
-        else:
-            success = False
-
-        return success
-
-    def try_walk_front(self):
-        self.turn_front()
-        can_move = self.GameData.positioner[self.GameController.current_room].can_move(self.GameData.player["Player"])
-        is_door = self.GameData.positioner[self.GameController.current_room].check_door(self.GameData.player["Player"])
-        if can_move:
-            success = True
-            self.walk_front()
-            self.GameController.LockInput()
-        elif is_door:
-            success = False
-            the_tile = self.get_facing_tile().object_filling
-            self.GameData.positioner[self.GameController.current_room].through_door(self.GameData.room_list[self.GameController.current_room].door_list[the_tile])
-        else:
-            success = False
-
-        return success
-
-    def turn_left(self):
-        self.set_image(0, 3)
-        self.facing = "left"
-
-
-    def turn_right(self):
-        self.set_image(0, 2)
-        self.facing = "right"
-
-    def turn_front(self):
-        self.set_image(0, 0)
-        self.facing = "front"
-
-    def turn_back(self):
-        self.set_image(0, 1)
-        self.facing = "back"
-
-    def walk_left(self):
-        self.state = "walk_left"
+    def walk_player(self, direction):
+        self.state = direction
         self.GameData.positioner[self.GameController.current_room].empty_tile(self)
-        self.x -= 1
-        self.GameData.positioner[self.GameController.current_room].fill_tile(self)
-
-    def walk_right(self):
-        self.state = "walk_right"
-        self.GameData.positioner[self.GameController.current_room].empty_tile(self)
-        self.x += 1
-        self.GameData.positioner[self.GameController.current_room].fill_tile(self)
-
-    def walk_front(self):
-        self.state = "walk_front"
-        self.GameData.positioner[self.GameController.current_room].empty_tile(self)
-        self.y += 1
-        self.GameData.positioner[self.GameController.current_room].fill_tile(self)
-
-    def walk_back(self):
-        self.state = "walk_back"
-        self.GameData.positioner[self.GameController.current_room].empty_tile(self)
-        self.y -= 1
+        if direction is Direction.LEFT:
+            self.x -= 1
+        elif direction is Direction.RIGHT:
+            self.x += 1
+        elif direction is Direction.UP:
+            self.y -= 1
+        elif direction is Direction.DOWN:
+            self.y += 1
         self.GameData.positioner[self.GameController.current_room].fill_tile(self)
 
     def walk_cycle(self):
-        if self.state == "walk_left":
+        if self.state == Direction.LEFT:
             if 0 <= self.cur_img < 3:
                 self.cur_img += 1
                 self.set_image(self.cur_img, 3)
@@ -237,22 +141,13 @@ class Player(Person):
                 self.cur_img = 0
                 self.set_image(self.cur_img, 3)
                 self.GameController.camera[0] += 1 / 4
-                if self.GameController.key_held:
-                    success = self.try_walk_left()
-
-                    if not success:
-                        self.set_state("idle")
-                        self.GameController.UnlockInput()
-
-                elif not self.GameController.key_held:
-                    self.set_state("idle")
-                    self.GameController.UnlockInput()
+                self.set_state("idle")
 
             else:
                 self.cur_img = 0
                 self.set_image(0, 3)
 
-        elif self.state == "walk_right":
+        elif self.state == Direction.RIGHT:
             if 0 <= self.cur_img < 3:
                 self.cur_img += 1
                 self.set_image(self.cur_img, 2)
@@ -262,22 +157,13 @@ class Player(Person):
                 self.cur_img = 0
                 self.set_image(self.cur_img, 2)
                 self.GameController.camera[0] -= 1 / 4
-                if self.GameController.key_held:
-                    success = self.try_walk_right()
-
-                    if not success:
-                        self.set_state("idle")
-                        self.GameController.UnlockInput()
-
-                elif not self.GameController.key_held:
-                    self.set_state("idle")
-                    self.GameController.UnlockInput()
+                self.set_state("idle")
 
             else:
                 self.cur_img = 0
                 self.set_image(0, 2)
 
-        elif self.state == "walk_front":
+        elif self.state == Direction.DOWN:
             if 0 <= self.cur_img < 3:
                 self.cur_img += 1
                 self.set_image(self.cur_img, 0)
@@ -287,23 +173,14 @@ class Player(Person):
                 self.cur_img = 0
                 self.set_image(self.cur_img, 0)
                 self.GameController.camera[1] -= 1 / 4
-                if self.GameController.key_held:
-                    success = self.try_walk_front()
-
-                    if not success:
-                        self.set_state("idle")
-                        self.GameController.UnlockInput()
-
-                elif not self.GameController.key_held:
-                    self.set_state("idle")
-                    self.GameController.UnlockInput()
+                self.set_state("idle")
 
             else:
                 self.cur_img = 0
                 self.set_image(0, 0)
 
 
-        elif self.state == "walk_back":
+        elif self.state == Direction.UP:
             if 0 <= self.cur_img < 3:
                 self.cur_img += 1
                 self.set_image(self.cur_img, 1)
@@ -314,36 +191,27 @@ class Player(Person):
                 self.cur_img = 0
                 self.set_image(self.cur_img, 1)
                 self.GameController.camera[1] += 1 / 4
-                if self.GameController.key_held:
-                    success = self.try_walk_back()
-
-                    if not success:
-                        self.set_state("idle")
-                        self.GameController.UnlockInput()
-
-                elif not self.GameController.key_held:
-                    self.set_state("idle")
-                    self.GameController.UnlockInput()
+                self.set_state("idle")
 
             else:
                 self.cur_img = 0
                 self.set_image(0, 1)
 
     def continue_walking(self):
-        if self.state == "walk_left":
+        if self.state == Direction.LEFT:
             self.walk_cycle()
 
-        elif self.state == "walk_right":
+        elif self.state == Direction.RIGHT:
             self.walk_cycle()
 
-        elif self.state == "walk_back":
+        elif self.state == Direction.UP:
             self.walk_cycle()
 
-        elif self.state == "walk_front":
+        elif self.state == Direction.DOWN:
             self.walk_cycle()
 
     def check_if_walking(self):
-        if self.state in ["walk_left", "walk_right", "walk_back", "walk_front"]:
+        if self.state in [Direction.LEFT, Direction.RIGHT, Direction.UP, Direction.DOWN]:
             return True
         else:
             return False

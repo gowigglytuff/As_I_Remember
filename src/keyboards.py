@@ -138,25 +138,17 @@ class InGame(KeyboardManager):
         if self.current_direction_key == direction:
             self.current_direction_key = None
 
-    def direction_key_pressed(self, direction):
-        self.current_direction_key = direction
 
-    #
-    # def key_right(self):
-    #     # self.GameData.player["Player"].try_walk_right()
-    #     self.current_direction_key = Direction.RIGHT
-    #
-    # def key_left(self):
-    #     # self.GameData.player["Player"].try_walk_left()
-    #     self.current_direction_key = Direction.LEFT
-    #
-    # def key_up(self):
-    #     # self.GameData.player["Player"].try_walk_back()
-    #     self.current_direction_key = Direction.UP
-    #
-    # def key_down(self):
-    #     # self.GameData.player["Player"].try_walk_front()
-    #     self.current_direction_key = Direction.DOWN
+    def direction_key_pressed(self, direction):
+        #TODO: Fix this direction changing thing which flicks the image before youve finished the previous walk cycle
+        self.GameData.player["Player"].turn_player(direction)
+        is_door = self.GameData.positioner[self.GameController.current_room].check_door(self.GameData.player["Player"])
+        if is_door:
+            self.GameData.player["Player"].try_door()
+        else:
+            self.current_direction_key = direction
+        print(self.GameData.positioner[self.GameController.current_room].can_move(self.GameData.player["Player"]))
+        print(self.GameData.positioner[self.GameController.current_room].check_door(self.GameData.player["Player"]))
 
     def key_return(self):
         # interacts with the feature that is in the tile that the player is facing

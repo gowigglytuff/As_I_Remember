@@ -175,7 +175,7 @@ def init_room_1(gc, gd):
     #add the door to the room
     gd.room_list["room1"].add_room_door("room1_door1", Door("room1", "room2", 2, 2, 1, 14, "room1_door1"))
     gd.room_list["room1"].add_room_door("room1_door2", Door("room1", "room4", 5, 1, 2, 4, "room1_door2"))
-    gd.room_list["room1"].add_room_door("room1_door3", Door("room1", "room5", 1, 7, 1, 2, "room1_door3"))
+    #gd.room_list["room1"].add_room_door("room1_door3", Door("room1", "room5", 1, 7, 1, 2, "room1_door3"))
 
     # add the NPC characters to the game
     gd.add_character("Shuma", Pixie(2, 4, 2, 4, 32, 40, Spritesheet("assets/NPC_sprites/Shuma.png", 32, 40), "Shuma", gc, gd, "Your dad have manure for sale? I'd really love to get my hands on a couple bags of it. It's great for the turnips and the kale! Though I think I might get some nitrogen fixed stuff from the co-op for the lettuce..."))

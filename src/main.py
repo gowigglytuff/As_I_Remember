@@ -43,13 +43,12 @@ def run_game_loop():
             if event.type == pygame.QUIT:
                 running = False
 
-            #if gc.input:
             if event.type == pygame.KEYDOWN:
                 gc.current_keyboard_manager.parse_key_pressed(event.key)
 
             if event.type == pygame.KEYUP:
                 gc.current_keyboard_manager.parse_key_released(event.key)
-                gc.key_held = False
+
 
             # check to see if any events have occurred
             for character in gd.room_list[gc.current_room].character_list:
