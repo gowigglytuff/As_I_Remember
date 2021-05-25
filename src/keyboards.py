@@ -10,73 +10,86 @@ class Direction(Enum):
     DOWN = 4
 
 #TODO add other keyboards
-class KeyboardManager(ABC):
-
+class KeyboardManager(Manager):
     @property
     @abstractmethod
     def ID(self):
         pass
 
-    def parse_key_pressed(self, key_pressed):
-        self.key_pushed()
+    def parse_events(self, events):
+        """Parse events from the main game loop.
 
-        if key_pressed == pygame.K_RIGHT:
+        Args:
+            events (pygame.event.Event): List of events to parse, must be type
+                pygame.KEYDOWN or pygame.KEYUP.
+
+        Raises:
+            TypeError: Event of non-keyboard type sent to KeyboardManger.
+        """        
+        for e in events:
+            if e.type == pygame.KEYDOWN:
+                self.parse_key_pressed(e.key)
+            elif e.type == pygame.KEYUP:
+                self.parse_key_released(e.key)
+            else:
+                raise TypeError("Non-keyboard event sent to KeyboardManager")
+    
+    def parse_key_pressed(self, key):
+        if key == pygame.K_RIGHT:
             self.direction_key_pressed(Direction.RIGHT)
             print("right")
 
-        if key_pressed == pygame.K_LEFT:
+        if key == pygame.K_LEFT:
             self.direction_key_pressed(Direction.LEFT)
             print("left")
 
-        if key_pressed == pygame.K_DOWN:
+        if key == pygame.K_DOWN:
             self.direction_key_pressed(Direction.DOWN)
 
-        if key_pressed == pygame.K_UP:
+        if key == pygame.K_UP:
             self.direction_key_pressed(Direction.UP)
 
-        if key_pressed == pygame.K_RETURN:
+        if key == pygame.K_RETURN:
             self.key_return()
 
-        if key_pressed == pygame.K_SPACE:
+        if key == pygame.K_SPACE:
             self.key_space()
 
-        if key_pressed == pygame.K_LCTRL:
+        if key == pygame.K_LCTRL:
             self.key_control()
 
-        if key_pressed == pygame.K_LSHIFT:
+        if key == pygame.K_LSHIFT:
             self.key_shift()
 
-        if key_pressed == pygame.K_CAPSLOCK:
+        if key == pygame.K_CAPSLOCK:
             self.key_caps()
 
-    def parse_key_released(self, key_pressed):
-        self.key_pushed()
-
-        if key_pressed == pygame.K_RIGHT:
+    def parse_key_released(self, key):
+        if key == pygame.K_RIGHT:
             self.direction_key_released(Direction.RIGHT)
 
-        if key_pressed == pygame.K_LEFT:
+        if key == pygame.K_LEFT:
             self.direction_key_released(Direction.LEFT)
 
-        if key_pressed == pygame.K_DOWN:
+        if key == pygame.K_DOWN:
             self.direction_key_released(Direction.DOWN)
 
-        if key_pressed == pygame.K_UP:
+        if key == pygame.K_UP:
             self.direction_key_released(Direction.UP)
 
-        if key_pressed == pygame.K_RETURN:
+        if key == pygame.K_RETURN:
             self.key_return()
 
-        if key_pressed == pygame.K_SPACE:
+        if key == pygame.K_SPACE:
             self.key_space()
 
-        if key_pressed == pygame.K_LCTRL:
+        if key == pygame.K_LCTRL:
             self.key_control()
 
-        if key_pressed == pygame.K_LSHIFT:
+        if key == pygame.K_LSHIFT:
             self.key_shift()
 
-        if key_pressed == pygame.K_CAPSLOCK:
+        if key == pygame.K_CAPSLOCK:
             self.key_caps()
 
     def key_pushed(self):
