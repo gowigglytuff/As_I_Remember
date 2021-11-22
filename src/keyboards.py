@@ -9,8 +9,14 @@ class Direction(Enum):
     UP = 3
     DOWN = 4
 
+class Facing(Enum):
+    LEFT = 1
+    RIGHT = 2
+    FRONT = 4
+    BACK = 3
+
 #TODO add other keyboards
-class KeyboardManager(Manager):
+class KeyboardManager():
     @property
     @abstractmethod
     def ID(self):
@@ -37,11 +43,9 @@ class KeyboardManager(Manager):
     def parse_key_pressed(self, key):
         if key == pygame.K_RIGHT:
             self.direction_key_pressed(Direction.RIGHT)
-            print("right")
 
         if key == pygame.K_LEFT:
             self.direction_key_pressed(Direction.LEFT)
-            print("left")
 
         if key == pygame.K_DOWN:
             self.direction_key_pressed(Direction.DOWN)
@@ -78,19 +82,24 @@ class KeyboardManager(Manager):
             self.direction_key_released(Direction.UP)
 
         if key == pygame.K_RETURN:
-            self.key_return()
+            #self.key_return()
+            pass
 
         if key == pygame.K_SPACE:
-            self.key_space()
+            #self.key_space()
+            pass
 
         if key == pygame.K_LCTRL:
-            self.key_control()
+            #self.key_control()
+            pass
 
         if key == pygame.K_LSHIFT:
-            self.key_shift()
+            #self.key_shift()
+            pass
 
         if key == pygame.K_CAPSLOCK:
-            self.key_caps()
+            #self.key_caps()
+            pass
 
     def key_pushed(self):
         pass
@@ -154,18 +163,29 @@ class InGame(KeyboardManager):
 
     def direction_key_pressed(self, direction):
         #TODO: Fix this direction changing thing which flicks the image before youve finished the previous walk cycle
-        self.GameData.player["Player"].turn_player(direction)
-        is_door = self.GameData.positioner[self.GameController.current_room].check_door(self.GameData.player["Player"])
+
+        is_door = self.GameData.positioner[self.GameController.current_room].check_door(self.GameData.player["Player"], direction)
         if is_door:
-            self.GameData.player["Player"].try_door()
+            self.GameData.player["Player"].turn_player(direction)
+            self.GameData.player["Player"].try_door(direction)
         else:
             self.current_direction_key = direction
-        print(self.GameData.positioner[self.GameController.current_room].can_move(self.GameData.player["Player"]))
-        print(self.GameData.positioner[self.GameController.current_room].check_door(self.GameData.player["Player"]))
+        # print(self.GameData.positioner[self.GameController.current_room].can_move_NPC(self.GameData.player["Player"]))
+        # print(self.GameData.positioner[self.GameController.current_room].check_door(self.GameData.player["Player"]))
 
     def key_return(self):
         # interacts with the feature that is in the tile that the player is facing
-        self.GameData.player["Player"].interact_with()
+        direction = Direction.DOWN
+
+        if self.GameData.player["Player"].facing == Facing.LEFT:
+            direction = Direction.LEFT
+        if self.GameData.player["Player"].facing == Facing.RIGHT:
+            direction = Direction.RIGHT
+        if self.GameData.player["Player"].facing == Facing.FRONT:
+            direction = Direction.DOWN
+        if self.GameData.player["Player"].facing == Facing.BACK:
+            direction = Direction.UP
+        self.GameData.player["Player"].interact_with(direction)
 
     def key_space(self):
         for x in self.GameData.room_list["room2"].tiles_array:
@@ -180,10 +200,10 @@ class InGame(KeyboardManager):
 
 
     def key_shift(self):
-        pass
+        self.GameData.positioner[self.GameController.current_room].check_adj_square_full(self.GameData.player["Player"],Facing.LEFT)
 
     def key_caps(self):
-        pass
+        print(self.GameData.player["Player"].x, self.GameData.player["Player"].y)
 
 
 # Keyboard Manager for when the player is in the start menu
@@ -494,7 +514,18 @@ class InConversationOptions(KeyboardManager):
     def key_left(self):
         pass
 
+    def direction_key_released(self, direction):
+        self.direction = direction
+        if self.direction == Direction.DOWN:
+            self.GameData.menu_list["character_interact_menu"].cursor_down()
+        if self.direction == Direction.UP:
+            self.GameData.menu_list["character_interact_menu"].cursor_up()
+
+    def direction_key_pressed(self, direction):
+        pass
+
     def key_up(self):
+        print("hi")
         self.GameData.menu_list["character_interact_menu"].cursor_up()
 
     def key_down(self):
@@ -511,11 +542,18 @@ class InConversationOptions(KeyboardManager):
             self.GameController.set_keyboard_manager(InConversation.ID)
             self.GameData.menu_list["character_interact_menu"].set_talking_to(None)
             self.GameController.MenuManager.character_interact_menu = False
+        elif menu_selection == "Give Gift":
+            print("here, take this poop")
+            self.GameController.set_keyboard_manager(InGame.ID)
+            self.GameController.MenuManager.character_interact_menu = False
+            self.GameData.character_list[self.GameData.player["Player"].get_facing_tile().object_filling].set_state(
+                "idle")
         elif menu_selection == "Exit":
             self.GameController.set_keyboard_manager(InGame.ID)
             self.GameController.MenuManager.character_interact_menu = False
             self.GameData.character_list[self.GameData.player["Player"].get_facing_tile().object_filling].set_state(
                 "idle")
+        self.GameData.menu_list["character_interact_menu"].reset_cursor()
 
     def key_space(self):
         pass
@@ -539,6 +577,7 @@ class InConversation(KeyboardManager):
 
     def key_left(self):
         pass
+
 
     def key_up(self):
         pass

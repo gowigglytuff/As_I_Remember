@@ -72,7 +72,7 @@ class Person(Feature):
 
 class Player(Person):
     def __init__(self, x, y, imagex, imagey, width, height, spritesheet, name, GameController, GameData):
-        super().__init__(x, y, imagex, imagey, width, height, spritesheet, name, GameController, GameData, facing="front", feature_type="Player", offset_y=10)
+        super().__init__(x, y, imagex, imagey, width, height, spritesheet, name, GameController, GameData, facing=Facing.FRONT, feature_type="Player", offset_y=10)
         self.front = ["assets/player/P_front_1.png", "assets/player/P_front_2.png", "assets/player/P_front_3.png", "assets/player/P_front_4.png", "assets/player/P_front_1.png", "assets/player/P_front_2.png", "assets/player/P_front_3.png", "assets/player/P_front_4.png"]
         self.back = ["assets/player/P_back_1.png", "assets/player/P_back_2.png", "assets/player/P_back_3.png", "assets/player/P_back_4.png", "assets/player/P_back_1.png", "assets/player/P_back_2.png", "assets/player/P_back_3.png", "assets/player/P_back_4.png"]
         self.left = ["assets/player/P_left_1.png", "assets/player/P_left_2.png", "assets/player/P_left_3.png", "assets/player/P_left_4.png", "assets/player/P_left_1.png", "assets/player/P_left_2.png", "assets/player/P_left_3.png", "assets/player/P_left_4.png"]
@@ -90,36 +90,50 @@ class Player(Person):
         screen.blit(self.img, [(self.imagex * self.GameData.square_size[0])+self.GameData.base_locator_x,
                                ((self.imagey * self.GameData.square_size[1])-self.offset_y)+self.GameData.base_locator_y])
 
-    def try_door(self):
-
-        the_tile = self.get_facing_tile().object_filling
+    def try_door(self, direction):
+        self.direction = direction
+        the_tile = self.check_adj_tile(self.direction).object_filling
         self.GameData.positioner[self.GameController.current_room].through_door(
             self.GameData.room_list[self.GameController.current_room].door_list[the_tile])
 
     #TODO: Fix this so that it doesn't screw up when you go through a door
     def try_walk(self, direction):
         # checks mapClasses - position_manager to see if the player is acing a wall or another object
-        can_move = self.GameData.positioner[self.GameController.current_room].can_move(self.GameData.player["Player"])
+        can_move_NPC = self.GameData.positioner[self.GameController.current_room].check_adj_square_full(self.GameData.player["Player"], direction)
         # moves the player a single step if they are able to
-        if can_move:
+        if can_move_NPC:
+            self.set_facing(direction)
             self.walk_player(direction)
+        else:
+            self.turn_player(direction)
 
     def turn_player(self, direction):
         if direction is Direction.LEFT:
             self.set_image(0, 3)
-            self.facing = "left"
+            self.facing = Facing.LEFT
         elif direction is Direction.RIGHT:
             self.set_image(0, 2)
-            self.facing = "right"
+            self.facing = Facing.RIGHT
         elif direction is Direction.UP:
             self.set_image(0, 1)
-            self.facing = "back"
+            self.facing = Facing.BACK
         elif direction is Direction.DOWN:
             self.set_image(0, 0)
-            self.facing = "front"
+            self.facing = Facing.FRONT
+
+    def set_facing(self, direction):
+        if direction is Direction.LEFT:
+            self.facing = Facing.LEFT
+        elif direction is Direction.RIGHT:
+            self.facing = Facing.RIGHT
+        elif direction is Direction.UP:
+            self.facing = Facing.BACK
+        elif direction is Direction.DOWN:
+            self.facing = Facing.FRONT
 
     def walk_player(self, direction):
         self.state = direction
+
         self.GameData.positioner[self.GameController.current_room].empty_tile(self)
         if direction is Direction.LEFT:
             self.x -= 1
@@ -221,19 +235,19 @@ class Player(Person):
 
         facing_tile_y = 0
         facing_tile_x = 0
-        if self.facing == "back":
+        if self.facing == Facing.BACK:
             facing_tile_y = int(self.y - 1)
             facing_tile_x = int(self.x)
 
-        elif self.facing == "front":
+        elif self.facing == Facing.FRONT:
             facing_tile_y = int(self.y + 1)
             facing_tile_x = int(self.x)
 
-        elif self.facing == "left":
+        elif self.facing == Facing.LEFT:
             facing_tile_y = int(self.y)
             facing_tile_x = int(self.x - 1)
 
-        elif self.facing == "right":
+        elif self.facing == Facing.RIGHT:
             facing_tile_y = int(self.y)
             facing_tile_x = int(self.x + 1)
 
@@ -241,8 +255,34 @@ class Player(Person):
 
         return facing_tile
 
-    def interact_with(self):
-        facing_tile = self.get_facing_tile()
+    def check_adj_tile(self, direction_to_check):
+        self.direction_to_check = direction_to_check
+
+        adj_tile_y = 0
+        adj_tile_x = 0
+        if direction_to_check == Direction.UP:
+            adj_tile_y = int(self.y - 1)
+            adj_tile_x = int(self.x)
+
+        elif direction_to_check == Direction.DOWN:
+            adj_tile_y = int(self.y + 1)
+            adj_tile_x = int(self.x)
+
+        elif direction_to_check == Direction.LEFT:
+            adj_tile_y = int(self.y)
+            adj_tile_x = int(self.x - 1)
+
+        elif direction_to_check == Direction.RIGHT:
+            adj_tile_y = int(self.y)
+            adj_tile_x = int(self.x + 1)
+
+        adj_tile = self.GameData.room_list[self.GameController.current_room].tiles_array[adj_tile_x][adj_tile_y]
+
+        return adj_tile
+
+    def interact_with(self, direction):
+        self.direction = direction
+        facing_tile = self.check_adj_tile(self.direction)
         object_filling = facing_tile.object_filling
         filling_type = facing_tile.filling_type
         full = facing_tile.full
@@ -266,14 +306,14 @@ class Player(Person):
 class NPC(Person):
 
     NPC_TIMER_ID = 10
-    
+
 
     def __init__(self, x, y, imagex, imagey, width, height, spritesheet, name, GameController, GameData, facing, feature_type, offset_y):
 
         super().__init__(x, y, imagex, imagey, width, height, spritesheet, name, GameController, GameData, facing, feature_type, offset_y)
 
         self.set_state("idle")
-        self.facing = "front"
+        self.facing = Facing.FRONT
         self.initiate = pygame.USEREVENT + NPC.NPC_TIMER_ID
         self.action_clock = pygame.USEREVENT + NPC.NPC_TIMER_ID + 1
         self.drawing_priority = 2
@@ -285,23 +325,23 @@ class NPC(Person):
 
     def turn_left(self):
         self.set_image(0, 3)
-        self.facing = "left"
+        self.facing = Facing.LEFT
         self.set_state("idle")
         self.set_state("idle")
 
     def turn_right(self):
         self.set_image(1, 2)
-        self.facing = "right"
+        self.facing = Facing.RIGHT
         self.set_state("idle")
 
     def turn_front(self):
         self.set_image(0, 0)
-        self.facing = "front"
+        self.facing = Facing.FRONT
         self.set_state("idle")
 
     def turn_back(self):
         self.set_image(0, 1)
-        self.facing = "back"
+        self.facing = Facing.BACK
         self.set_state("idle")
 
     def check_if_walking(self):
@@ -414,19 +454,19 @@ class NPC(Person):
 
         facing_tile_y = 0
         facing_tile_x = 0
-        if self.facing == "back":
+        if self.facing == Facing.BACK:
             facing_tile_y = int(self.y - 1)
             facing_tile_x = int(self.x)
 
-        elif self.facing == "front":
+        elif self.facing == Facing.FRONT:
             facing_tile_y = int(self.y + 1)
             facing_tile_x = int(self.x)
 
-        elif self.facing == "left":
+        elif self.facing == Facing.LEFT:
             facing_tile_y = int(self.y)
             facing_tile_x = int(self.x - 1)
 
-        elif self.facing == "right":
+        elif self.facing == Facing.RIGHT:
             facing_tile_y = int(self.y)
             facing_tile_x = int(self.x + 1)
 
@@ -460,7 +500,7 @@ class Pixie(NPC):
     AVAILABLE_STATES = [WALK_BACK, WALK_RIGHT, WALK_BACK, WALK_FRONT, TURNING_BACK, TURNING_RIGHT, TURNING_FRONT, TURNING_LEFT, IDLE]
 
     def __init__(self, x, y, imagex, imagey, width, height, spritesheet, name, GameController, GameData, phrase):
-        super().__init__(x, y, imagex, imagey, width, height, spritesheet, name, GameController, GameData, facing = "front", feature_type="Pixie", offset_y=10)
+        super().__init__(x, y, imagex, imagey, width, height, spritesheet, name, GameController, GameData, facing = Facing.FRONT, feature_type="Pixie", offset_y=10)
         assert self.state in self.AVAILABLE_STATES
         self.actions = ["walk_left", "walk_right", "walk_front", "walk_back", "turning_left", "turning_front", "turning_right", "turning_back"]
         self.available_actions = ["turn"]
@@ -479,26 +519,26 @@ class Pixie(NPC):
             result = choice(self.actions)
 
             if result == "walk_left":
-                self.facing = "left"
-                can_walk = self.GameData.positioner[self.GameController.current_room].can_move(self)
+                self.facing = Facing.LEFT
+                can_walk = self.GameData.positioner[self.GameController.current_room].can_move_NPC(self)
                 if can_walk:
                     self.walk_left()
 
             elif result == "walk_right":
-                self.facing = "right"
-                can_walk = self.GameData.positioner[self.GameController.current_room].can_move(self)
+                self.facing = Facing.RIGHT
+                can_walk = self.GameData.positioner[self.GameController.current_room].can_move_NPC(self)
                 if can_walk:
                     self.walk_right()
 
             elif result == "walk_front":
-                self.facing = "front"
-                can_walk = self.GameData.positioner[self.GameController.current_room].can_move(self)
+                self.facing = Facing.FRONT
+                can_walk = self.GameData.positioner[self.GameController.current_room].can_move_NPC(self)
                 if can_walk:
                     self.walk_front()
 
             elif result == "walk_back":
-                self.facing = "back"
-                can_walk = self.GameData.positioner[self.GameController.current_room].can_move(self)
+                self.facing = Facing.BACK
+                can_walk = self.GameData.positioner[self.GameController.current_room].can_move_NPC(self)
                 if can_walk:
                     self.walk_back()
 
@@ -517,13 +557,13 @@ class Pixie(NPC):
     def get_interacted_with(self):
         # TODO: Fix all of this mess - make their picture pop up in their speech bubble thing
         if self.state == "idle":
-            if self.GameData.player["Player"].facing == "back":
+            if self.GameData.player["Player"].facing == Facing.BACK:
                 self.turn_front()
-            elif self.GameData.player["Player"].facing == "front":
+            elif self.GameData.player["Player"].facing == Facing.FRONT:
                 self.turn_back()
-            elif self.GameData.player["Player"].facing == "left":
+            elif self.GameData.player["Player"].facing == Facing.LEFT:
                 self.turn_right()
-            elif self.GameData.player["Player"].facing == "right":
+            elif self.GameData.player["Player"].facing == Facing.RIGHT:
                 self.turn_left()
             self.GameController.set_keyboard_manager(InConversationOptions.ID)
             # self.GameController.set_menu("character_interact_menu")

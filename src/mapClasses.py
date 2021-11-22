@@ -1,6 +1,6 @@
 import pygame, csv, os
 
-from keyboards import Direction
+from keyboards import Direction, Facing
 
 
 class Room(object):
@@ -254,10 +254,10 @@ class Position_Manager(object):
                 tile.filling_type = "None"
                 tile.full = False
 
-    def can_move(self, mover):
+    def can_move_NPC(self, mover):
         move = False
         facing_tile = mover.get_facing_tile()
-        if mover.facing == "left":
+        if mover.facing == Facing.LEFT:
             if mover.x <= self.GameData.room_list[self.GameController.current_room].left_edge_x:
                 move = False
             else:
@@ -265,7 +265,7 @@ class Position_Manager(object):
                     move = True
                 else:
                     move = False
-        elif mover.facing == "right":
+        elif mover.facing == Facing.RIGHT:
             if mover.x >= self.GameData.room_list[self.GameController.current_room].right_edge_x:
                 move = False
             else:
@@ -273,7 +273,7 @@ class Position_Manager(object):
                     move = True
                 else:
                     move = False
-        elif mover.facing == "front":
+        elif mover.facing == Facing.FRONT:
             if mover.y >= self.GameData.room_list[self.GameController.current_room].bottom_edge_y:
                 move = False
             else:
@@ -281,7 +281,7 @@ class Position_Manager(object):
                     move = True
                 else:
                     move = False
-        if mover.facing == "back":
+        if mover.facing == Facing.BACK:
             if mover.y <= self.GameData.room_list[self.GameController.current_room].top_edge_y:
                 move = False
             else:
@@ -292,9 +292,48 @@ class Position_Manager(object):
 
         return move
 
-    def check_door(self, mover):
+    def check_adj_square_full(self, mover, direction):
+        full = False
+        check_tile = mover.check_adj_tile(direction)
+        if direction == Direction.LEFT:
+            if mover.x <= self.GameData.room_list[self.GameController.current_room].left_edge_x:
+                full = False
+            else:
+                if not check_tile.full:
+                    full = True
+                else:
+                    full = False
+        elif direction == Direction.RIGHT:
+            if mover.x >= self.GameData.room_list[self.GameController.current_room].right_edge_x:
+                full = False
+            else:
+                if not check_tile.full:
+                    full = True
+                else:
+                    full = False
+        elif direction == Direction.DOWN:
+            if mover.y >= self.GameData.room_list[self.GameController.current_room].bottom_edge_y:
+                full = False
+            else:
+                if not check_tile.full:
+                    full = True
+                else:
+                    full = False
+        if direction == Direction.UP:
+            if mover.y <= self.GameData.room_list[self.GameController.current_room].top_edge_y:
+                full = False
+            else:
+                if not check_tile.full:
+                    full = True
+                else:
+                    full = False
+        #print(str(direction) + str(full))
+        return full
+
+    def check_door(self, mover, direction):
+        self.direction = direction
         is_door = False
-        facing_tile = mover.get_facing_tile()
+        facing_tile = mover.check_adj_tile(self.direction)
         if facing_tile.filling_type == "Door":
             is_door = True
         else:

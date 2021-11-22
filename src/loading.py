@@ -44,7 +44,7 @@ def init_game(gd, gc):
     # run functions that initiate all rooms
     init_room_1(gc, gd)
     init_room_2(gc, gd)
-    # init_room_3(gc, gd)
+    init_room_3(gc, gd)
     init_room_4(gc, gd)
     # init_room_5(gc, gd)
 

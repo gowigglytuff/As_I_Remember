@@ -73,8 +73,6 @@ def run_game_loop():
                 if not gd.player["Player"].check_if_walking():
                     gd.player["Player"].try_walk(gc.current_keyboard_manager.current_direction_key)
 
-
-
         picaso.big_draw()
         pygame.display.update()
         gc.tick()
