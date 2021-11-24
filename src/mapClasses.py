@@ -244,6 +244,8 @@ class Position_Manager(object):
         self.fill_tiles(door.room_to)
         self.fill_doors(door.room_to)
         self.fill_tile(self.GameData.player["Player"])
+        self.GameController.current_keyboard_manager.current_direction_key = None
+        self.GameData.player["Player"].set_state("idle")
 
 
     def empty_tiles(self, fillable_room):

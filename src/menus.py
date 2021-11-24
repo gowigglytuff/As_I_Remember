@@ -75,6 +75,7 @@ class MenuManager(object):
         self.inventory_menu = False
         self.key_inventory_menu = False
         self.use_menu = False
+        self.yes_no_menu = False
 
 class Menu(object):
     def __init__(self, GameController, GameData, name, menu_item_list, menu_go, overlay, offset_x=30, offset_y=20):

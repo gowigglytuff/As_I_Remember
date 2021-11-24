@@ -17,16 +17,16 @@ class Phrase(TimedDrawing):
         self.size = size
         self.current_state = 0
         self.currently_displaying = []
-        self.my_font = pygame.font.Font("assets/fonts/PressStart2P-Regular.ttf", self.size)
+        self.my_font = pygame.font.Font("assets/fonts/PressStart.ttf", self.size)
 
     def write_simple(self, screen, x, y):
-        my_font = pygame.font.Font("assets/fonts/PressStart2P-Regular.ttf", 10)
+        my_font = pygame.font.Font("assets/fonts/PressStart.ttf", 10)
         item = my_font.render(self.text, 1, (0, 0, 0))
         screen.blit(item, (x + 200, y + 200))
 
     def write(self, screen):
 
-        my_font = pygame.font.Font("assets/fonts/PressStart2P-Regular.ttf", self.size)
+        my_font = pygame.font.Font("assets/fonts/PressStart.ttf", self.size)
 
         for index, letter in enumerate(self.text):
             label = my_font.render(letter, 1, self.colour)

@@ -72,7 +72,7 @@ class Person(Feature):
 
 class Player(Person):
     def __init__(self, x, y, imagex, imagey, width, height, spritesheet, name, GameController, GameData):
-        super().__init__(x, y, imagex, imagey, width, height, spritesheet, name, GameController, GameData, facing=Facing.FRONT, feature_type="Player", offset_y=10)
+        super().__init__(x, y, imagex, imagey, width, height, spritesheet, name, GameController, GameData, facing=Facing.FRONT, feature_type="Player", offset_y=16)
         self.front = ["assets/player/P_front_1.png", "assets/player/P_front_2.png", "assets/player/P_front_3.png", "assets/player/P_front_4.png", "assets/player/P_front_1.png", "assets/player/P_front_2.png", "assets/player/P_front_3.png", "assets/player/P_front_4.png"]
         self.back = ["assets/player/P_back_1.png", "assets/player/P_back_2.png", "assets/player/P_back_3.png", "assets/player/P_back_4.png", "assets/player/P_back_1.png", "assets/player/P_back_2.png", "assets/player/P_back_3.png", "assets/player/P_back_4.png"]
         self.left = ["assets/player/P_left_1.png", "assets/player/P_left_2.png", "assets/player/P_left_3.png", "assets/player/P_left_4.png", "assets/player/P_left_1.png", "assets/player/P_left_2.png", "assets/player/P_left_3.png", "assets/player/P_left_4.png"]
@@ -95,13 +95,19 @@ class Player(Person):
         the_tile = self.check_adj_tile(self.direction).object_filling
         self.GameData.positioner[self.GameController.current_room].through_door(
             self.GameData.room_list[self.GameController.current_room].door_list[the_tile])
+        self.set_state("idle")
 
     #TODO: Fix this so that it doesn't screw up when you go through a door
     def try_walk(self, direction):
         # checks mapClasses - position_manager to see if the player is acing a wall or another object
         can_move_NPC = self.GameData.positioner[self.GameController.current_room].check_adj_square_full(self.GameData.player["Player"], direction)
         # moves the player a single step if they are able to
-        if can_move_NPC:
+        is_door = self.GameData.positioner[self.GameController.current_room].check_door(self.GameData.player["Player"],
+                                                                                        direction)
+        if is_door:
+            self.GameData.player["Player"].turn_player(direction)
+            self.GameData.player["Player"].try_door(direction)
+        elif can_move_NPC:
             self.set_facing(direction)
             self.walk_player(direction)
         else:
@@ -500,7 +506,7 @@ class Pixie(NPC):
     AVAILABLE_STATES = [WALK_BACK, WALK_RIGHT, WALK_BACK, WALK_FRONT, TURNING_BACK, TURNING_RIGHT, TURNING_FRONT, TURNING_LEFT, IDLE]
 
     def __init__(self, x, y, imagex, imagey, width, height, spritesheet, name, GameController, GameData, phrase):
-        super().__init__(x, y, imagex, imagey, width, height, spritesheet, name, GameController, GameData, facing = Facing.FRONT, feature_type="Pixie", offset_y=10)
+        super().__init__(x, y, imagex, imagey, width, height, spritesheet, name, GameController, GameData, facing = Facing.FRONT, feature_type="Pixie", offset_y=16)
         assert self.state in self.AVAILABLE_STATES
         self.actions = ["walk_left", "walk_right", "walk_front", "walk_back", "turning_left", "turning_front", "turning_right", "turning_back"]
         self.available_actions = ["turn"]
@@ -615,7 +621,7 @@ class Pixie(NPC):
 
 
 class Prop(Feature):
-    def __init__(self, x, y, imagex, imagey, width, height, spritesheet, name, GameController, GameData, size_x, size_y, offset_y=10):
+    def __init__(self, x, y, imagex, imagey, width, height, spritesheet, name, GameController, GameData, size_x, size_y, offset_y=16):
         super().__init__(x, y, imagex, imagey, width, height, spritesheet, name, GameController, GameData, offset_y)
         self.drawing_priority = 1
         self.size_x = size_x
@@ -636,7 +642,7 @@ class Decoration(Prop):
     def __init__(self, x, y, imagex, imagey, width, height, spritesheet, name, GameController, GameData, size_x, size_y, location_list):
         super().__init__(x, y, imagex, imagey, width, height, spritesheet, name, GameController, GameData, size_x, size_y)
         self.location_list = location_list
-        self.offset_y = 10
+        self.offset_y = 3
 
     def draw(self, screen):
         for location in self.location_list:

@@ -53,12 +53,15 @@ class GameData(object):
     def add_door(self, door_name, door_object):
         self.door[door_name] = door_object
 
+    # Decorations are images that have no substance in the game and thus cannot be interacted with in any way
     def add_decoration(self, decoration_name, decoration_object):
         self.decoration_list[decoration_name] = decoration_object
 
+    # Each room has a positioner which manages how objects are positioned in the room
     def add_positioner(self, positioner_name, positioner_object):
         self.positioner[positioner_name] = positioner_object
 
+    # Adds props to the game, props are items that can be moved
     def add_prop(self, prop_name, prop_object):
         self.prop_list[prop_name] = prop_object
 
@@ -85,7 +88,7 @@ class GameController(object):
         self.screen = pygame.display.set_mode(GameData.settings["resolution"])
         self.clock = pygame.time.Clock()
         self._FPS = GameData.settings["FPS"]
-        self.font = "assets/fonts/PressStart2P-Regular.ttf"
+        self.font = "assets/fonts/PressStart.ttf"
         self.current_room = "room1"
         self.camera = [0, 0]
         self.current_overlay_list = ["top_bar"]
@@ -191,6 +194,9 @@ class Picaso(object):
 
         if self.GameController.MenuManager.use_menu:
             self.GameData.menu_list["use_menu"].display_menu()
+
+        if self.GameController.MenuManager.yes_no_menu:
+            self.GameData.menu_list["yes_no_menu"].display_menu()
 
         # blits any overlays that are always active and ons tghat are associated with currently active menus
         for overlay in self.GameController.current_overlay_list:

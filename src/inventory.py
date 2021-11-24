@@ -2,9 +2,9 @@ import pygame
 from data import GameData, GameController
 
 class Inventory(object):
-    def __init__(self, gc: GameController, gd: GameData):
-        self.GameController = gc
-        self.GameData = gd
+    def __init__(self, GameController: GameController, GameData: GameData):
+        self.GameController = GameController
+        self.GameData = GameData
 
         self.current_items = []
         self.current_key_items = []
