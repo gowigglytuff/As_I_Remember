@@ -179,6 +179,9 @@ class InGame(KeyboardManager):
             direction = Direction.UP
         self.GameData.player["Player"].interact_with(direction)
 
+        print(self.GameData.prop_list["tree"].x)
+        print(self.GameData.prop_list["tree"].imagex)
+
     def key_space(self):
         for x in self.GameData.room_list["room2"].tiles_array:
             for y in x:

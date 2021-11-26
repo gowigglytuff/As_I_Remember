@@ -18,7 +18,6 @@ class Inventory(object):
 
     def bag_left(self):
         self.bag_slots.append(self.bag_slots.pop(self.bag_slots.index(self.bag_slots[0])))
-        print(self.bag_slots)
 
     def change_bag_slot(self):
         self.GameController.MenuManager.self.bag_slots[0] = True

@@ -38,8 +38,6 @@ def init_game(GameData, GameController):
     # store each tile in a dictionary in GameData that will be accessed by the TileMap function
     GameData.add_tile_dict(BT.load_tile_images())
 
-    print(GameData.tiles_img_dict)
-
     # add the player to the game
     GameData.add_player("Player", Player(2, 3, 2, 3, 32, 40, Spritesheet("assets/NPC_sprites/Shuma.png", 32, 40), "Bug", GameController, GameData))
     GameData.player["Player"].activate_timer()
@@ -172,7 +170,7 @@ def init_room_1(GameController, GameData):
     # room #1
 
     # add the room #1, generate the grid, and add the background and doors
-    GameData.add_room("room1", Room("room1", 1, 2, 6, 6, 1, 1, 6, 6, GameController, GameData))
+    GameData.add_room("room1", Room("room1", 1, 2, 6, 6, 1, 1, GameController, GameData))
     GameData.room_list["room1"].add_room_plot("room1_1_1", Plot("room4", 1, 1, pygame.image.load("assets/backgrounds/room_1_background.png"), GameController, GameData, None))
     GameData.room_list["room1"].activate_plot("room1_1_1")
 
@@ -213,7 +211,7 @@ def init_room_2(GameController, GameData):
     # room#2
 
     # add the room #2, generate the grid, and add the background and doors
-    GameData.add_room("room2", Room("room2", 1, 1, 15, 15, 1, 1, 15, 15, GameController, GameData, map_style="csv"))
+    GameData.add_room("room2", Room("room2", 1, 1, 15, 15, 1, 1, GameController, GameData, map_style="csv"))
     GameData.room_list["room2"].add_room_plot("room2_1_1", Plot("room2", 1, 1,
                                                           TileMap("assets/csv_maps/csv_tiles/lake.csv", GameData.tiles_img_dict).return_map(),
                                                           GameController, GameData, "assets/csv_maps/room2.csv"))
@@ -229,20 +227,29 @@ def init_room_2(GameController, GameData):
 
     # add features for room 2
     GameData.add_prop("house", Prop(5, 10, 5, 10, 160, 128, Spritesheet("assets/prop_sprites/House.png", 160, 128), "house", GameController, GameData, 5, 3, offset_y=32))
-    GameData.add_prop("tree", Prop(6, 6, 6, 6, 64, 96, Spritesheet("assets/prop_sprites/tree.png", 64, 96), "tree", GameController, GameData, 2, 1, offset_y=64))
-    GameData.add_prop("tree2", Prop(9, 5, 9, 5, 64, 96, Spritesheet("assets/prop_sprites/tree.png", 64, 96), "tree2", GameController, GameData, 2, 1, offset_y=64))
+    GameData.add_prop("tree", Tree(3, 6, GameController))
+    GameData.add_prop("tree2", Prop(7, 7, 7, 7, 64, 96, Spritesheet("assets/prop_sprites/tree.png", 64, 96), "tree2", GameController, GameData, 2, 1, offset_y=64))
     GameData.add_prop("tree3", Prop(10, 7, 10, 7, 64, 96, Spritesheet("assets/prop_sprites/tree.png", 64, 96), "tree3", GameController, GameData, 2, 1, offset_y=64))
+    GameData.add_prop("tree4", Prop(5, 4, 5, 4, 64, 96, Spritesheet("assets/prop_sprites/tree.png", 64, 96), "tree4",
+                                   GameController, GameData, 2, 1, offset_y=64))
+    GameData.add_prop("tree5", Prop(8, 4, 8, 4, 64, 96, Spritesheet("assets/prop_sprites/tree.png", 64, 96), "tree5",
+                                    GameController, GameData, 2, 1, offset_y=64))
+    GameData.add_prop("tree6", Prop(11, 4, 11, 4, 64, 96, Spritesheet("assets/prop_sprites/tree.png", 64, 96), "tree6",
+                                    GameController, GameData, 2, 1, offset_y=64))
 
-    GameData.add_decoration("Grass1", Decoration(2, 13, 2, 13, 32, 32, Spritesheet("assets/decoration_sprites/grass2.png", 32, 32), "Grass1", GameController, GameData, 1, 1, [[2, 13], [2, 14], [3, 13], [3, 14]]))
+    GameData.add_decoration("Grass", Decoration(0, 0, 2, 13, 32, 32, Spritesheet("assets/decoration_sprites/grass5.png", 32, 32), "Grass", GameController, GameData, 1, 1, [[2, 11], [2, 12], [2, 13], [2, 14],[3, 11], [3, 12], [3, 13], [3, 14]]))
 
     # attach all features to room
     GameData.room_list["room2"].add_room_prop("house")
     GameData.room_list["room2"].add_room_prop("tree")
     GameData.room_list["room2"].add_room_prop("tree2")
     GameData.room_list["room2"].add_room_prop("tree3")
+    GameData.room_list["room2"].add_room_prop("tree4")
+    GameData.room_list["room2"].add_room_prop("tree5")
+    GameData.room_list["room2"].add_room_prop("tree6")
     GameData.room_list["room2"].add_room_character("Deb")
 
-    GameData.room_list["room2"].add_room_decoration("Grass1")
+    GameData.room_list["room2"].add_room_decoration("Grass")
 
     # add position manager to it's room and make it tell the tile array what it's filled with, then populate doors
     GameData.add_positioner("room2", Position_Manager("room2", GameController, GameData))
@@ -256,7 +263,7 @@ def init_room_2(GameController, GameData):
         GameData.character_list[character].activate_timers()
 
 def init_room_3(GameController, GameData):
-    GameData.add_room("room3", Room("room3", 1, 2, 3, 3, 1, 1, 3, 3, GameController, GameData))
+    GameData.add_room("room3", Room("room3", 1, 2, 3, 3, 1, 1, GameController, GameData))
     GameData.room_list["room3"].generate_room_grid()
     GameData.room_list["room3"].add_room_plot("room3_1_1", Plot("room3", 1, 1, pygame.image.load("assets/backgrounds/room_3_background.png"), GameController, GameData, None))
     GameData.room_list["room3"].add_room_door("room3_door1", Door("room3", "room2", 2, 5, 8, 13, "room3_door1"))
@@ -284,7 +291,7 @@ def init_room_3(GameController, GameData):
 def init_room_4(GameController, GameData):
 
     # add room #4
-    GameData.add_room("room4", Room("room4", 1, 1, 100, 50, 2, 1, 50, 50, GameController, GameData, map_style="csv"))
+    GameData.add_room("room4", Room("room4", 1, 1, 100, 50, 2, 1, GameController, GameData, map_style="csv"))
 
     big_map = TileMap("assets/csv_maps/csv_tiles/big_map2.0.csv", GameData.tiles_img_dict)
     GameData.room_list["room4"].add_room_plot("room4_1_1", Plot("room4", 1, 1, big_map.return_map(), GameController, GameData, "assets/csv_maps/big_map.csv"))
@@ -312,7 +319,7 @@ def init_room_4(GameController, GameData):
 def init_room_5(GameController, GameData):
     #TODO: Fix this room
    # add the room #5, generate the grid, and add the background and doors
-    GameData.add_room("room5", Room("room5", 1, 1, 20, 10, 1, 1, 20, 10, GameController, GameData, map_style="csv"))
+    GameData.add_room("room5", Room("room5", 1, 1, 20, 10, 1, 1, GameController, GameData, map_style="csv"))
     GameData.room_list["room5"].add_room_plot("room5_1_1", Plot("room5", 1, 1,
                                                           TileMap("assets/csv_maps/room5.csv", "grass", "water").return_map(),
                                                           GameController, GameData, "assets/csv_maps/room5.csv"))
@@ -334,7 +341,7 @@ def init_room_5(GameController, GameData):
 
 def init_room_Coop(GameController, GameData):
     # add room Coop
-    GameData.add_room("Coop", Room("Coop", 1, 1, 36, 60, 1, 1, 36, 60, GameController, GameData, map_style="csv"))
+    GameData.add_room("Coop", Room("Coop", 1, 1, 36, 60, 1, 1, GameController, GameData, map_style="csv"))
 
     coop_map = TileMap("assets/csv_maps/Co-op_area.csv", GameData.tiles_img_dict)
     GameData.room_list["Coop"].add_room_plot("Coop_1_1",

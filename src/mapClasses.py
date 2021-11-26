@@ -5,7 +5,7 @@ from keyboards import Direction, Facing
 
 class Room(object):
 
-    def __init__(self, name, left_edge_x, top_edge_y, room_width, room_height, total_plots_x, total_plots_y, plot_size_x, plot_size_y, GameController, GameData, map_style="image"):
+    def __init__(self, name, left_edge_x, top_edge_y, room_width, room_height, total_plots_x, total_plots_y, GameController, GameData, map_style="image"):
         self.GameController = GameController
         self.GameData = GameData
 
@@ -21,8 +21,8 @@ class Room(object):
         self.plot_list = {}
         self.total_plots_x = total_plots_x
         self.total_plots_y = total_plots_y
-        self.plot_size_x = plot_size_x
-        self.plot_size_y = plot_size_y
+        self.plot_size_x = int(room_width/total_plots_x)
+        self.plot_size_y = int(room_height/total_plots_y)
         self.active_plots = []
 
         self.tiles_array = []
@@ -76,7 +76,7 @@ class Plot(object):
     '''
     each room will be made up of a specified number of plots
     '''
-    def __init__(self, room, plot_x, plot_y, plot_img, GameController, GameData, csv_file):
+    def __init__(self, room, plot_x, plot_y, plot_img, GameController, GameData, terrain_csv_file):
         self.GameController = GameController
         self.GameData = GameData
 
@@ -85,7 +85,7 @@ class Plot(object):
         self.plot_y = plot_y
         self.name = self.room + "_" + str(plot_x) + "_"+ str(plot_y)
         self.plot_img = plot_img
-        self.csv_file = csv_file
+        self.terrain_csv_file = terrain_csv_file
         self.prop_list = []
         self.character_list = []
         self.decoration_list = []
@@ -240,7 +240,7 @@ class Position_Manager(object):
         #TODO: Make all maps in CSV Style?
         if self.GameData.room_list[door.room_to].map_style == "csv":
             for plot in self.GameData.room_list[door.room_to].plot_list:
-                self.fill_obstacles(self.GameData.room_list[door.room_to].plot_list[plot].csv_file, door.room_to)
+                self.fill_obstacles(self.GameData.room_list[door.room_to].plot_list[plot].terrain_csv_file, door.room_to)
         self.fill_tiles(door.room_to)
         self.fill_doors(door.room_to)
         self.fill_tile(self.GameData.player["Player"])

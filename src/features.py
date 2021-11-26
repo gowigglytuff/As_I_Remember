@@ -1,4 +1,6 @@
 import pygame
+
+from main import GameController, GameData
 from spritesheet import *
 from random import choice
 from keyboards import *
@@ -72,7 +74,7 @@ class Person(Feature):
 
 class Player(Person):
     def __init__(self, x, y, imagex, imagey, width, height, spritesheet, name, GameController, GameData):
-        super().__init__(x, y, imagex, imagey, width, height, spritesheet, name, GameController, GameData, facing=Facing.FRONT, feature_type="Player", offset_y=16)
+        super().__init__(x, y, imagex, imagey, width, height, spritesheet, name, GameController, GameData, facing=Facing.FRONT, feature_type="Player", offset_y=20)
         self.front = ["assets/player/P_front_1.png", "assets/player/P_front_2.png", "assets/player/P_front_3.png", "assets/player/P_front_4.png", "assets/player/P_front_1.png", "assets/player/P_front_2.png", "assets/player/P_front_3.png", "assets/player/P_front_4.png"]
         self.back = ["assets/player/P_back_1.png", "assets/player/P_back_2.png", "assets/player/P_back_3.png", "assets/player/P_back_4.png", "assets/player/P_back_1.png", "assets/player/P_back_2.png", "assets/player/P_back_3.png", "assets/player/P_back_4.png"]
         self.left = ["assets/player/P_left_1.png", "assets/player/P_left_2.png", "assets/player/P_left_3.png", "assets/player/P_left_4.png", "assets/player/P_left_1.png", "assets/player/P_left_2.png", "assets/player/P_left_3.png", "assets/player/P_left_4.png"]
@@ -649,3 +651,59 @@ class Decoration(Prop):
             screen.blit(self.img,[((location[0] + self.GameController.camera[0]) * self.GameData.square_size[
                             0]) + self.GameData.base_locator_x, (((location[1] + self.GameController.camera[1]) *
                             self.GameData.square_size[1]) - self.offset_y) + self.GameData.base_locator_y])
+
+
+class Feature2(object):
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+        self.GameController = GameController
+        self.GameData = GameData
+        self.imagex = None
+        self.imagey = None
+        self.name = None
+        self.width = None
+        self.height = None
+        self.cur_img = None
+        self.spritesheet = None
+        self.img = None
+        self.offset_y = None
+
+    def set_image(self, img_x, img_y):
+        self.img = self.spritesheet.get_image(img_x, img_y)
+
+class Interactable(object):
+    # TODO: Make this a class???
+    def __init__(self):
+        pass
+
+    def get_interacted_with(self):
+        pass
+
+class Tree(Feature2):
+    def __init__(self, x, y, gc):
+        super().__init__(x, y)
+        self.drawing_priority = 1
+        self.imagex = x
+        self.imagey = y
+        self.width = 64
+        self.height = 96
+        self.spritesheet = Spritesheet("assets/prop_sprites/tree.png", 64, 96)
+        self.name = "tree"
+        self.size_x = 2
+        self.size_y = 1
+        self.offset_y = 64
+        self.feature_type = "Prop"
+        self.cur_img = 0
+        self.img = self.spritesheet.get_image(0, 0)
+        self.GameController = gc
+
+    def draw(self, screen):
+        screen.blit(self.img, [((self.imagex + self.GameController.camera[0]) * self.GameData.square_size[0])
+                               + self.GameData.base_locator_x, ((self.imagey + self.GameController.camera[1])
+                                * self.GameData.square_size[1] - self.offset_y) + self.GameData.base_locator_y])
+
+
+    #TODO: Fix this!
+    def get_interacted_with(self):
+        print("I'm a " + self.name + "!")

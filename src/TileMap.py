@@ -92,5 +92,4 @@ class TileSet(object):
             for row in range(self.image_rows):
                 tiles_dict[tiles_count] = self.get_tile_img(row, column)
                 tiles_count += 1
-                print(row, column)
         return tiles_dict

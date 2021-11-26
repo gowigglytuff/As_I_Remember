@@ -73,6 +73,8 @@ def run_game_loop():
                 if not GameData.player["Player"].check_if_walking():
                     GameData.player["Player"].try_walk(GameController.current_keyboard_manager.current_direction_key)
 
+        print(GameData.character_list["Shuma"].x)
+        print(GameData.character_list["Shuma"].imagex)
         Picaso.big_draw()
         pygame.display.update()
         GameController.tick()
