@@ -5,9 +5,9 @@ from keyboards import Direction, Facing
 
 class Room(object):
 
-    def __init__(self, name, left_edge_x, top_edge_y, room_width, room_height, total_plots_x, total_plots_y, GameController, GameData, map_style="image"):
-        self.GameController = GameController
-        self.GameData = GameData
+    def __init__(self, name, left_edge_x, top_edge_y, room_width, room_height, total_plots_x, total_plots_y, gc_input, gd_input, map_style="image"):
+        self.gc_input = gc_input
+        self.gd_input = gd_input
 
         self.name = name
         self.left_edge_x = left_edge_x
@@ -33,6 +33,10 @@ class Room(object):
         self.decoration_list = []
         self.prop_list = []
 
+    def compose_room(self):
+        self.gd_input.room_list[self.name].generate_room_grid()
+
+        #self.gd_input.add_positioner(self.name, Position_Manager(self.name, self.gc_input, self.gd_input))
 
     def generate_room_grid(self):
         """
@@ -68,8 +72,8 @@ class Room(object):
 
     def draw_bg(self, screen):
         for plot in self.active_plots:
-            self_x = (((((self.plot_list[plot].plot_x)-1)*self.plot_size_x + self.GameController.camera[0])+1) * self.GameData.square_size[0]) + self.GameData.base_locator_x
-            self_y = (((((self.plot_list[plot].plot_y)-1)*self.plot_size_y + self.GameController.camera[1])+1) * self.GameData.square_size[1]) + self.GameData.base_locator_y
+            self_x = (((((self.plot_list[plot].plot_x)-1) * self.plot_size_x + self.gc_input.camera[0]) + 1) * self.gd_input.square_size[0]) + self.gd_input.base_locator_x
+            self_y = (((((self.plot_list[plot].plot_y)-1) * self.plot_size_y + self.gc_input.camera[1]) + 1) * self.gd_input.square_size[1]) + self.gd_input.base_locator_y
             screen.blit(self.plot_list[plot].plot_img, (self_x, self_y))
 
 class Plot(object):

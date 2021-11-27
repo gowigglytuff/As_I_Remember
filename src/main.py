@@ -12,17 +12,17 @@ from inventory import *
 from menus import *
 
 mm = MenuManager()
-GameData = GameData()
-GameController = GameController(GameData, mm)
-em = EventsManager(GameData, GameController)
-Picaso = Picaso(GameData, GameController)
-inv = Inventory(GameController, GameData)
-GameController.set_inventory(inv)
+gd = GameData()
+gc = GameController(gd, mm)
+em = EventsManager(gd, gc)
+Picaso = Picaso(gd, gc)
+inv = Inventory(gc, gd)
+gc.set_inventory(inv)
 
 
 
 def main():
-    init_game(GameData, GameController)
+    init_game(gd, gc)
     run_game_loop()
 
 def run_game_loop():
@@ -38,46 +38,45 @@ def run_game_loop():
     pygame.time.set_timer(printout, 500)
 
     while running:
-        pygame.draw.rect(GameController.screen, (0, 0, 0), (0, 0, 1000, 10000))
+        pygame.draw.rect(gc.screen, (0, 0, 0), (0, 0, 1000, 10000))
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
 
             if event.type == pygame.KEYDOWN:
-                GameController.current_keyboard_manager.parse_key_pressed(event.key)
+                gc.current_keyboard_manager.parse_key_pressed(event.key)
 
             if event.type == pygame.KEYUP:
-                GameController.current_keyboard_manager.parse_key_released(event.key)
+                gc.current_keyboard_manager.parse_key_released(event.key)
 
 
             # check to see if any events have occurred
-            for character in GameData.room_list[GameController.current_room].character_list:
-                if event.type == GameData.character_list[character].initiate:
-                    if GameData.character_list[character].state == "idle":
-                        GameData.character_list[character].do_activity()
+            for character in gd.room_list[gc.current_room].character_list:
+                if event.type == gd.character_list[character].initiate:
+                    if gd.character_list[character].state == "idle":
+                        gd.character_list[character].do_activity()
 
             #check for a single step in series of walk cycle steps for each character
-            for character in GameData.room_list[GameController.current_room].character_list:
+            for character in gd.room_list[gc.current_room].character_list:
                 try:
-                    if event.type == GameData.character_list[character].action_clock:
-                        GameData.character_list[character].check_if_walking()
+                    if event.type == gd.character_list[character].action_clock:
+                        gd.character_list[character].check_if_walking()
                 except AttributeError:
                     pass
 
             # check for a single step in series of walk cycle steps for Player
-            if event.type == GameData.player["Player"].step_timer:
-                GameData.player["Player"].continue_walking()
+            if event.type == gd.player["Player"].step_timer:
+                gd.player["Player"].continue_walking()
 
-        if isinstance(GameController.current_keyboard_manager, InGame):
-            if GameController.current_keyboard_manager.current_direction_key is not None:
-                if not GameData.player["Player"].check_if_walking():
-                    GameData.player["Player"].try_walk(GameController.current_keyboard_manager.current_direction_key)
+        if isinstance(gc.current_keyboard_manager, InGame):
+            if gc.current_keyboard_manager.current_direction_key is not None:
+                if not gd.player["Player"].check_if_walking():
+                    gd.player["Player"].try_walk(gc.current_keyboard_manager.current_direction_key)
 
-        print(GameData.character_list["Shuma"].x)
-        print(GameData.character_list["Shuma"].imagex)
+
         Picaso.big_draw()
         pygame.display.update()
-        GameController.tick()
+        gc.tick()
 
 
 if __name__ == "__main__":
