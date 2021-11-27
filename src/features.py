@@ -1,6 +1,4 @@
 import pygame
-
-from main import gc, gd
 from spritesheet import *
 from random import choice
 from keyboards import *
@@ -275,61 +273,6 @@ class Player(Feature):
     def set_state(self, state_to_set):
         self.state = state_to_set
 
-class Feature2(object):
-    def __init__(self, x, y, name, gc_input, gd_input, offset_y):
-        self.x = x
-        self.y = y
-        self.imagex = None
-        self.imagey = None
-        self.name = name
-        self.width = None
-        self.height = None
-        self.cur_img = 0
-        self.spritesheet = None
-        self.img = None
-        self.gc_input = gc_input
-        self.gd_input = gd_input
-        self.offset_y = offset_y
-
-    def set_image(self, img_x, img_y):
-        self.img = self.spritesheet.get_image(img_x, img_y)
-
-class Person(Feature2):
-
-    UPDATE_COLOUR_EVENT = pygame.USEREVENT + 5
-
-    def __init__(self, x, y, width, height, spritesheet, name, gc_input, gd_input, facing, feature_type, offset_y = 24):
-        super().__init__(x, y, name, gc_input, gd_input, offset_y)
-        self.activity = None
-        self.facing = facing
-        self.drawing_priority = 2
-        self.feature_type = feature_type
-        self.width = width
-        self.height = height
-        self.spritesheet = spritesheet
-
-    def update_behaviour(self, some_parameter=None):
-        '''
-        Updates character behavior based on timer
-        :param some_parameter: some useless parameter
-        :return: time until next update in milliseconds
-        '''
-        time_to_next_update = 500
-        if self.activity == None:
-            self.activity = "be_red"
-            self.change_red()
-        elif self.activity == "be_red":
-            self.activity = "be_green"
-            self.change_green()
-        elif self.activity == "be_green":
-            self.activity = "be_blue"
-            self.change_blue()
-        elif self.activity == "be_blue":
-            self.activity = "be_red"
-            self.change_red()
-
-        return time_to_next_update
-
 class NPC(Feature):
 
     NPC_TIMER_ID = 10
@@ -517,7 +460,7 @@ class NPC(Feature):
     def set_state(self, state_to_set):
         self.state = state_to_set
 
-class Generic_NPC(NPC):
+class GenericNPC(NPC):
     WALK_LEFT = "walk_left"
     WALK_RIGHT = "walk_right"
     WALK_FRONT = "walk_front"
@@ -559,25 +502,25 @@ class Generic_NPC(NPC):
 
             if result == "walk_left":
                 self.facing = Facing.LEFT
-                can_walk = self.gd_input.positioner[self.gc_input.current_room].can_move_NPC(self)
+                can_walk = self.gd_input.positioner[self.room].can_move_NPC(self)
                 if can_walk:
                     self.walk_left()
 
             elif result == "walk_right":
                 self.facing = Facing.RIGHT
-                can_walk = self.gd_input.positioner[self.gc_input.current_room].can_move_NPC(self)
+                can_walk = self.gd_input.positioner[self.room].can_move_NPC(self)
                 if can_walk:
                     self.walk_right()
 
             elif result == "walk_front":
                 self.facing = Facing.FRONT
-                can_walk = self.gd_input.positioner[self.gc_input.current_room].can_move_NPC(self)
+                can_walk = self.gd_input.positioner[self.room].can_move_NPC(self)
                 if can_walk:
                     self.walk_front()
 
             elif result == "walk_back":
                 self.facing = Facing.BACK
-                can_walk = self.gd_input.positioner[self.gc_input.current_room].can_move_NPC(self)
+                can_walk = self.gd_input.positioner[self.room].can_move_NPC(self)
                 if can_walk:
                     self.walk_back()
 
@@ -654,6 +597,33 @@ class Generic_NPC(NPC):
         self.speaking_queue = None
 
 class Prop(Feature):
+    def __init__(self, x, y, gc_input, gd_input):
+        super().__init__(x, y, gc_input, gd_input)
+        self.imagey = y
+        self.imagex = x
+        self.drawing_priority = 1
+        self.size_x = None
+        self.size_y = None
+        self.feature_type = "Prop"
+        self.width = None
+        self.height = None
+        self.spritesheet = Spritesheet("assets/prop_sprites/image_error.png", 32, 32)
+        self.img = self.spritesheet.get_image(0, 0)
+        self.name = None
+        self.offset_y = 20
+        self.room = None
+
+        try:
+            self.gd_input.room_list[self.room].add_room_prop(self.name)
+        except:
+            pass
+
+    def draw(self, screen):
+        screen.blit(self.img, [((self.imagex + self.gc_input.camera[0]) * self.gd_input.square_size[0])
+                               + self.gd_input.base_locator_x, ((self.imagey + self.gc_input.camera[1])
+                                                                * self.gd_input.square_size[1] - self.offset_y) + self.gd_input.base_locator_y])
+
+class GenericProp(Prop):
     def __init__(self, x, y, gc_input, gd_input, width, height, spritesheet, name, size_x, size_y, room):
         super().__init__(x, y, gc_input, gd_input)
         self.imagey = y
@@ -679,7 +649,6 @@ class Prop(Feature):
         screen.blit(self.img, [((self.imagex + self.gc_input.camera[0]) * self.gd_input.square_size[0])
                                + self.gd_input.base_locator_x, ((self.imagey + self.gc_input.camera[1])
                                                                 * self.gd_input.square_size[1] - self.offset_y) + self.gd_input.base_locator_y])
-
 
     #TODO: Fix this!
     def get_interacted_with(self):
@@ -708,48 +677,32 @@ class Decoration(Feature):
                             0]) + self.gd_input.base_locator_x, (((location[1] + self.gc_input.camera[1]) *
                                                                   self.gd_input.square_size[1]) - self.offset_y) + self.gd_input.base_locator_y])
 
-
-class Feature3(object):
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
-        self.GameController = gc
-        self.GameData = gd
-        self.imagex = None
-        self.imagey = None
-        self.name = None
-        self.width = None
-        self.height = None
-        self.cur_img = None
-        self.spritesheet = None
-        self.img = None
-        self.offset_y = None
-
-    def set_image(self, img_x, img_y):
-        self.img = self.spritesheet.get_image(img_x, img_y)
-
-class Tree(Feature3):
-    def __init__(self, x, y, gc):
-        super().__init__(x, y)
+class Tree(Prop):
+    def __init__(self, x, y, name, gc_input, gd_input, room_name):
+        super().__init__(x, y, gc_input, gd_input)
         self.drawing_priority = 1
         self.imagex = x
         self.imagey = y
         self.width = 64
         self.height = 96
         self.spritesheet = Spritesheet("assets/prop_sprites/tree.png", 64, 96)
-        self.name = "tree"
+        self.name = name
         self.size_x = 2
         self.size_y = 1
         self.offset_y = 64
         self.feature_type = "Prop"
         self.cur_img = 0
         self.img = self.spritesheet.get_image(0, 0)
-        self.GameController = gc
+        self.gc_input = gc_input
+        self.gd_input = gd_input
+        self.room = room_name
+
+        self.gd_input.room_list[self.room].add_room_prop(self.name)
 
     def draw(self, screen):
-        screen.blit(self.img, [((self.imagex + self.GameController.camera[0]) * self.GameData.square_size[0])
-                               + self.GameData.base_locator_x, ((self.imagey + self.GameController.camera[1])
-                                * self.GameData.square_size[1] - self.offset_y) + self.GameData.base_locator_y])
+        screen.blit(self.img, [((self.imagex + self.gc_input.camera[0]) * self.gd_input.square_size[0])
+                               + self.gd_input.base_locator_x, ((self.imagey + self.gc_input.camera[1])
+                                * self.gd_input.square_size[1] - self.offset_y) + self.gd_input.base_locator_y])
 
 
     #TODO: Fix this!

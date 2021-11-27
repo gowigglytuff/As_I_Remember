@@ -47,8 +47,7 @@ def init_game(gd_input, gc_input):
     init_room_2(gc_input, gd_input, "room2")
     init_room_3(gc_input, gd_input, "room3")
     init_room_4(gc_input, gd_input, "room4")
-    #init_room_5(GameController, GameData, "room5")
-    #init_room_Coop(GameController, GameData)
+    init_room_Coop(gc_input, gd_input, "Coop")
 
 def load_keyboard_managers(GameController, GameData):
     # load all keyboard managers
@@ -166,173 +165,46 @@ initiate the rooms following this process:
 12. activate the animation and action timers for all of the characters that are in the 
     room using: a for loop and GameData.character_list[character].activate_timers()
 """
+
 def init_room_1(gc_input, gd_input, room_name):
     # room #1
 
-    # add the room #1, generate the grid, and add the background and doors
-    gd_input.add_room(room_name, Room(room_name, 1, 2, 6, 6, 1, 1, gc_input, gd_input))
-    gd_input.room_list[room_name].add_room_plot("room1_1_1", Plot("room1", 1, 1, pygame.image.load("assets/backgrounds/room_1_background.png"), gc_input, gd_input, None))
-    gd_input.room_list[room_name].activate_plot("room1_1_1")
-
-    # generate the grid for the room
-    #gd_input.room_list[room_name].generate_room_grid()
-    gd_input.room_list[room_name].compose_room()
-
-
-
-    def add_room_doors(gc_input, gd_input, room_name):
-        #add the door to the room
-        gd_input.room_list[room_name].add_room_door("room1_door1", Door(room_name, "room2", 2, 2, 1, 15, "room1_door1"))
-        gd_input.room_list[room_name].add_room_door("room1_door2", Door(room_name, "room4", 5, 1, 2, 4, "room1_door2"))
-        #GameData.room_list[room_name].add_room_door("room1_door3", Door(room_name, "room5", 1, 7, 1, 2, "room1_door3"))
-
-    add_room_doors(gc_input, gd_input, room_name)
-
-    # add the NPC characters to the game
-    gd_input.add_character("Shuma", Generic_NPC(2, 4, gc_input, gd_input, Spritesheet("assets/NPC_sprites/Shuma.png", 32, 40), "Shuma", "room1", "Your dad have manure for sale? I'd really love to get my hands on a couple bags of it. It's great for the turnips and the kale! Though I think I might get some nitrogen fixed stuff from the co-op for the lettuce..."))
-    gd_input.add_character("Maggie", Generic_NPC(5, 5, gc_input, gd_input, Spritesheet("assets/NPC_sprites/Maggie.png", 32, 40), "Maggie", "room1", "This outfit makes me feel really cool and powerful, so I've decided I'm going to wear it everywhere."))
-    gd_input.add_character("Laurie", Generic_NPC(4, 3, gc_input, gd_input, Spritesheet("assets/NPC_sprites/Laurie.png", 32, 40), "Laurie", "room1", "Have you seen my drink anywhere?"))
-
-    #add props to the game
-    gd_input.add_prop("trunk", Prop(3, 2, gc_input, gd_input,32, 40, Spritesheet("assets/prop_sprites/trunk.png", 32, 40), "trunk",  1, 1, room_name))
-    gd_input.add_prop("lamp", Prop(1, 5, gc_input, gd_input, 32, 40, Spritesheet("assets/prop_sprites/lamp.png", 32, 40), "lamp", 1, 1, room_name))
-
-    # add position manager to it's room and make it tell the tile array what it's filled with
-    gd_input.add_positioner(room_name, Position_Manager(room_name, gc_input, gd_input))
-    gd_input.positioner[room_name].fill_tiles(room_name)
-    gd_input.positioner[room_name].fill_doors(room_name)
-
-    # activate the timers for animation and actions for the NPCs (make this apply to all that are in room)
-    for character in gd_input.room_list[room_name].character_list:
-        gd_input.character_list[character].activate_timers()
+    gd_input.add_room(room_name, Room1(room_name, 1, 2, 6, 6, 1, 1, gc_input, gd_input))
+    gd_input.room_list[room_name].activate_room()
 
 def init_room_2(gc_input, gd_input, room_name):
     # room#2
+    gd_input.add_room(room_name, Room2(room_name, 1, 1, 15, 15, 1, 1, gc_input, gd_input, map_style="csv"))
+    gd_input.room_list[room_name].activate_room()
 
-    # add the room #2, generate the grid, and add the background and doors
-    gd_input.add_room(room_name, Room(room_name, 1, 1, 15, 15, 1, 1, gc_input, gd_input, map_style="csv"))
-    gd_input.room_list[room_name].add_room_plot("room2_1_1", Plot(room_name, 1, 1,
-                                                                TileMap("assets/csv_maps/csv_tiles/lake.csv", gd_input.tiles_img_dict).return_map(),
-                                                                gc_input, gd_input, "assets/csv_maps/room2.csv"))
-    gd_input.room_list[room_name].activate_plot("room2_1_1")
-    gd_input.room_list[room_name].generate_room_grid()
-
-    gd_input.room_list[room_name].add_room_door("room2_door1", Door(room_name, "room1", 1, 14, 2, 3, "room2_door1"))
-    gd_input.room_list[room_name].add_room_door("room2_door2", Door(room_name, "room3", 8, 12, 2, 4, "room2_door2"))
-
-    # add characters
-    gd_input.add_character("Deb", Generic_NPC(4, 4, gc_input, gd_input, Spritesheet("assets/NPC_sprites/Deb.png", 32, 40), "Deb", "room2",
-                                  "Hey Shuma, so nice to see you again!, I should probably be in the studio, but when I'm low on inspiration I like to come out here and walk by the water. "))
-
-    # add features for room 2
-    gd_input.add_prop("house", Prop(5, 10, gc_input, gd_input, 160, 128, Spritesheet("assets/prop_sprites/House.png", 160, 128), "house", 5, 3, room_name))
-    gd_input.add_prop("tree", Tree(3, 6, gc_input))
-
-    gd_input.add_decoration("Grass", Decoration(0, 0, gc_input, gd_input, 32, 32, Spritesheet("assets/decoration_sprites/grass5.png", 32, 32), "Grass", 1, 1, [[2, 11], [2, 12], [2, 13], [2, 14], [3, 11], [3, 12], [3, 13], [3, 14]], room_name))
-
-
-    # add position manager to it's room and make it tell the tile array what it's filled with, then populate doors
-    gd_input.add_positioner(room_name, Position_Manager(room_name, gc_input, gd_input))
     gd_input.positioner[room_name].fill_obstacles("assets/csv_maps/room2.csv", room_name)
     #TODO: Fill out terrain for all other levels
     gd_input.positioner[room_name].fill_terrain("assets/csv_maps/room2.csv", room_name)
-    gd_input.positioner[room_name].fill_tiles(room_name)
-    gd_input.positioner[room_name].fill_doors(room_name)
 
-    for character in gd_input.room_list[room_name].character_list:
-        gd_input.character_list[character].activate_timers()
 
 def init_room_3(gc_input, gd_input, room_name):
-    gd_input.add_room(room_name, Room(room_name, 1, 2, 3, 3, 1, 1, gc_input, gd_input))
-    gd_input.room_list[room_name].generate_room_grid()
-    gd_input.room_list[room_name].add_room_plot("room3_1_1", Plot(room_name, 1, 1, pygame.image.load("assets/backgrounds/room_3_background.png"), gc_input, gd_input, None))
-    gd_input.room_list[room_name].add_room_door("room3_door1", Door(room_name, "room2", 2, 5, 8, 13, "room3_door1"))
 
-    gd_input.room_list[room_name].activate_plot("room3_1_1")
-
-    gd_input.add_character("Pixie", Generic_NPC(2, 2, gc_input, gd_input, Spritesheet("assets/NPC_sprites/sprite_sheet.png", 32, 40), "Pixie", "room3", "Hi!"))
-    gd_input.add_character("Pixie_b", Generic_NPC(3, 4, gc_input, gd_input, Spritesheet("assets/NPC_sprites/sprite2_sheet.png", 32, 40), "Pixie_b", "room3", "Hi!"))
-    gd_input.add_character("Ian", Generic_NPC(3, 2, gc_input, gd_input, Spritesheet("assets/NPC_sprites/Ian.png", 32, 40), "Ian", "room3", "Damnit, the cows got out again... If you see Kleyo can you ask her to give me a call? I should be back at the house by five."))
-
-    gd_input.add_positioner(room_name, Position_Manager(room_name, gc_input, gd_input))
-    gd_input.positioner[room_name].fill_tiles(room_name)
-    gd_input.positioner[room_name].fill_doors(room_name)
-
-    for character in gd_input.room_list[room_name].character_list:
-        gd_input.character_list[character].activate_timers()
+    gd_input.add_room(room_name, Room3(room_name, 1, 2, 3, 3, 1, 1, gc_input, gd_input))
+    gd_input.room_list[room_name].activate_room()
 
 def init_room_4(gc_input, gd_input, room_name):
 
     # add room #4
-    gd_input.add_room(room_name, Room(room_name, 1, 1, 100, 50, 2, 1, gc_input, gd_input, map_style="csv"))
+    gd_input.add_room(room_name, Room4(room_name, 1, 1, 100, 50, 2, 1, gc_input, gd_input, map_style="csv"))
 
-    big_map = TileMap("assets/csv_maps/csv_tiles/big_map2.0.csv", gd_input.tiles_img_dict)
-    gd_input.room_list[room_name].add_room_plot("room4_1_1", Plot(room_name, 1, 1, big_map.return_map(), gc_input, gd_input, "assets/csv_maps/big_map.csv"))
-    gd_input.room_list[room_name].add_room_plot("room4_1_2", Plot(room_name, 2, 1, big_map.return_map(), gc_input, gd_input, "assets/csv_maps/big_map.csv"))
-    gd_input.room_list[room_name].activate_plot("room4_1_1")
-    gd_input.room_list[room_name].activate_plot("room4_1_2")
-
-    gd_input.room_list[room_name].generate_room_grid()
-    gd_input.room_list[room_name].add_room_door("room4_door1", Door(room_name, "room1", 2, 3, 5, 2, "room4_door1"))
-
-    for name in range(50):
-        rand_x = randrange(1, 100)
-        rand_y = randrange(1, 50)
-        gd_input.add_character(("Sheep" + str(name)), Generic_NPC(rand_x, rand_y, gc_input, gd_input, Spritesheet("assets/NPC_sprites/sheep.png", 32, 40), ("Sheep" + str(name)), "room4", "Baaaahhhh"))
-        gd_input.character_list["Sheep" + str(name)].activate_timers()
-
-    gd_input.add_positioner(room_name, Position_Manager(room_name, gc_input, gd_input))
+    gd_input.room_list[room_name].activate_room()
 
     # TODO: figure out how to use csv for rooms with multiple maps in them (Perhaps attach them to BG instead of Room)
     gd_input.positioner[room_name].fill_obstacles("assets/csv_maps/big_map.csv", room_name)
-    gd_input.positioner[room_name].fill_tiles(room_name)
-    gd_input.positioner[room_name].fill_doors(room_name)
 
-def init_room_5(gc_input, gd_input, room_name):
-    #TODO: Fix this room
-   # add the room #5, generate the grid, and add the background and doors
-    gd_input.add_room(room_name, Room(room_name, 1, 1, 20, 10, 1, 1, gc_input, gd_input, map_style="csv"))
-    gd_input.room_list[room_name].add_room_plot("room5_1_1", Plot(room_name, 1, 1,
-                                                                TileMap("assets/csv_maps/room5.csv", "grass", "water").return_map(),
-                                                                gc_input, gd_input, "assets/csv_maps/room5.csv"))
 
-    gd_input.add_prop("house2", Prop(13, 3, gc_input, gd_input, 192, 128, Spritesheet("assets/prop_sprites/House.png", 192, 128), "house2", 6, 3, room_name))
-    gd_input.room_list[room_name].add_room_prop("house2")
-
-    gd_input.room_list[room_name].activate_plot("room5_1_1")
-
-    gd_input.room_list[room_name].generate_room_grid()
-
-    gd_input.add_positioner(room_name, Position_Manager(room_name, gc_input, gd_input))
-
-    gd_input.room_list[room_name].add_room_door("room5_door1", Door(room_name, "room1", 1, 1, 1, 6, "room5_door1"))
-
-    gd_input.positioner[room_name].fill_obstacles("assets/csv_maps/room5.csv", room_name)
-    gd_input.positioner[room_name].fill_tiles(room_name)
-    gd_input.positioner[room_name].fill_doors(room_name)
-
-def init_room_Coop(gc_input, gd_input):
+def init_room_Coop(gc_input, gd_input, room_name):
     # add room Coop
-    gd_input.add_room("Coop", Room("Coop", 1, 1, 36, 60, 1, 1, gc_input, gd_input, map_style="csv"))
+    gd_input.add_room(room_name, Room5(room_name, 1, 1, 36, 60, 1, 1, gc_input, gd_input, map_style="csv"))
+    gd_input.room_list[room_name].activate_room()
 
-    coop_map = TileMap("assets/csv_maps/Co-op_area.csv", gd_input.tiles_img_dict)
-    gd_input.room_list["Coop"].add_room_plot("Coop_1_1",
-                                             Plot("Coop", 1, 1, coop_map.return_map(), gc_input, gd_input,
-                                                   "assets/csv_maps/Co-op_area.csv"))
-
-    gd_input.room_list["Coop"].activate_plot("Coop_1_1")
-
-
-    gd_input.room_list["Coop"].generate_room_grid()
-    #GameData.room_list["Coop"].add_room_door("Coop_door1", Door("Coop", "room1", 2, 3, 5, 2, "Coop_door1"))
-
-    gd_input.add_positioner("Coop", Position_Manager("Coop", gc_input, gd_input))
-
-    gd_input.add_prop("Coop_Building", Prop(2, 2, gc_input, gd_input, 832, 1632, Spritesheet("assets/prop_sprites/Coop_Building.png", 832, 1632), "Coop_Building", 6, 3))
-    gd_input.room_list["Coop"].add_room_prop("Coop_Building")
 
     # TODO: figure out how to use csv for rooms with multiple maps in them (Perhaps attach them to BG instead of Room)
     gd_input.positioner["Coop"].fill_obstacles("assets/csv_maps/Coop_allowance.csv", "Coop")
-    gd_input.positioner["Coop"].fill_tiles("Coop")
-    gd_input.positioner["Coop"].fill_doors("Coop")
+
 
