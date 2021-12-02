@@ -4,7 +4,7 @@ import pygame, csv, os
 
 from TileMap import TileMap
 from features import GenericNPC, Spritesheet
-from prop_page import GenericProp, Tree, Decoration
+from prop_page import GenericProp, Tree, Decoration, Building, Lix, ComputerCentre, IslandPotters, Coop, HornbyCreative, RealEstate
 from keyboards import Direction, Facing
 from mapClasses import Plot, Door, Tile, Position_Manager
 
@@ -317,11 +317,12 @@ class Room5(Room):
         pass
 
     def add_room_props(self):
-        self.gd_input.add_prop("Coop_Building", GenericProp(2, 2, self.gc_input, self.gd_input, 832, 1632, Spritesheet("assets/prop_sprites/Coop_Building.png", 832, 1632), "Coop_Building", 6, 3, self.name))
-        self.gd_input.add_prop("Computer_Centre", GenericProp(25, 50, self.gc_input, self.gd_input, 192, 98, Spritesheet("assets/prop_sprites/computer_centre.png", 192, 128), "Computer_Centre", 6, 2, self.name))
-        self.gd_input.add_prop("Hornby_Creative", GenericProp(25, 45, self.gc_input, self.gd_input, 192, 98, Spritesheet("assets/prop_sprites/hornby_creative.png", 192, 128), "Hornby_Creative", 6, 2, self.name))
-        self.gd_input.add_prop("Island_Potters", GenericProp(25, 55, self.gc_input, self.gd_input, 160, 96, Spritesheet("assets/prop_sprites/island_potters.png", 160, 96), "Island_Potters", 5, 2, self.name))
-        self.gd_input.add_prop("Lix", GenericProp(5, 52, self.gc_input, self.gd_input, (8*32), (5*32), Spritesheet("assets/prop_sprites/lix.png", (8*32), (5*32)), "Lix", 7, 3, self.name))
+        self.gd_input.add_prop("Coop_Building", Coop(2, 2, self.gc_input, self.gd_input, 832, 1632, "assets/prop_sprites/Coop_Building.png", "Coop_Building", 26, 51, self.name))
+        self.gd_input.add_prop("Computer_Centre", ComputerCentre(25, 53, self.gc_input, self.gd_input, 192, 128, "assets/prop_sprites/computer_centre.png", "Computer_Centre", 6, 4, self.name))
+        self.gd_input.add_prop("Hornby_Creative", HornbyCreative(25, 48, self.gc_input, self.gd_input, 192, 128, "assets/prop_sprites/hornby_creative.png", "Hornby_Creative", 6, 4, self.name))
+        self.gd_input.add_prop("Island_Potters", IslandPotters(7, 53, self.gc_input, self.gd_input, 160, 96, "assets/prop_sprites/island_potters.png", "Island_Potters", 5, 3, self.name))
+        self.gd_input.add_prop("Lix", Lix(23, 42, self.gc_input, self.gd_input, (8*32), (5*32), "assets/prop_sprites/lix.png", "Lix", 8, 5, self.name))
+        self.gd_input.add_prop("Real_Estate", RealEstate(1, 52, self.gc_input, self.gd_input, (5*32), (5*32), "assets/prop_sprites/real_estate_2.png", "Real_Estate", 5, 5, self.name))
 
 
 class Room6(Room):

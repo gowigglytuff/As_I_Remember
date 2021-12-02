@@ -1,3 +1,6 @@
+import csv
+import os
+
 from features import Feature
 from spritesheet import Spritesheet
 
@@ -114,3 +117,132 @@ class Tree(Prop):
     #TODO: Fix this!
     def get_interacted_with(self):
         print("I'm a " + self.name + "!")
+
+class Building(Prop):
+    def __init__(self, x, y, gc_input, gd_input, width, height, spritesheet, name, size_x, size_y, room):
+        super().__init__(x, y, gc_input, gd_input)
+        self.imagey = y
+        self.imagex = x
+        self.drawing_priority = 1
+        self.size_x = size_x
+        self.size_y = size_y
+        self.feature_type = "Prop"
+        self.width = width
+        self.height = height
+        self.spritesheet = Spritesheet(spritesheet, self.width, self.height)
+        self.img = self.spritesheet.get_image(0, 0)
+        self.name = name
+        self.offset_y = 0
+        self.room = room
+
+        try:
+            self.gd_input.room_list[self.room].add_room_prop(self.name)
+        except:
+            pass
+
+    def draw(self, screen):
+        screen.blit(self.img, [((self.imagex + self.gc_input.camera[0]) * self.gd_input.square_size[0])
+                               + self.gd_input.base_locator_x, ((self.imagey + self.gc_input.camera[1])
+                                                                * self.gd_input.square_size[1] - self.offset_y) + self.gd_input.base_locator_y])
+
+class Lix(Building):
+    def __init__(self, x, y, gc_input, gd_input, width, height, spritesheet, name, size_x, size_y, room):
+        super().__init__(x, y, gc_input, gd_input, width, height, spritesheet, name, size_x, size_y, room)
+        self.fill_csv = "assets/prop_sprites/building_csv/lix_fill_map.csv"
+        self.feature_type = "Building"
+        self.offset_y = -10
+        self.fill_map = self.read_csv(self.fill_csv)
+        print(self.fill_map)
+
+    def read_csv(self, filename):
+        map = []
+        with open(os.path.join(filename)) as data:
+            data = csv.reader(data, delimiter=',')
+            for row in data:
+                map.append(list(row))
+        return map
+
+class ComputerCentre(Building):
+    def __init__(self, x, y, gc_input, gd_input, width, height, spritesheet, name, size_x, size_y, room):
+        super().__init__(x, y, gc_input, gd_input, width, height, spritesheet, name, size_x, size_y, room)
+        self.fill_csv = "assets/prop_sprites/building_csv/computer_centre_fill_map.csv"
+        self.feature_type = "Building"
+        self.offset_y = -10
+        self.fill_map = self.read_csv(self.fill_csv)
+
+
+    def read_csv(self, filename):
+        map = []
+        with open(os.path.join(filename)) as data:
+            data = csv.reader(data, delimiter=',')
+            for row in data:
+                map.append(list(row))
+        return map
+
+class IslandPotters(Building):
+    def __init__(self, x, y, gc_input, gd_input, width, height, spritesheet, name, size_x, size_y, room):
+        super().__init__(x, y, gc_input, gd_input, width, height, spritesheet, name, size_x, size_y, room)
+        self.fill_csv = "assets/prop_sprites/building_csv/island_potters_fill_map.csv"
+        self.feature_type = "Building"
+        self.offset_y = -10
+        self.fill_map = self.read_csv(self.fill_csv)
+
+
+    def read_csv(self, filename):
+        map = []
+        with open(os.path.join(filename)) as data:
+            data = csv.reader(data, delimiter=',')
+            for row in data:
+                map.append(list(row))
+        return map
+
+class Coop(Building):
+    def __init__(self, x, y, gc_input, gd_input, width, height, spritesheet, name, size_x, size_y, room):
+        super().__init__(x, y, gc_input, gd_input, width, height, spritesheet, name, size_x, size_y, room)
+        self.fill_csv = "assets/prop_sprites/building_csv/coop_fill_csv.csv"
+        self.feature_type = "Building"
+        self.offset_y = -10
+        self.fill_map = self.read_csv(self.fill_csv)
+
+
+    def read_csv(self, filename):
+        map = []
+        with open(os.path.join(filename)) as data:
+            data = csv.reader(data, delimiter=',')
+            for row in data:
+                map.append(list(row))
+        return map
+
+class HornbyCreative(Building):
+    def __init__(self, x, y, gc_input, gd_input, width, height, spritesheet, name, size_x, size_y, room):
+        super().__init__(x, y, gc_input, gd_input, width, height, spritesheet, name, size_x, size_y, room)
+        self.fill_csv = "assets/prop_sprites/building_csv/hornby_creative_fill_map.csv"
+        self.feature_type = "Building"
+        self.offset_y = -10
+        self.fill_map = self.read_csv(self.fill_csv)
+
+
+    def read_csv(self, filename):
+        map = []
+        with open(os.path.join(filename)) as data:
+            data = csv.reader(data, delimiter=',')
+            for row in data:
+                map.append(list(row))
+        return map
+
+class RealEstate(Building):
+    def __init__(self, x, y, gc_input, gd_input, width, height, spritesheet, name, size_x, size_y, room):
+        super().__init__(x, y, gc_input, gd_input, width, height, spritesheet, name, size_x, size_y, room)
+        self.fill_csv = "assets/prop_sprites/building_csv/real_estate_csv.csv"
+        self.feature_type = "Building"
+        self.offset_y = -10
+        self.fill_map = self.read_csv(self.fill_csv)
+
+
+    def read_csv(self, filename):
+        map = []
+        with open(os.path.join(filename)) as data:
+            data = csv.reader(data, delimiter=',')
+            for row in data:
+                map.append(list(row))
+        return map

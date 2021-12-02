@@ -168,6 +168,7 @@ class InGame(KeyboardManager):
     def key_return(self):
         # interacts with the feature that is in the tile that the player is facing
         direction = Direction.DOWN
+        print("Player Location: " + str(self.GameData.player["Player"].x), str(self.GameData.player["Player"].y))
 
         if self.GameData.player["Player"].facing == Facing.LEFT:
             direction = Direction.LEFT

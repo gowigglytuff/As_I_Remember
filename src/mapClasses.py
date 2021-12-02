@@ -97,6 +97,18 @@ class Position_Manager(object):
                                     self.GameData.room_list[fillable_room].tiles_array[drawable.x + size_x][drawable.y + size_y].object_filling = drawable.name
                                     self.GameData.room_list[fillable_room].tiles_array[drawable.x + size_x][drawable.y + size_y].filling_type = drawable.feature_type
                                     self.GameData.room_list[fillable_room].tiles_array[drawable.x + size_x][drawable.y + size_y].full = True
+                    #TODO make buildings fill themselves out based on a csv
+                    if drawable.feature_type == "Building" and drawable.x == tile.x and drawable.y == tile.y:
+                        for size_x in range(drawable.size_x):
+                            for size_y in range(drawable.size_y):
+                                if drawable.fill_map[size_y][size_x] == '0':
+                                    print(size_x, size_y)
+                                    pass
+                                elif drawable.fill_map[size_y][size_x] == '1':
+                                    #print(size_x, size_y)
+                                    self.GameData.room_list[fillable_room].tiles_array[drawable.x + size_x][drawable.y + size_y].object_filling = drawable.name
+                                    self.GameData.room_list[fillable_room].tiles_array[drawable.x + size_x][drawable.y + size_y].filling_type = drawable.feature_type
+                                    self.GameData.room_list[fillable_room].tiles_array[drawable.x + size_x][drawable.y + size_y].full = True
 
                     elif drawable.feature_type != "Prop" and drawable.x == tile.x and drawable.y == tile.y:
                         tile.object_filling = drawable.name
