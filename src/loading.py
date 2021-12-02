@@ -4,6 +4,7 @@ import pygame
 from data import *
 from features import *
 from mapClasses import *
+from room_page import *
 from TileMap import *
 from keyboards import *
 from random import randrange
@@ -43,11 +44,8 @@ def init_game(gd_input, gc_input):
     gd_input.player["Player"].activate_timer()
 
     # run functions that initiate all rooms
-    init_room_1(gc_input, gd_input, "room1")
-    init_room_2(gc_input, gd_input, "room2")
-    init_room_3(gc_input, gd_input, "room3")
-    init_room_4(gc_input, gd_input, "room4")
-    init_room_Coop(gc_input, gd_input, "Coop")
+    init_all_rooms(gc_input, gd_input)
+
 
 def load_keyboard_managers(GameController, GameData):
     # load all keyboard managers
@@ -166,45 +164,27 @@ initiate the rooms following this process:
     room using: a for loop and GameData.character_list[character].activate_timers()
 """
 
-def init_room_1(gc_input, gd_input, room_name):
+def init_all_rooms(gc_input, gd_input):
     # room #1
+    gd_input.add_room("room1", Room1(gc_input, gd_input))
+    gd_input.room_list["room1"].activate_room()
 
-    gd_input.add_room(room_name, Room1(room_name, 1, 2, 6, 6, 1, 1, gc_input, gd_input))
-    gd_input.room_list[room_name].activate_room()
+    # room #2
+    gd_input.add_room("room2", Room2(gc_input, gd_input))
+    gd_input.room_list["room2"].activate_room()
 
-def init_room_2(gc_input, gd_input, room_name):
-    # room#2
-    gd_input.add_room(room_name, Room2(room_name, 1, 1, 15, 15, 1, 1, gc_input, gd_input, map_style="csv"))
-    gd_input.room_list[room_name].activate_room()
-
-    gd_input.positioner[room_name].fill_obstacles("assets/csv_maps/room2.csv", room_name)
-    #TODO: Fill out terrain for all other levels
-    gd_input.positioner[room_name].fill_terrain("assets/csv_maps/room2.csv", room_name)
-
-
-def init_room_3(gc_input, gd_input, room_name):
-
-    gd_input.add_room(room_name, Room3(room_name, 1, 2, 3, 3, 1, 1, gc_input, gd_input))
-    gd_input.room_list[room_name].activate_room()
-
-def init_room_4(gc_input, gd_input, room_name):
+    # room 3
+    gd_input.add_room("room3", Room3(gc_input, gd_input))
+    gd_input.room_list["room3"].activate_room()
 
     # add room #4
-    gd_input.add_room(room_name, Room4(room_name, 1, 1, 100, 50, 2, 1, gc_input, gd_input, map_style="csv"))
+    gd_input.add_room("room4", Room4(gc_input, gd_input))
+    gd_input.room_list["room4"].activate_room()
 
-    gd_input.room_list[room_name].activate_room()
-
-    # TODO: figure out how to use csv for rooms with multiple maps in them (Perhaps attach them to BG instead of Room)
-    gd_input.positioner[room_name].fill_obstacles("assets/csv_maps/big_map.csv", room_name)
-
-
-def init_room_Coop(gc_input, gd_input, room_name):
     # add room Coop
-    gd_input.add_room(room_name, Room5(room_name, 1, 1, 36, 60, 1, 1, gc_input, gd_input, map_style="csv"))
-    gd_input.room_list[room_name].activate_room()
+    gd_input.add_room("Coop", Room5(gc_input, gd_input))
+    gd_input.room_list["Coop"].activate_room()
 
-
-    # TODO: figure out how to use csv for rooms with multiple maps in them (Perhaps attach them to BG instead of Room)
-    gd_input.positioner["Coop"].fill_obstacles("assets/csv_maps/Coop_allowance.csv", "Coop")
-
-
+    # add room #6
+    gd_input.add_room("room6", Room6(gc_input, gd_input))
+    gd_input.room_list["room6"].activate_room()
