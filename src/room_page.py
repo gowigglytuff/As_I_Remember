@@ -146,8 +146,8 @@ class Room1(Room):
         self.gd_input.room_list[self.name].activate_plot("room1_1_1")
 
     def add_room_doors(self):
-        self.gd_input.room_list[self.name].add_room_door("room1_door1", Door(self.name, "Coop", 2, 2, 1, 56, "room1_door1"))
-        self.gd_input.room_list[self.name].add_room_door("room1_door2", Door(self.name, "room4", 5, 1, 2, 4, "room1_door2"))
+        self.gd_input.room_list[self.name].add_room_door("ringside_door1", Door(self.name, "Ringside", 2, 2, 3, 3, "ringside_door1"))
+        self.gd_input.room_list[self.name].add_room_door("ringside_door2", Door(self.name, "room4", 5, 1, 2, 4, "room1_door2"))
 
     def add_room_characters(self):
         self.gd_input.add_character("Shuma", GenericNPC(2, 4, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Shuma.png", 32, 40), "Shuma", self.name, "Your dad have manure for sale? I'd really love to get my hands on a couple bags of it. It's great for the turnips and the kale! Though I think I might get some nitrogen fixed stuff from the co-op for the lettuce..."))
@@ -358,3 +358,45 @@ class Room6(Room):
         pass
     def add_room_props(self):
         pass
+
+class Ringside(Room):
+    def __init__(self, gc_input, gd_input):
+        super().__init__(gc_input, gd_input)
+        self.terrain_map = None
+        self.obstacle_map = None
+
+        self.name = "Ringside"
+        self.room_width = 55
+        self.room_height = 106
+        self.left_edge_x = 1
+        self.top_edge_y = 1
+
+        self.right_edge_x = self.left_edge_x + self.room_width - 1
+        self.bottom_edge_y = self.top_edge_y + self.room_height - 1
+
+        self.map_style = "image"
+
+        self.total_plots_x = 1
+        self.total_plots_y = 1
+        self.plot_size_x = int(self.room_width / self.total_plots_x)
+        self.plot_size_y = int(self.room_height / self.total_plots_y)
+
+    def add_room_and_plots(self):
+        ringside_map = TileMap("assets/csv_maps/ringside_map.csv", self.gd_input.tiles_img_dict)
+        self.gd_input.room_list["Ringside"].add_room_plot("Ringside_1_1", Plot("Coop", 1, 1, ringside_map.return_map(), self.gc_input, self.gd_input, "assets/csv_maps/ringside_map.csv"))
+        self.gd_input.room_list[self.name].activate_plot("Ringside_1_1")
+
+    def add_room_doors(self):
+        pass
+        #self.gd_input.room_list["Coop"].add_room_door("Coop_door1", Door("Coop", "room2", 1, 57, 13, 11, "Coop_door1"))
+
+    def add_room_characters(self):
+        pass
+
+    def add_room_props(self):
+        self.gd_input.add_prop("Coop_Building", Coop(10, 8, self.gc_input, self.gd_input, 832, 1632, "assets/prop_sprites/Coop_Building.png", "Coop_Building", 26, 51, self.name))
+        self.gd_input.add_prop("Computer_Centre", ComputerCentre(16, 85, self.gc_input, self.gd_input, 192, 128, "assets/prop_sprites/computer_centre.png", "Computer_Centre", 6, 4, self.name))
+        self.gd_input.add_prop("Hornby_Creative", HornbyCreative(14, 75, self.gc_input, self.gd_input, 192, 128, "assets/prop_sprites/hornby_creative.png", "Hornby_Creative", 6, 4, self.name))
+        self.gd_input.add_prop("Island_Potters", IslandPotters(37, 62, self.gc_input, self.gd_input, 160, 96, "assets/prop_sprites/island_potters.png", "Island_Potters", 5, 3, self.name))
+        self.gd_input.add_prop("Lix", Lix(15, 66, self.gc_input, self.gd_input, (8*32), (5*32), "assets/prop_sprites/lix.png", "Lix", 8, 5, self.name))
+        self.gd_input.add_prop("Real_Estate", RealEstate(37, 71, self.gc_input, self.gd_input, (5*32), (5*32), "assets/prop_sprites/real_estate_2.png", "Real_Estate", 5, 5, self.name))

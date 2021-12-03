@@ -188,3 +188,6 @@ def init_all_rooms(gc_input, gd_input):
     # add room #6
     gd_input.add_room("room6", Room6(gc_input, gd_input))
     gd_input.room_list["room6"].activate_room()
+
+    gd_input.add_room("Ringside", Ringside(gc_input, gd_input))
+    gd_input.room_list["Ringside"].activate_room()
