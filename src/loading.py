@@ -34,10 +34,11 @@ def init_game(gd_input, gc_input):
     load_key_items(gc_input, gd_input)
 
     # Load the Tileset
+    FT = TileSet("assets/csv_maps/csv_tiles/Full_Tileset_Adjusted.png", 32, 32,40, 40)
     BT = TileSet("assets/csv_maps/csv_tiles/Big_Tileset.png", 32, 32, 40, 10)
     T = TileSet("assets/csv_maps/csv_tiles/tileset.png", 32, 32, 3, 5)
     # store each tile in a dictionary in GameData that will be accessed by the TileMap function
-    gd_input.add_tile_dict(BT.load_tile_images())
+    gd_input.add_tile_dict(FT.load_tile_images())
 
     # add the player to the game
     gd_input.add_player("Player", Player(2, 3, gc_input, gd_input))

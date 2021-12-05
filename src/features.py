@@ -289,7 +289,7 @@ class NPC(Feature):
         self.drawing_priority = 2
         self.friendship = 0
         self.feature_type = "NPC"
-        self.offset_y = 20
+        self.offset_y = 16
 
 
         NPC.NPC_TIMER_ID += 2

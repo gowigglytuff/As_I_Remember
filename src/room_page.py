@@ -4,7 +4,8 @@ import pygame, csv, os
 
 from TileMap import TileMap
 from features import GenericNPC, Spritesheet
-from prop_page import GenericProp, Tree, Decoration, Building, Lix, ComputerCentre, IslandPotters, Coop, HornbyCreative, RealEstate
+from prop_page import GenericProp, Tree, Decoration, Building, Lix, ComputerCentre, IslandPotters, Coop, HornbyCreative, \
+    RealEstate, ToTheMoon, BenchHorizontal, BenchVertical, Fibres, PlumTree
 from keyboards import Direction, Facing
 from mapClasses import Plot, Door, Tile, Position_Manager
 
@@ -146,7 +147,7 @@ class Room1(Room):
         self.gd_input.room_list[self.name].activate_plot("room1_1_1")
 
     def add_room_doors(self):
-        self.gd_input.room_list[self.name].add_room_door("ringside_door1", Door(self.name, "Ringside", 2, 2, 3, 3, "ringside_door1"))
+        self.gd_input.room_list[self.name].add_room_door("ringside_door1", Door(self.name, "Ringside", 2, 2, 8, 70, "ringside_door1"))
         self.gd_input.room_list[self.name].add_room_door("ringside_door2", Door(self.name, "room4", 5, 1, 2, 4, "room1_door2"))
 
     def add_room_characters(self):
@@ -391,12 +392,30 @@ class Ringside(Room):
         #self.gd_input.room_list["Coop"].add_room_door("Coop_door1", Door("Coop", "room2", 1, 57, 13, 11, "Coop_door1"))
 
     def add_room_characters(self):
-        pass
+        self.gd_input.add_character("Deb", GenericNPC(29, 76, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Deb.png", 32, 40), "Deb", self.name, "Hey Shuma, so nice to see you again!, I should probably be in the studio, but when I'm low on inspiration I like to come out here and walk by the water. "))
+        self.gd_input.add_character("Alex", GenericNPC(17, 70, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/alex_lamont_CS.png", 32, 40), "Alex", self.name, "Hey Shuma, nice to see you! Stop by later and I'll sling you some free icecream! haha... I'm just kidding it's $5.00 a cone."))
+        self.gd_input.add_character("Jamara", GenericNPC(31, 90, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Jamara_CS.png", 32, 40), "Jamara", self.name, "What do you think the greatest joy in life is? I haven't figured it out yet... I enjoy a whole lot of stuff, but I feel like nothing I've done so far is quite it."))
+        self.gd_input.add_character("Donna", GenericNPC(39, 78, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Donna_Tuelle_CS.png", 32, 40), "Donna", self.name, "You know, Jennessa does such a good job, I'm almost considering retiring... not quite, but a very strong almost."))
+
 
     def add_room_props(self):
-        self.gd_input.add_prop("Coop_Building", Coop(10, 8, self.gc_input, self.gd_input, 832, 1632, "assets/prop_sprites/Coop_Building.png", "Coop_Building", 26, 51, self.name))
-        self.gd_input.add_prop("Computer_Centre", ComputerCentre(16, 85, self.gc_input, self.gd_input, 192, 128, "assets/prop_sprites/computer_centre.png", "Computer_Centre", 6, 4, self.name))
-        self.gd_input.add_prop("Hornby_Creative", HornbyCreative(14, 75, self.gc_input, self.gd_input, 192, 128, "assets/prop_sprites/hornby_creative.png", "Hornby_Creative", 6, 4, self.name))
-        self.gd_input.add_prop("Island_Potters", IslandPotters(37, 62, self.gc_input, self.gd_input, 160, 96, "assets/prop_sprites/island_potters.png", "Island_Potters", 5, 3, self.name))
-        self.gd_input.add_prop("Lix", Lix(15, 66, self.gc_input, self.gd_input, (8*32), (5*32), "assets/prop_sprites/lix.png", "Lix", 8, 5, self.name))
-        self.gd_input.add_prop("Real_Estate", RealEstate(37, 71, self.gc_input, self.gd_input, (5*32), (5*32), "assets/prop_sprites/real_estate_2.png", "Real_Estate", 5, 5, self.name))
+            self.gd_input.add_prop("Coop_Building", Coop(10, 8, self.gc_input, self.gd_input, 832, 1632, "assets/prop_sprites/Coop_Building.png", "Coop_Building", 26, 51, self.name))
+            self.gd_input.add_prop("Computer_Centre", ComputerCentre(9, 82, self.gc_input, self.gd_input, 192, 128, "assets/prop_sprites/computer_centre.png", "Computer_Centre", 6, 4, self.name))
+            self.gd_input.add_prop("Hornby_Creative", HornbyCreative(9, 74, self.gc_input, self.gd_input, 192, 128, "assets/prop_sprites/hornby_creative.png", "Hornby_Creative", 6, 4, self.name))
+            self.gd_input.add_prop("Island_Potters", IslandPotters(38, 61, self.gc_input, self.gd_input, 160, 96, "assets/prop_sprites/island_potters.png", "Island_Potters", 5, 3, self.name))
+            self.gd_input.add_prop("Lix", Lix(15, 63, self.gc_input, self.gd_input, (8*32), (5*32), "assets/prop_sprites/lix.png", "Lix", 8, 5, self.name))
+            self.gd_input.add_prop("Real_Estate", RealEstate(38, 72, self.gc_input, self.gd_input, (5*32), (5*32), "assets/prop_sprites/real_estate_2.png", "Real_Estate", 5, 5, self.name))
+            self.gd_input.add_prop("To_The_Moon", ToTheMoon(39, 78, self.gc_input, self.gd_input, (5 * 32), (5 * 32), "assets/prop_sprites/to_the_moon.png", "To_The_Moon", 5, 5, self.name))
+            self.gd_input.add_prop("Fibres", Fibres(31, 60, self.gc_input, self.gd_input, (5 * 32), (5 * 32), "assets/prop_sprites/Fibres.png", "Fibres", 5, 5, self.name))
+
+
+            self.gd_input.add_prop("tree1", Tree(29, 74, "tree1", self.gc_input, self.gd_input, self.name))
+            self.gd_input.add_prop("Bench1", BenchHorizontal(28, 78, "Bench1", self.gc_input, self.gd_input, self.name))
+            self.gd_input.add_prop("Bench2", BenchHorizontal(29, 70, "Bench2", self.gc_input, self.gd_input, self.name))
+            self.gd_input.add_prop("Bench4", BenchVertical(26, 73, "Bench4", self.gc_input, self.gd_input, self.name))
+            self.gd_input.add_prop("Bench5", BenchVertical(33, 73, "Bench5", self.gc_input, self.gd_input, self.name))
+            self.gd_input.add_prop("Bench6", BenchVertical(22, 69, "Bench6", self.gc_input, self.gd_input, self.name))
+            self.gd_input.add_prop("Bench7", BenchVertical(21, 79, "Bench7", self.gc_input, self.gd_input, self.name))
+
+            self.gd_input.add_prop("tree2", Tree(37, 69, "tree2", self.gc_input, self.gd_input, self.name))
+            self.gd_input.add_prop("Bench3", BenchHorizontal(37, 70, "Bench3", self.gc_input, self.gd_input, self.name))
