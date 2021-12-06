@@ -4,8 +4,7 @@ import pygame, csv, os
 
 from TileMap import TileMap
 from features import GenericNPC, Spritesheet
-from prop_page import GenericProp, Tree, Decoration, Building, Lix, ComputerCentre, IslandPotters, Coop, HornbyCreative, \
-    RealEstate, ToTheMoon, BenchHorizontal, BenchVertical, Fibres, PlumTree
+from prop_page import GenericProp, Tree, Decoration, Building, BenchHorizontal, BenchVertical, PlumTree, PicnicTable
 from keyboards import Direction, Facing
 from mapClasses import Plot, Door, Tile, Position_Manager
 
@@ -163,8 +162,8 @@ class Room2(Room):
     def __init__(self, gc_input, gd_input):
         super().__init__(gc_input, gd_input)
 
-        self.terrain_map = "assets/csv_maps/room2.csv"
-        self.obstacle_map = "assets/csv_maps/room2.csv"
+        self.terrain_map = "assets/room_maps/room2.csv"
+        self.obstacle_map = "assets/room_maps/room2.csv"
 
         self.name = "room2"
         self.room_width = 15
@@ -183,7 +182,7 @@ class Room2(Room):
         self.plot_size_y = int(self.room_height/self.total_plots_y)
 
     def add_room_and_plots(self):
-        self.gd_input.room_list[self.name].add_room_plot("room2_1_1", Plot(self.name, 1, 1, TileMap("assets/csv_maps/csv_tiles/lake.csv", self.gd_input.tiles_img_dict).return_map(), self.gc_input, self.gd_input, "assets/csv_maps/room2.csv"))
+        self.gd_input.room_list[self.name].add_room_plot("room2_1_1", Plot(self.name, 1, 1, TileMap("assets/room_maps/csv_tiles/lake.csv", self.gd_input.tiles_img_dict).return_map(), self.gc_input, self.gd_input, "assets/room_maps/room2.csv"))
         self.gd_input.room_list[self.name].activate_plot("room2_1_1")
 
     def add_room_doors(self):
@@ -199,7 +198,7 @@ class Room2(Room):
         self.gd_input.add_character("Donna", GenericNPC(3, 11, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Donna_Tuelle_CS.png", 32, 40), "Donna", self.name, "You know, Jennessa does such a good job, I'm almost considering retiring... not quite, but a very strong almost."))
 
     def add_room_props(self):
-        self.gd_input.add_prop("house", GenericProp(5, 10, self.gc_input, self.gd_input, 160, 128, Spritesheet("assets/prop_sprites/House.png", 160, 128), "house", 5, 3, self.name))
+        self.gd_input.add_prop("house", GenericProp(5, 10, self.gc_input, self.gd_input, 160, 128, Spritesheet("assets/prop_sprites/Buildings/House.png", 160, 128), "house", 5, 3, self.name))
         self.gd_input.add_prop("tree1", Tree(3, 6, "tree1", self.gc_input, self.gd_input, self.name))
         self.gd_input.add_prop("tree2", Tree(6, 6, "tree2", self.gc_input, self.gd_input, self.name))
         self.gd_input.add_prop("tree3", Tree(9, 6, "tree3", self.gc_input, self.gd_input, self.name))
@@ -247,7 +246,7 @@ class Room4(Room):
     def __init__(self, gc_input, gd_input):
             super().__init__(gc_input, gd_input)
             self.terrain_map = None
-            self.obstacle_map = "assets/csv_maps/big_map.csv"
+            self.obstacle_map = "assets/room_maps/big_map.csv"
 
             self.name = "room4"
             self.room_width = 100
@@ -266,9 +265,9 @@ class Room4(Room):
             self.plot_size_y = int(self.room_height / self.total_plots_y)
 
     def add_room_and_plots(self):
-        big_map = TileMap("assets/csv_maps/csv_tiles/big_map2.0.csv", self.gd_input.tiles_img_dict)
-        self.gd_input.room_list[self.name].add_room_plot("room4_1_1", Plot(self.name, 1, 1, big_map.return_map(), self.gc_input, self.gd_input, "assets/csv_maps/big_map.csv"))
-        self.gd_input.room_list[self.name].add_room_plot("room4_1_2", Plot(self.name, 2, 1, big_map.return_map(), self.gc_input, self.gd_input, "assets/csv_maps/big_map.csv"))
+        big_map = TileMap("assets/room_maps/csv_tiles/big_map2.0.csv", self.gd_input.tiles_img_dict)
+        self.gd_input.room_list[self.name].add_room_plot("room4_1_1", Plot(self.name, 1, 1, big_map.return_map(), self.gc_input, self.gd_input, "assets/room_maps/big_map.csv"))
+        self.gd_input.room_list[self.name].add_room_plot("room4_1_2", Plot(self.name, 2, 1, big_map.return_map(), self.gc_input, self.gd_input, "assets/room_maps/big_map.csv"))
         self.gd_input.room_list[self.name].activate_plot("room4_1_1")
         self.gd_input.room_list[self.name].activate_plot("room4_1_2")
 
@@ -287,8 +286,8 @@ class Room4(Room):
 class Room5(Room):
     def __init__(self, gc_input, gd_input):
         super().__init__(gc_input, gd_input)
-        self.terrain_map = "assets/csv_maps/Coop_allowance.csv"
-        self.obstacle_map = "assets/csv_maps/Coop_allowance.csv"
+        self.terrain_map = "assets/room_maps/Coop_allowance.csv"
+        self.obstacle_map = "assets/room_maps/Coop_allowance.csv"
 
         self.name = "Coop"
         self.room_width = 36
@@ -307,8 +306,8 @@ class Room5(Room):
         self.plot_size_y = int(self.room_height / self.total_plots_y)
 
     def add_room_and_plots(self):
-        coop_map = TileMap("assets/csv_maps/Co-op_area.csv", self.gd_input.tiles_img_dict)
-        self.gd_input.room_list["Coop"].add_room_plot("Coop_1_1", Plot("Coop", 1, 1, coop_map.return_map(), self.gc_input, self.gd_input, "assets/csv_maps/Coop_allowance.csv"))
+        coop_map = TileMap("assets/room_maps/Co-op_area.csv", self.gd_input.tiles_img_dict)
+        self.gd_input.room_list["Coop"].add_room_plot("Coop_1_1", Plot("Coop", 1, 1, coop_map.return_map(), self.gc_input, self.gd_input, "assets/room_maps/Coop_allowance.csv"))
         self.gd_input.room_list[self.name].activate_plot("Coop_1_1")
 
     def add_room_doors(self):
@@ -318,13 +317,12 @@ class Room5(Room):
         pass
 
     def add_room_props(self):
-        self.gd_input.add_prop("Coop_Building", Coop(2, 2, self.gc_input, self.gd_input, 832, 1632, "assets/prop_sprites/Coop_Building.png", "Coop_Building", 26, 51, self.name))
-        self.gd_input.add_prop("Computer_Centre", ComputerCentre(25, 53, self.gc_input, self.gd_input, 192, 128, "assets/prop_sprites/computer_centre.png", "Computer_Centre", 6, 4, self.name))
-        self.gd_input.add_prop("Hornby_Creative", HornbyCreative(25, 48, self.gc_input, self.gd_input, 192, 128, "assets/prop_sprites/hornby_creative.png", "Hornby_Creative", 6, 4, self.name))
-        self.gd_input.add_prop("Island_Potters", IslandPotters(7, 53, self.gc_input, self.gd_input, 160, 96, "assets/prop_sprites/island_potters.png", "Island_Potters", 5, 3, self.name))
-        self.gd_input.add_prop("Lix", Lix(23, 42, self.gc_input, self.gd_input, (8*32), (5*32), "assets/prop_sprites/lix.png", "Lix", 8, 5, self.name))
-        self.gd_input.add_prop("Real_Estate", RealEstate(1, 52, self.gc_input, self.gd_input, (5*32), (5*32), "assets/prop_sprites/real_estate_2.png", "Real_Estate", 5, 5, self.name))
-
+        #self.gd_input.add_prop("Coop_Building", Coop(2, 2, self.gc_input, self.gd_input, 832, 1632, "assets/prop_sprites/Buildings/Coop_Building.png", "Coop_Building", 26, 51, self.name))
+        #self.gd_input.add_prop("Computer_Centre", ComputerCentre(25, 53, self.gc_input, self.gd_input, 192, 128, "assets/prop_sprites/Buildings/computer_centre.png", "Computer_Centre", 6, 4, self.name))
+        #self.gd_input.add_prop("Island_Potters", IslandPotters(7, 53, self.gc_input, self.gd_input, 160, 96, "assets/prop_sprites/Buildings/island_potters.png", "Island_Potters", 5, 3, self.name))
+        #self.gd_input.add_prop("Lix", Lix(23, 42, self.gc_input, self.gd_input, (8*32), (5*32), "assets/prop_sprites/Buildings/lix.png", "Lix", 8, 5, self.name))
+        #self.gd_input.add_prop("Real_Estate", RealEstate(1, 52, self.gc_input, self.gd_input, (5*32), (5*32), "assets/prop_sprites/Buildings/real_estate_2.png", "Real_Estate", 5, 5, self.name))
+        pass
 
 class Room6(Room):
     def __init__(self, gc_input, gd_input):
@@ -350,7 +348,7 @@ class Room6(Room):
         self.plot_size_y = int(self.room_height/self.total_plots_y)
 
     def add_room_and_plots(self):
-        room6_map = TileMap("assets/csv_maps/room6.csv", self.gd_input.tiles_img_dict)
+        room6_map = TileMap("assets/room_maps/room6.csv", self.gd_input.tiles_img_dict)
         self.gd_input.room_list[self.name].add_room_plot("room6_1_1", Plot("room6", 1, 1, room6_map.return_map(), self.gc_input, self.gd_input, None))
         self.gd_input.room_list[self.name].activate_plot("room6_1_1")
     def add_room_doors(self):
@@ -383,8 +381,8 @@ class Ringside(Room):
         self.plot_size_y = int(self.room_height / self.total_plots_y)
 
     def add_room_and_plots(self):
-        ringside_map = TileMap("assets/csv_maps/ringside_map.csv", self.gd_input.tiles_img_dict)
-        self.gd_input.room_list["Ringside"].add_room_plot("Ringside_1_1", Plot("Coop", 1, 1, ringside_map.return_map(), self.gc_input, self.gd_input, "assets/csv_maps/ringside_map.csv"))
+        ringside_map = TileMap("assets/room_maps/ringside_map.csv", self.gd_input.tiles_img_dict)
+        self.gd_input.room_list["Ringside"].add_room_plot("Ringside_1_1", Plot("Coop", 1, 1, ringside_map.return_map(), self.gc_input, self.gd_input, "assets/room_maps/ringside_map.csv"))
         self.gd_input.room_list[self.name].activate_plot("Ringside_1_1")
 
     def add_room_doors(self):
@@ -399,14 +397,14 @@ class Ringside(Room):
 
 
     def add_room_props(self):
-            self.gd_input.add_prop("Coop_Building", Coop(10, 8, self.gc_input, self.gd_input, 832, 1632, "assets/prop_sprites/Coop_Building.png", "Coop_Building", 26, 51, self.name))
-            self.gd_input.add_prop("Computer_Centre", ComputerCentre(9, 82, self.gc_input, self.gd_input, 192, 128, "assets/prop_sprites/computer_centre.png", "Computer_Centre", 6, 4, self.name))
-            self.gd_input.add_prop("Hornby_Creative", HornbyCreative(9, 74, self.gc_input, self.gd_input, 192, 128, "assets/prop_sprites/hornby_creative.png", "Hornby_Creative", 6, 4, self.name))
-            self.gd_input.add_prop("Island_Potters", IslandPotters(38, 61, self.gc_input, self.gd_input, 160, 96, "assets/prop_sprites/island_potters.png", "Island_Potters", 5, 3, self.name))
-            self.gd_input.add_prop("Lix", Lix(15, 63, self.gc_input, self.gd_input, (8*32), (5*32), "assets/prop_sprites/lix.png", "Lix", 8, 5, self.name))
-            self.gd_input.add_prop("Real_Estate", RealEstate(38, 72, self.gc_input, self.gd_input, (5*32), (5*32), "assets/prop_sprites/real_estate_2.png", "Real_Estate", 5, 5, self.name))
-            self.gd_input.add_prop("To_The_Moon", ToTheMoon(39, 78, self.gc_input, self.gd_input, (5 * 32), (5 * 32), "assets/prop_sprites/to_the_moon.png", "To_The_Moon", 5, 5, self.name))
-            self.gd_input.add_prop("Fibres", Fibres(31, 60, self.gc_input, self.gd_input, (5 * 32), (5 * 32), "assets/prop_sprites/Fibres.png", "Fibres", 5, 5, self.name))
+            self.gd_input.add_prop("Coop_Building", Building(10, 8, self.gc_input, self.gd_input, 832, 1632, "assets/prop_sprites/Buildings/Coop_Building.png", "Coop_Building", 26, 51, self.name, "assets/prop_sprites/Buildings/building_csv/coop_fill_csv.csv"))
+            self.gd_input.add_prop("Computer_Centre", Building(9, 82, self.gc_input, self.gd_input, 192, 128, "assets/prop_sprites/Buildings/computer_centre.png", "Computer_Centre", 6, 4, self.name, "assets/prop_sprites/Buildings/building_csv/computer_centre_fill_map.csv"))
+            self.gd_input.add_prop("Hornby_Creative", Building(9, 74, self.gc_input, self.gd_input, 192, 128, "assets/prop_sprites/Buildings/hornby_creative.png", "Hornby_Creative", 6, 4, self.name, "assets/prop_sprites/Buildings/building_csv/hornby_creative_fill_map.csv"))
+            self.gd_input.add_prop("Island_Potters", Building(38, 61, self.gc_input, self.gd_input, 160, 96, "assets/prop_sprites/Buildings/island_potters.png", "Island_Potters", 5, 3, self.name, "assets/prop_sprites/Buildings/building_csv/island_potters_fill_map.csv"))
+            self.gd_input.add_prop("Lix", Building(15, 63, self.gc_input, self.gd_input, (8*32), (5*32), "assets/prop_sprites/Buildings/lix.png", "Lix", 8, 5, self.name, "assets/prop_sprites/Buildings/building_csv/lix_fill_map.csv"))
+            self.gd_input.add_prop("Real_Estate", Building(38, 72, self.gc_input, self.gd_input, (5*32), (5*32), "assets/prop_sprites/Buildings/real_estate_2.png", "Real_Estate", 5, 5, self.name, "assets/prop_sprites/Buildings/building_csv/real_estate_csv.csv"))
+            self.gd_input.add_prop("To_The_Moon", Building(39, 78, self.gc_input, self.gd_input, (5 * 32), (5 * 32), "assets/prop_sprites/Buildings/to_the_moon.png", "To_The_Moon", 5, 5, self.name, "assets/prop_sprites/Buildings/building_csv/to_the_moon_fill_map.csv"))
+            self.gd_input.add_prop("Fibres", Building(31, 60, self.gc_input, self.gd_input, (5 * 32), (5 * 32), "assets/prop_sprites/Buildings/Fibres.png", "Fibres", 5, 5, self.name, "assets/prop_sprites/Buildings/building_csv/fibres_fill_map.csv"))
 
 
             self.gd_input.add_prop("tree1", Tree(29, 74, "tree1", self.gc_input, self.gd_input, self.name))
@@ -419,3 +417,10 @@ class Ringside(Room):
 
             self.gd_input.add_prop("tree2", Tree(37, 69, "tree2", self.gc_input, self.gd_input, self.name))
             self.gd_input.add_prop("Bench3", BenchHorizontal(37, 70, "Bench3", self.gc_input, self.gd_input, self.name))
+
+            self.gd_input.add_prop("Picnic_Table5", PicnicTable(17, 82, "Picnic_Table5", self.gc_input, self.gd_input, self.name))
+
+            self.gd_input.add_prop("Picnic_Table1", PicnicTable(9, 65, "Picnic_Table1", self.gc_input, self.gd_input, self.name))
+            self.gd_input.add_prop("Picnic_Table2", PicnicTable(9, 69, "Picnic_Table2", self.gc_input, self.gd_input, self.name))
+            self.gd_input.add_prop("Picnic_Table3", PicnicTable(13, 65, "Picnic_Table3", self.gc_input, self.gd_input, self.name))
+            self.gd_input.add_prop("Picnic_Table4", PicnicTable(13, 69, "Picnic_Table4", self.gc_input, self.gd_input, self.name))

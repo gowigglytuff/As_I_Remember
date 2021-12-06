@@ -103,8 +103,12 @@ class GameController(object):
     def add_keyboard_manager(self, keyboard_manager_name, keyboard_manager_object):
         self.keyboard_manager_list[keyboard_manager_name] = keyboard_manager_object
 
-    def set_keyboard_manager(self, active_manager):
+    def set_keyboard_manager(self, active_manager, menu=None, origin=None):
         self.current_keyboard_manager = self.keyboard_manager_list[active_manager]
+        if menu is not None:
+            self.MenuManager.activate_menu(menu)
+        if origin is not None:
+            self.GameData.menu_list[menu].set_origin(origin)
 
     def set_menu(self, active_menu):
         self.current_menu = active_menu

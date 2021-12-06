@@ -1,5 +1,8 @@
 import pygame
 
+from keyboards import InStartMenu, InYesNo, InInventory, InKeyInventory, InUseInventory, InGame
+
+
 class Overlay(object):
     def __init__(self, GameController, GameData, name, x, y, image):
         self.GameController = GameController
@@ -77,6 +80,34 @@ class MenuManager(object):
         self.use_menu = False
         self.yes_no_menu = False
 
+    def activate_menu(self, menu_to_activate):
+        if menu_to_activate == "character_interact_menu":
+            self.character_interact_menu = True
+        if menu_to_activate == "start_menu":
+            self.start_menu = True
+        if menu_to_activate == "inventory_menu":
+            self.inventory_menu = True
+        if menu_to_activate == "key_inventory_menu":
+            self.key_inventory_menu = True
+        if menu_to_activate == "use_menu":
+            self.use_menu = True
+        if menu_to_activate == "yes_no_menu":
+            self.yes_no_menu = True
+
+    def deactivate_menu(self, menu_to_deactivate):
+        if menu_to_deactivate == "character_interact_menu":
+            self.character_interact_menu = False
+        if menu_to_deactivate == "start_menu":
+            self.start_menu = False
+        if menu_to_deactivate == "inventory_menu":
+            self.inventory_menu = False
+        if menu_to_deactivate == "key_inventory_menu":
+            self.key_inventory_menu = False
+        if menu_to_deactivate == "use_menu":
+            self.use_menu = False
+        if menu_to_deactivate == "yes_no_menu":
+            self.yes_no_menu = False
+
 class Menu(object):
     def __init__(self, GameController, GameData, name, menu_item_list, menu_go, overlay, offset_x=30, offset_y=20):
         self.GameController = GameController
@@ -91,6 +122,20 @@ class Menu(object):
         self.menu_go = menu_go
         self.cursor_at = 0
 
+        self.origin = None
+
+    def set_origin(self, menu_name):
+        self.origin = menu_name
+
+    def reset_origin(self):
+        self.origin = None
+
+    def set_menu(self):
+        pass
+
+    def exit_menus(self):
+        self.GameController.MenuManager.deactivate_menu(self.name)
+        self.GameController.set_keyboard_manager(InGame.ID)
 
     @property
     def size(self):
@@ -132,6 +177,11 @@ class Menu(object):
         menu_selection = self.menu_item_list[self.cursor_at]
         return menu_selection
 
+    def choose_option(self):
+        pass
+    def do_option(self):
+        pass
+
 class TalkingMenu(Menu):
     def __init__(self, GameController, GameData, name, menu_item_list, menu_go, overlay):
         super().__init__(GameController, GameData, name, menu_item_list, menu_go, overlay, offset_x=150, offset_y = 50)
@@ -159,7 +209,12 @@ class StartMenu(Menu):
         super().__init__(GameController, GameData, name, menu_item_list, menu_go, overlay)
         self.menu_item_list.append("Exit")
 
-class InventoryMenu(Menu):
+    def set_menu(self):
+        self.GameController.set_keyboard_manager(InStartMenu.ID)
+        self.GameController.MenuManager.activate_menu(self.name)
+        self.GameController.set_menu(self.name)
+
+class KeyInventoryMenu(Menu):
     def __init__(self, GameController, GameData, name, menu_item_list, menu_go, overlay):
         super().__init__(GameController, GameData, name, menu_item_list, menu_go, overlay)
         self.y_spacing = 20
@@ -168,6 +223,41 @@ class InventoryMenu(Menu):
         my_font = pygame.font.Font(self.GameController.font, 10)
         item = my_font.render("-", 1, (0, 0, 0))
         self.screen.blit(item, (self.x - 15, (self.y+2 + self.y_spacing) + (self.cursor_at * self.menu_spread)))
+
+    def display_menu(self):
+        self.GameData.overlay_list[self.overlay].display_overlay()
+
+        my_font = pygame.font.Font(self.GameController.font, 10)
+        item = my_font.render("<  KEY ITEMS  >", 1, (0, 0, 0))
+        self.screen.blit(item, (self.x, self.y))
+
+        for option in range(self.size):
+            item = my_font.render(self.menu_item_list[option], 1, (0, 0, 0))
+            self.screen.blit(item, (self.x, self.y + self.y_spacing + (option * self.menu_spread)))
+
+        self.display_cursor()
+
+    def set_menu(self):
+        self.set_origin(self.GameController.current_menu)
+        self.GameController.MenuManager.deactivate_menu(self.origin)
+        self.GameController.set_keyboard_manager(InKeyInventory.ID)
+        self.GameController.MenuManager.activate_menu(self.name)
+        self.GameController.set_menu(self.name)
+        self.GameData.menu_list[self.origin].reset_cursor()
+        print(self.origin)
+
+    def choose_option(self):
+        self.GameData.menu_list["use_menu"].set_menu()
+
+class InventoryMenu(Menu):
+    def __init__(self, GameController, GameData, name, menu_item_list, menu_go, overlay):
+        super().__init__(GameController, GameData, name, menu_item_list, menu_go, overlay)
+        self.y_spacing = 20
+
+    def display_cursor(self):
+        my_font = pygame.font.Font(self.GameController.font, 10)
+        item = my_font.render("-", 1, (0, 0, 0))
+        self.screen.blit(item, (self.x - 15, (self.y + 2 + self.y_spacing) + (self.cursor_at * self.menu_spread)))
 
     def display_menu(self):
         self.GameData.overlay_list[self.overlay].display_overlay()
@@ -192,25 +282,63 @@ class InventoryMenu(Menu):
             self.screen.blit(item, (self.x + spacing, self.y + self.y_spacing + (option * self.menu_spread)))
         self.display_cursor()
 
-class KeyInventoryMenu(Menu):
+    def set_menu(self):
+        self.set_origin(self.GameController.current_menu)
+        self.GameController.MenuManager.deactivate_menu(self.origin)
+        self.GameController.set_keyboard_manager(InInventory.ID)
+        self.GameController.MenuManager.activate_menu(self.name)
+        self.GameController.set_menu(self.name)
+        self.GameData.menu_list[self.origin].reset_cursor()
+        print(self.origin)
+
+    def choose_option(self):
+        self.GameData.menu_list["use_menu"].set_menu()
+
+class UseMenu(Menu):
     def __init__(self, GameController, GameData, name, menu_item_list, menu_go, overlay):
         super().__init__(GameController, GameData, name, menu_item_list, menu_go, overlay)
-        self.y_spacing = 20
+        self.menu_item_list.append("Exit")
 
-    def display_cursor(self):
-        my_font = pygame.font.Font(self.GameController.font, 10)
-        item = my_font.render("-", 1, (0, 0, 0))
-        self.screen.blit(item, (self.x - 15, (self.y+2 + self.y_spacing) + (self.cursor_at * self.menu_spread)))
+    def set_menu(self):
+        self.set_origin(self.GameController.current_menu)
 
-    def display_menu(self):
-        self.GameData.overlay_list[self.overlay].display_overlay()
+        menu_selection = self.GameData.menu_list[self.origin].get_current_menu_item()
+        self.GameController.inventory.select_item(menu_selection)
 
-        my_font = pygame.font.Font(self.GameController.font, 10)
-        item = my_font.render("<  KEY ITEMS  >", 1, (0, 0, 0))
-        self.screen.blit(item, (self.x, self.y))
+        self.GameController.set_keyboard_manager(InUseInventory.ID)
+        self.GameController.MenuManager.activate_menu(self.name)
+        self.GameController.set_menu(self.name)
+        print(self.origin)
 
-        for option in range(self.size):
-            item = my_font.render(self.menu_item_list[option], 1, (0, 0, 0))
-            self.screen.blit(item, (self.x, self.y + self.y_spacing + (option * self.menu_spread)))
+    def do_option(self):
+        pass
 
-        self.display_cursor()
+class YesNoMenu(Menu):
+    def __init__(self, GameController, GameData, name, menu_item_list, menu_go, overlay):
+        super().__init__(GameController, GameData, name, menu_item_list, menu_go, overlay)
+
+    def set_menu(self):
+        self.set_origin(self.GameController.current_menu)
+        # self.GameController.MenuManager.deactivate_menu(self.origin)
+        self.GameController.set_keyboard_manager(InYesNo.ID)
+        self.GameController.MenuManager.activate_menu(self.name)
+        self.GameController.set_menu(self.name)
+        print(self.origin)
+
+    def choose_option(self):
+        menu_selection = self.GameData.menu_list[self.name].get_current_menu_item()
+
+        if menu_selection == "Yes":
+            print("yes!")
+            self.exit_menus()
+            print(self.GameData.menu_list[self.origin].origin)
+
+
+        if menu_selection == "No":
+            print("no!")
+
+            # self.GameController.set_menu(None)
+            self.GameController.MenuManager.yes_no_menu = False
+            self.GameController.set_keyboard_manager(InGame.ID)
+
+        self.GameData.menu_list[self.name].reset_cursor()

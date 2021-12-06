@@ -14,8 +14,6 @@ class Inventory(object):
     def select_item(self, selected_item):
         self.selected_item = selected_item
 
-
-
     def bag_left(self):
         self.bag_slots.append(self.bag_slots.pop(self.bag_slots.index(self.bag_slots[0])))
 

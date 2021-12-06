@@ -34,9 +34,9 @@ def init_game(gd_input, gc_input):
     load_key_items(gc_input, gd_input)
 
     # Load the Tileset
-    FT = TileSet("assets/csv_maps/csv_tiles/Full_Tileset_Adjusted.png", 32, 32,40, 40)
-    BT = TileSet("assets/csv_maps/csv_tiles/Big_Tileset.png", 32, 32, 40, 10)
-    T = TileSet("assets/csv_maps/csv_tiles/tileset.png", 32, 32, 3, 5)
+    FT = TileSet("assets/room_maps/csv_tiles/Full_Tileset_Adjusted.png", 32, 32,40, 40)
+    BT = TileSet("assets/room_maps/csv_tiles/Big_Tileset.png", 32, 32, 40, 10)
+    T = TileSet("assets/room_maps/csv_tiles/tileset.png", 32, 32, 3, 5)
     # store each tile in a dictionary in GameData that will be accessed by the TileMap function
     gd_input.add_tile_dict(FT.load_tile_images())
 
@@ -62,6 +62,7 @@ def load_keyboard_managers(GameController, GameData):
     GameController.add_keyboard_manager(InToDoList.ID, InToDoList(GameController, GameData))
 
     GameController.add_keyboard_manager(InProfile.ID, InProfile(GameController, GameData))
+    GameController.add_keyboard_manager(InYesNo.ID, InYesNo(GameController, GameData))
 
     # sets the initial Keyboard Manager to be the InGame Manager
     GameController.set_keyboard_manager(InGame.ID)
@@ -72,8 +73,8 @@ def load_menus(GameController, GameData):
     GameData.add_overlay("start_menu", Overlay(GameController, GameData, "start_menu", 700, 200, Spritesheet("assets/menu_images/start_menu.png", 150, 400)))
     GameData.add_menu("start_menu", StartMenu(GameController, GameData, "start_menu", ["Chore List", "Map", "Bag", "Outfits", "Profile", "Save", "Options", "Vibes"], True, "start_menu"))
 
-    GameData.add_overlay("yes_no_menu", Overlay(GameController, GameData, "yes_no_menu", 600, 200, Spritesheet("assets/menu_images/yes_no_menu.png", 90, 76)))
-    GameData.add_menu("yes_no_menu", Menu(GameController, GameData, "yes_no_menu", ["Yes", "No"], True, "yes_no_menu"))
+    GameData.add_overlay("yes_no_menu", Overlay(GameController, GameData, "yes_no_menu", 490, 200, Spritesheet("assets/menu_images/yes_no_menu.png", 90, 76)))
+    GameData.add_menu("yes_no_menu", YesNoMenu(GameController, GameData, "yes_no_menu", ["Yes", "No"], True, "yes_no_menu"))
 
     # the menu which pops up when the player has selected bag from the start menu
     GameData.add_overlay("inventory_menu", Overlay(GameController, GameData, "inventory_menu", 700, 200, Spritesheet("assets/menu_images/inventory_menu.png", 200, 400)))
@@ -85,7 +86,7 @@ def load_menus(GameController, GameData):
 
     # the menu that pops up when a player selects an item from the inventory or key inventory
     GameData.add_overlay("use_menu", Overlay(GameController, GameData, "use_menu", 590, 200, Spritesheet("assets/menu_images/use_menu.png", 100, 100)))
-    GameData.add_menu("use_menu", StartMenu(GameController, GameData, "use_menu", ["Use", "Toss"], True, "use_menu"))
+    GameData.add_menu("use_menu", UseMenu(GameController, GameData, "use_menu", ["Use", "Toss"], True, "use_menu"))
 
     # Add non-menu overlays
     # the overlay that presents the profile card
