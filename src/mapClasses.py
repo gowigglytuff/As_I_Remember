@@ -102,7 +102,6 @@ class Position_Manager(object):
                         for size_x in range(drawable.size_x):
                             for size_y in range(drawable.size_y):
                                 if drawable.fill_map[size_y][size_x] == '0':
-                                    print(size_x, size_y)
                                     pass
                                 elif drawable.fill_map[size_y][size_x] == '1':
                                     #print(size_x, size_y)
@@ -178,7 +177,8 @@ class Position_Manager(object):
         self.empty_tile(self.GameData.player["Player"])
         x_change = self.GameData.player["Player"].x - door.exit_x
         y_change = self.GameData.player["Player"].y - door.exit_y
-        self.GameData.player["Player"].turn_player(Direction.DOWN)
+        # if self.GameData.player["Player"].facing == Facing.FRONT:
+        #     self.GameData.player["Player"].turn_player(Direction.DOWN)
         self.GameData.player["Player"].x = door.exit_x
         self.GameData.player["Player"].y = door.exit_y
         self.GameController.camera[0] += x_change

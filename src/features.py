@@ -22,6 +22,8 @@ class Feature(object):
         self.gc_input = gc_input
         self.gd_input = gd_input
         self.offset_y = None
+        self.size_y = 1
+        self.size_x = 1
 
     def set_image(self, img_x, img_y):
         self.img = self.spritesheet.get_image(img_x, img_y)
@@ -35,7 +37,6 @@ class Player(Feature):
         self.drawing_priority = 2
         self.step_timer = pygame.USEREVENT + 7
         self.facing = Facing.FRONT
-        self.drawing_priority = 2
         self.feature_type = "Player"
         self.width = 32
         self.height = 40
@@ -45,7 +46,7 @@ class Player(Feature):
         self.offset_y = 16
 
     def activate_timer(self):
-        pygame.time.set_timer(self.step_timer, 60)
+        pygame.time.set_timer(self.step_timer, 30)
 
     def draw(self, screen):
         self_x = (self.imagex * self.gd_input.square_size[0]) + self.gd_input.base_locator_x
@@ -292,6 +293,7 @@ class NPC(Feature):
         self.offset_y = 16
 
 
+
         NPC.NPC_TIMER_ID += 2
 
     # TODO: make sets of walking behaviour types that different NPC can have (back and forth/look around/square/etc.)
@@ -475,7 +477,7 @@ class GenericNPC(NPC):
     def __init__(self, x, y, gc_input, gd_input, spritesheet, name, room, phrase):
         super().__init__(x, y, gc_input, gd_input)
         assert self.state in self.AVAILABLE_STATES
-        self.actions = ["walk_left", "walk_right", "walk_front", "walk_back", "turning_left", "turning_front", "turning_right", "turning_back"]
+        self.actions = ["walk_left", "walk_right", "walk_front", "walk_back", "turning_left", "turning_front", "turning_right", "turning_back", "rest", "rest"]
         self.available_actions = ["turn"]
         self.spritesheet = spritesheet
         self.state = "idle"
@@ -488,8 +490,11 @@ class GenericNPC(NPC):
         self.name = name
         self.phrase = phrase
 
-        self.room = room
+        self.current_step_number = 0
+        self.step1 = ["turning_left", "rest", "walk_left", "rest", "turning_right", "rest", "walk_right", "rest"]
+        self.walk_pattern = "random"
 
+        self.room = room
         self.gd_input.room_list[self.room].add_room_character(self.name)
 
     def activate_timers(self):
@@ -498,7 +503,18 @@ class GenericNPC(NPC):
 
     def do_activity(self):
         if self.state == "idle":
-            result = choice(self.actions)
+            result = None
+            if self.walk_pattern == "step1":
+                if self.current_step_number == len(self.step1) -1:
+                    self.current_step_number = 0
+                elif self.current_step_number < len(self.step1) -1:
+                    self.current_step_number += 1
+                result = self.step1[self.current_step_number]
+            elif self.walk_pattern == "random":
+                result = choice(self.actions)
+
+            if result == "rest":
+                pass
 
             if result == "walk_left":
                 self.facing = Facing.LEFT
@@ -596,3 +612,287 @@ class GenericNPC(NPC):
     def clear_speaking_queue(self):
         self.speaking_queue = None
 
+class StandingNPC(NPC):
+    IDLE = "idle"
+    AVAILABLE_STATES = [IDLE]
+
+    def __init__(self, x, y, gc_input, gd_input, room, name, spritesheet, available_actions, facing):
+        super().__init__(x, y, gc_input, gd_input)
+
+        self.actions = available_actions
+        self.available_actions = ["turn"]
+        self.spritesheet = spritesheet
+        self.state = "idle"
+        self.phrase = "Hello, how are you?"
+        self.current_phrase = None
+        self.speaking_queue = None #textwrap.wrap("Hi everyone, it's so nice to see you here today! I hope you have all been doing well", width=30)
+        self.img = self.spritesheet.get_image(0, 0)
+        self.imagex = x
+        self.imagey = y
+        self.name = name
+        self.facing = facing
+
+        self.current_step_number = 0
+        self.step1 = ["rest"]
+        self.walk_pattern = "random"
+
+        self.room = room
+        self.gd_input.room_list[self.room].add_room_character(self.name)
+
+        print(self.name)
+
+    def activate_timers(self):
+        pygame.time.set_timer(self.initiate, 1000)
+        pygame.time.set_timer(self.action_clock, 80)
+
+    def do_activity(self):
+        if self.state == "idle":
+            result = None
+            if self.walk_pattern == "step1":
+                if self.current_step_number == len(self.step1) - 1:
+                    self.current_step_number = 0
+                elif self.current_step_number < len(self.step1) - 1:
+                    self.current_step_number += 1
+                result = self.step1[self.current_step_number]
+            elif self.walk_pattern == "random":
+                result = choice(self.actions)
+
+            if result == "rest":
+                pass
+
+            if result == "walk_left":
+                self.facing = Facing.LEFT
+                can_walk = self.gd_input.positioner[self.room].can_move_NPC(self)
+                if can_walk:
+                    self.walk_left()
+
+            elif result == "walk_right":
+                self.facing = Facing.RIGHT
+                can_walk = self.gd_input.positioner[self.room].can_move_NPC(self)
+                if can_walk:
+                    self.walk_right()
+
+            elif result == "walk_front":
+                self.facing = Facing.FRONT
+                can_walk = self.gd_input.positioner[self.room].can_move_NPC(self)
+                if can_walk:
+                    self.walk_front()
+
+            elif result == "walk_back":
+                self.facing = Facing.BACK
+                can_walk = self.gd_input.positioner[self.room].can_move_NPC(self)
+                if can_walk:
+                    self.walk_back()
+
+            elif result == "turning_front":
+                self.turn_front()
+
+            elif result == "turning_back":
+                self.turn_back()
+
+            elif result == "turning_left":
+                self.turn_left()
+
+            elif result == "turning_right":
+                self.turn_right()
+
+    def get_interacted_with(self):
+        print("I got interacted with")
+        # TODO: Fix all of this mess - make their picture pop up in their speech bubble thing
+        if self.state == "idle":
+            if self.gd_input.player["Player"].facing == Facing.BACK:
+                self.turn_front()
+            elif self.gd_input.player["Player"].facing == Facing.FRONT:
+                self.turn_back()
+            elif self.gd_input.player["Player"].facing == Facing.LEFT:
+                self.turn_right()
+            elif self.gd_input.player["Player"].facing == Facing.RIGHT:
+                self.turn_left()
+            self.gc_input.set_keyboard_manager(InConversationOptions.ID)
+            # self.GameController.set_menu("character_interact_menu")
+            self.gc_input.MenuManager.character_interact_menu = True
+            self.gd_input.menu_list["character_interact_menu"].set_talking_to(self.name)
+            self.set_state("talking")
+
+    def speak(self, chosen_phrase):
+        my_font = pygame.font.Font(self.gc_input.font, 10)
+        item = my_font.render(self.name + ":", 1, (0, 0, 0))
+        self.gc_input.screen.blit(item, (
+            self.gd_input.overlay_list["text_box"].x + 150, self.gd_input.overlay_list["text_box"].y + 20))
+
+        my_font = pygame.font.Font(self.gc_input.font, 10)
+        item = my_font.render(chosen_phrase, 1, (0, 0, 0))
+        self.gc_input.screen.blit(item, (self.gd_input.overlay_list["text_box"].x + 150, self.gd_input.overlay_list["text_box"].y + 60))
+
+    def display_name(self):
+        my_font = pygame.font.Font(self.gc_input.font, 10)
+        item = my_font.render(self.name + ":", 1, (0, 0, 0))
+        self.gc_input.screen.blit(item, (self.gd_input.overlay_list["text_box"].x + 150, self.gd_input.overlay_list["text_box"].y + 20))
+
+    def test_speak(self):
+        text_line = 0
+        for line in self.current_phrase:
+            my_font = pygame.font.Font(self.gc_input.font, 10)
+            item = my_font.render(line, 1, (0, 0, 0))
+            self.gc_input.screen.blit(item, (self.gd_input.overlay_list["text_box"].x + 150, self.gd_input.overlay_list["text_box"].y + 60 + 25 * text_line))
+            text_line += 1
+
+    def set_current_phrase(self):
+        self.current_phrase = textwrap.wrap(self.phrase, width=30)
+
+    def set_speaking_queue(self):
+
+        phrase_counter = 0
+        self.speaking_queue = []
+        for line in range(3):
+            if len(self.current_phrase) > 0:
+                self.speaking_queue.append(self.current_phrase[0])
+                self.current_phrase.pop(0)
+
+        if len(self.current_phrase) == 0:
+            self.current_phrase = None
+
+    def clear_speaking_queue(self):
+        self.speaking_queue = None
+
+class TammaNPC(NPC):
+    IDLE = "idle"
+    AVAILABLE_STATES = [IDLE]
+
+    def __init__(self, x, y, gc_input, gd_input, room):
+        super().__init__(x, y, gc_input, gd_input)
+
+        self.actions = ["turning_left", "turning_front", "turning_right", "rest", "rest", "rest", "rest"]
+        self.available_actions = ["turn"]
+        self.spritesheet = Spritesheet("assets/NPC_sprites/Tamma_CS.png", 32, 40)
+        self.state = "idle"
+        self.phrase = "Hi, welcome to Hornby Creative."
+        self.current_phrase = None
+        self.speaking_queue = None #textwrap.wrap("Hi everyone, it's so nice to see you here today! I hope you have all been doing well", width=30)
+        self.img = self.spritesheet.get_image(0, 0)
+        self.imagex = x
+        self.imagey = y
+        self.name = "Tamma"
+
+        self.current_step_number = 0
+        self.step1 = ["turning_left", "rest", "walk_left", "rest", "turning_right", "rest", "walk_right", "rest"]
+        self.walk_pattern = "random"
+
+        self.room = room
+        self.gd_input.room_list[self.room].add_room_character(self.name)
+
+        print(self.name)
+
+    def activate_timers(self):
+        pygame.time.set_timer(self.initiate, 1000)
+        pygame.time.set_timer(self.action_clock, 80)
+
+    def do_activity(self):
+        if self.state == "idle":
+            result = None
+            if self.walk_pattern == "step1":
+                if self.current_step_number == len(self.step1) - 1:
+                    self.current_step_number = 0
+                elif self.current_step_number < len(self.step1) - 1:
+                    self.current_step_number += 1
+                result = self.step1[self.current_step_number]
+            elif self.walk_pattern == "random":
+                result = choice(self.actions)
+
+            if result == "rest":
+                pass
+
+            if result == "walk_left":
+                self.facing = Facing.LEFT
+                can_walk = self.gd_input.positioner[self.room].can_move_NPC(self)
+                if can_walk:
+                    self.walk_left()
+
+            elif result == "walk_right":
+                self.facing = Facing.RIGHT
+                can_walk = self.gd_input.positioner[self.room].can_move_NPC(self)
+                if can_walk:
+                    self.walk_right()
+
+            elif result == "walk_front":
+                self.facing = Facing.FRONT
+                can_walk = self.gd_input.positioner[self.room].can_move_NPC(self)
+                if can_walk:
+                    self.walk_front()
+
+            elif result == "walk_back":
+                self.facing = Facing.BACK
+                can_walk = self.gd_input.positioner[self.room].can_move_NPC(self)
+                if can_walk:
+                    self.walk_back()
+
+            elif result == "turning_front":
+                self.turn_front()
+
+            elif result == "turning_back":
+                self.turn_back()
+
+            elif result == "turning_left":
+                self.turn_left()
+
+            elif result == "turning_right":
+                self.turn_right()
+
+    def get_interacted_with(self):
+        print("I got interacted with")
+        # TODO: Fix all of this mess - make their picture pop up in their speech bubble thing
+        if self.state == "idle":
+            if self.gd_input.player["Player"].facing == Facing.BACK:
+                self.turn_front()
+            elif self.gd_input.player["Player"].facing == Facing.FRONT:
+                self.turn_back()
+            elif self.gd_input.player["Player"].facing == Facing.LEFT:
+                self.turn_right()
+            elif self.gd_input.player["Player"].facing == Facing.RIGHT:
+                self.turn_left()
+            self.gc_input.set_keyboard_manager(InConversationOptions.ID)
+            # self.GameController.set_menu("character_interact_menu")
+            self.gc_input.MenuManager.character_interact_menu = True
+            self.gd_input.menu_list["character_interact_menu"].set_talking_to(self.name)
+            self.set_state("talking")
+
+    def speak(self, chosen_phrase):
+        my_font = pygame.font.Font(self.gc_input.font, 10)
+        item = my_font.render(self.name + ":", 1, (0, 0, 0))
+        self.gc_input.screen.blit(item, (
+            self.gd_input.overlay_list["text_box"].x + 150, self.gd_input.overlay_list["text_box"].y + 20))
+
+        my_font = pygame.font.Font(self.gc_input.font, 10)
+        item = my_font.render(chosen_phrase, 1, (0, 0, 0))
+        self.gc_input.screen.blit(item, (self.gd_input.overlay_list["text_box"].x + 150, self.gd_input.overlay_list["text_box"].y + 60))
+
+    def display_name(self):
+        my_font = pygame.font.Font(self.gc_input.font, 10)
+        item = my_font.render(self.name + ":", 1, (0, 0, 0))
+        self.gc_input.screen.blit(item, (self.gd_input.overlay_list["text_box"].x + 150, self.gd_input.overlay_list["text_box"].y + 20))
+
+    def test_speak(self):
+        text_line = 0
+        for line in self.current_phrase:
+            my_font = pygame.font.Font(self.gc_input.font, 10)
+            item = my_font.render(line, 1, (0, 0, 0))
+            self.gc_input.screen.blit(item, (self.gd_input.overlay_list["text_box"].x + 150, self.gd_input.overlay_list["text_box"].y + 60 + 25 * text_line))
+            text_line += 1
+
+    def set_current_phrase(self):
+        self.current_phrase = textwrap.wrap(self.phrase, width=30)
+
+    def set_speaking_queue(self):
+
+        phrase_counter = 0
+        self.speaking_queue = []
+        for line in range(3):
+            if len(self.current_phrase) > 0:
+                self.speaking_queue.append(self.current_phrase[0])
+                self.current_phrase.pop(0)
+
+        if len(self.current_phrase) == 0:
+            self.current_phrase = None
+
+    def clear_speaking_queue(self):
+        self.speaking_queue = None

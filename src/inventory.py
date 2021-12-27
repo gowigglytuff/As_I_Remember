@@ -9,6 +9,7 @@ class Inventory(object):
         self.current_items = []
         self.current_key_items = []
         self.bag_slots = ["inventory_menu", "key_inventory_menu"]
+        self.current_bag_slot = 0
         self.selected_item = None
 
     def select_item(self, selected_item):
@@ -19,6 +20,34 @@ class Inventory(object):
 
     def change_bag_slot(self):
         self.GameController.MenuManager.self.bag_slots[0] = True
+
+    def bag_slot_right(self):
+        self.GameController.MenuManager.deactivate_menu(self.bag_slots[self.current_bag_slot])
+        if self.current_bag_slot < (len(self.bag_slots)-1):
+            self.current_bag_slot +=1
+        elif self.current_bag_slot == (len(self.bag_slots)-1):
+            self.current_bag_slot = 0
+        self.GameController.MenuManager.activate_menu(self.bag_slots[self.current_bag_slot])
+        self.GameController.current_menu = self.bag_slots[self.current_bag_slot]
+        self.GameController.set_keyboard_manager(self.GameData.menu_list[self.GameController.current_menu].associated_manager)
+
+
+
+    def bag_slot_left(self):
+        self.GameController.MenuManager.deactivate_menu(self.bag_slots[self.current_bag_slot])
+        if self.current_bag_slot > 0:
+            self.current_bag_slot -=1
+        else:
+            self.current_bag_slot = (len(self.bag_slots)-1)
+        self.GameController.MenuManager.activate_menu(self.bag_slots[self.current_bag_slot])
+        self.GameController.current_menu = self.bag_slots[self.current_bag_slot]
+        self.GameController.set_keyboard_manager(self.GameData.menu_list[self.GameController.current_menu].associated_manager)
+
+
+    def reset_bag_slot(self):
+        self.current_bag_slot = 0
+        print(self.current_bag_slot)
+        print("did it!")
 
 
     def get_item(self, item_name: str, quantity_acquired: int):

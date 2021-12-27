@@ -58,7 +58,6 @@ def load_keyboard_managers(GameController, GameData):
     GameController.add_keyboard_manager(InInventory.ID, InInventory(GameController, GameData))
     GameController.add_keyboard_manager(InKeyInventory.ID, InKeyInventory(GameController, GameData))
     GameController.add_keyboard_manager(InUseInventory.ID, InUseInventory(GameController, GameData))
-    GameController.add_keyboard_manager(InUseKeyInventory.ID, InUseKeyInventory(GameController, GameData))
     GameController.add_keyboard_manager(InToDoList.ID, InToDoList(GameController, GameData))
 
     GameController.add_keyboard_manager(InProfile.ID, InProfile(GameController, GameData))
@@ -117,6 +116,13 @@ def load_items(GameController, GameData):
     GameData.add_item("Bottle", Item("Bottle", GameData, GameController))
     GameData.add_item("Coin", Item("Coin", GameData, GameController))
     GameData.add_item("Paper", Item("Paper", GameData, GameController))
+    GameData.add_item("Item1", Item("Item1", GameData, GameController))
+    GameData.add_item("Item2", Item("Item2", GameData, GameController))
+    GameData.add_item("Item3", Item("Item3", GameData, GameController))
+    GameData.add_item("Item4", Item("Item4", GameData, GameController))
+    GameData.add_item("Item5", Item("Item5", GameData, GameController))
+    GameData.add_item("Item6", Item("Item6", GameData, GameController))
+
 
     # adds the number of items to your inventory - temporary - for testing purposes
     GameController.inventory.get_item("Cheese", 9)
@@ -128,6 +134,12 @@ def load_items(GameController, GameData):
     GameController.inventory.get_item("Bottle", 91)
     GameController.inventory.get_item("Coin", 91)
     GameController.inventory.get_item("Paper", 91)
+    GameController.inventory.get_item("Item1", 1)
+    GameController.inventory.get_item("Item2", 1)
+    GameController.inventory.get_item("Item3", 1)
+    GameController.inventory.get_item("Item4", 1)
+    GameController.inventory.get_item("Item5", 1)
+    #GameController.inventory.get_item("Item6", 1)
 
 def load_key_items(GameController, GameData):
     # adds all the key items that exist in the game to the storage in GameData
@@ -193,3 +205,15 @@ def init_all_rooms(gc_input, gd_input):
 
     gd_input.add_room("Ringside", Ringside(gc_input, gd_input))
     gd_input.room_list["Ringside"].activate_room()
+
+    gd_input.add_room("computer_centre", ComputerCentreRoom(gc_input, gd_input))
+    gd_input.room_list["computer_centre"].activate_room()
+
+    gd_input.add_room("hornby_creative", HornbyCreativeRoom(gc_input, gd_input))
+    gd_input.room_list["hornby_creative"].activate_room()
+
+    gd_input.add_room("to_the_moon", ToTheMoon(gc_input, gd_input))
+    gd_input.room_list["to_the_moon"].activate_room()
+
+    gd_input.add_room("hornby_realestate", HornbyRealestate(gc_input, gd_input))
+    gd_input.room_list["hornby_realestate"].activate_room()

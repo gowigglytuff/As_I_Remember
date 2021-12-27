@@ -171,8 +171,26 @@ class Picaso(object):
             drawables_list.append(self.GameData.decoration_list[decoration])
 
         drawables_list.append(self.GameData.player["Player"])
-        drawables_list = sorted(drawables_list, key=lambda x: (x.y, x.drawing_priority))
-        return drawables_list
+        drawing_order = []
+        for drawable in drawables_list:
+            for height in range(drawable.size_y):
+                height += 1
+                drawing_order.append((drawable.name, drawable.y+height, drawable.drawing_priority, height))
+                #print(drawable.name, drawable.y, height)
+
+        drawing_order = sorted(drawing_order, key=lambda x: (x[1], x[2]))
+
+
+        final_drawing_list =[]
+        for drawable in drawing_order:
+            for drawabl2 in drawables_list:
+                if drawabl2.name == drawable[0]:
+                    final_drawing_list.append([drawabl2, drawable[3]])
+
+
+        # drawables_list = sorted(drawables_list, key=lambda x: (x.y, x.drawing_priority))
+        # print(drawables_list)
+        return final_drawing_list
 
     def big_draw(self):
         # Blits the background for the current room
@@ -181,7 +199,7 @@ class Picaso(object):
         # get's all the drawables and prints them in order of y and printing priority
         drawable_list = self.get_all_drawable()
         for drawable in drawable_list:
-            drawable.draw(self.GameController.screen)
+            drawable[0].draw(self.GameController.screen)
 
         # give the menus ability to print
         if self.GameController.MenuManager.character_interact_menu:

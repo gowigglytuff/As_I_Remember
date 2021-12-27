@@ -292,13 +292,10 @@ class InInventory(KeyboardManager):
         if self.direction == Direction.UP:
             self.GameData.menu_list["inventory_menu"].cursor_up()
         if self.direction == Direction.LEFT:
-            self.GameController.MenuManager.inventory_menu = False
-            self.GameController.MenuManager.key_inventory_menu = True
-            self.GameController.set_keyboard_manager(InKeyInventory.ID)
+            self.GameController.inventory.bag_slot_left()
+
         if self.direction == Direction.RIGHT:
-            self.GameController.MenuManager.inventory_menu = False
-            self.GameController.MenuManager.key_inventory_menu = True
-            self.GameController.set_keyboard_manager(InKeyInventory.ID)
+            self.GameController.inventory.bag_slot_right()
 
     def direction_key_pressed(self, direction):
         pass
@@ -345,6 +342,7 @@ class InUseInventory(KeyboardManager):
 
     def direction_key_pressed(self, direction):
         pass
+
     def key_up(self):
         pass
 
@@ -352,35 +350,7 @@ class InUseInventory(KeyboardManager):
         pass
 
     def key_return(self):
-        menu_selection = self.GameData.menu_list["use_menu"].get_current_menu_item()
-
-        if menu_selection == "Use":
-            self.GameData.item_list[self.GameController.inventory.selected_item].use_item()
-
-            # self.GameController.inventory.select_item(None)
-            # self.GameController.MenuManager.use_menu = False
-            # self.GameController.set_keyboard_manager(InGame.ID)
-            # self.GameController.MenuManager.inventory_menu = False
-
-            self.GameData.menu_list["yes_no_menu"].set_menu()
-
-        elif menu_selection == "Toss":
-            print("You tossed the item")
-
-            # self.GameController.set_menu(None)
-            self.GameController.MenuManager.use_menu = False
-            self.GameController.set_keyboard_manager(InGame.ID)
-            self.GameController.MenuManager.inventory_menu = False
-            self.GameController.MenuManager.key_inventory_menu = False
-
-        elif menu_selection == "Exit":
-
-            print("You exited your bag")
-            # self.GameController.set_menu(None)
-            self.GameController.MenuManager.use_menu = False
-            self.GameController.set_keyboard_manager(InGame.ID)
-            self.GameController.MenuManager.inventory_menu = False
-            self.GameController.MenuManager.key_inventory_menu = False
+        self.GameData.menu_list[self.GameController.current_menu].choose_option()
 
     def key_space(self):
         pass
@@ -414,14 +384,10 @@ class InKeyInventory(KeyboardManager):
             self.GameData.menu_list["key_inventory_menu"].cursor_up()
 
         if self.direction == Direction.LEFT:
-            self.GameController.MenuManager.key_inventory_menu = False
-            self.GameController.MenuManager.inventory_menu = True
-            self.GameController.set_keyboard_manager(InInventory.ID)
+            self.GameController.inventory.bag_slot_left()
 
         if self.direction == Direction.RIGHT:
-            self.GameController.MenuManager.key_inventory_menu = False
-            self.GameController.MenuManager.inventory_menu = True
-            self.GameController.set_keyboard_manager(InInventory.ID)
+            self.GameController.inventory.bag_slot_right()
 
     def key_right(self):
         pass
@@ -436,10 +402,8 @@ class InKeyInventory(KeyboardManager):
         pass
 
     def key_return(self):
-        menu_selection = self.GameData.menu_list["key_inventory_menu"].get_current_menu_item()
-        self.GameController.inventory.select_item(menu_selection)
-        self.GameController.set_keyboard_manager(InUseKeyInventory.ID)
-        self.GameController.MenuManager.use_menu = True
+        self.GameData.menu_list[self.GameController.current_menu].choose_option()
+
 
     def key_space(self):
         pass
@@ -452,85 +416,6 @@ class InKeyInventory(KeyboardManager):
 
     def key_caps(self):
         pass
-
-
-# Keyboard Manager for when the player has selected an item in key inventory and is deciding what to do with it
-class InUseKeyInventory(KeyboardManager):
-    ID = "IUKM_Keyer"
-
-    def __init__(self, GameController, GameData):
-        self.GameController = GameController
-        self.GameData = GameData
-
-    def key_right(self):
-        pass
-
-    def key_left(self):
-        pass
-
-    def direction_key_released(self, direction):
-        self.direction = direction
-        if self.direction == Direction.DOWN:
-            self.GameData.menu_list["use_menu"].cursor_down()
-
-        if self.direction == Direction.UP:
-            self.GameData.menu_list["use_menu"].cursor_up()
-
-        if self.direction == Direction.LEFT:
-            pass
-
-        if self.direction == Direction.RIGHT:
-            pass
-
-    def key_up(self):
-        pass
-
-    def key_down(self):
-        pass
-
-    def key_return(self):
-        menu_selection = self.GameData.menu_list["use_menu"].get_current_menu_item()
-
-        if menu_selection == "Use":
-            self.GameData.key_item_list[self.GameController.inventory.selected_item].use_item()
-            # self.GameController.set_menu(None)
-            self.GameController.inventory.select_item(None)
-            self.GameController.MenuManager.use_menu = False
-            self.GameController.set_keyboard_manager(InGame.ID)
-            self.GameController.MenuManager.key_inventory_menu = False
-
-        elif menu_selection == "Toss":
-            print("You looked in your bag!")
-
-            # self.GameController.set_menu(None)
-            self.GameController.MenuManager.use_menu = False
-            self.GameController.set_keyboard_manager(InGame.ID)
-            self.GameController.MenuManager.inventory_menu = False
-            self.GameController.MenuManager.key_inventory_menu = False
-
-        elif menu_selection == "Exit":
-
-            print("You looked in your bag!")
-            # self.GameController.set_menu(None)
-            self.GameController.MenuManager.use_menu = False
-            self.GameController.set_keyboard_manager(InGame.ID)
-            self.GameController.MenuManager.inventory_menu = False
-            self.GameController.MenuManager.key_inventory_menu = False
-
-    def key_space(self):
-        pass
-
-    def key_control(self):
-        self.GameController.set_keyboard_manager(InGame.ID)
-        # self.GameController.set_menu(None)
-        self.GameController.MenuManager.start_menu = False
-
-    def key_shift(self):
-        pass
-
-    def key_caps(self):
-        pass
-
 
 # Conversation Keyboard Managers
 # Keyboard Manager for when the player is talking to a NPC and choosing how to interact with them

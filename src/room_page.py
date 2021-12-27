@@ -3,8 +3,8 @@ from random import randrange
 import pygame, csv, os
 
 from TileMap import TileMap
-from features import GenericNPC, Spritesheet
-from prop_page import GenericProp, Tree, Decoration, Building, BenchHorizontal, BenchVertical, PlumTree, PicnicTable
+from features import GenericNPC, Spritesheet, TammaNPC, StandingNPC
+from prop_page import GenericProp, Tree, Decoration, Building, BenchHorizontal, BenchVertical, PlumTree, PicnicTable, Computer, Counter
 from keyboards import Direction, Facing
 from mapClasses import Plot, Door, Tile, Position_Manager
 
@@ -39,6 +39,8 @@ class Room(object):
         self.decoration_list = []
         self.prop_list = []
 
+        self.building_height = 1
+
         self.terrain_map = None
         self.obstacle_map = None
 
@@ -46,7 +48,6 @@ class Room(object):
         for plots_x in range(self.total_plots_x):
             for plots_y in range(self.total_plots_y):
                 #print(plots_x + 1, plots_y + 1)
-                print((self.name + "_" + str(plots_x+1) + "_" + str(plots_y+1)))
                 self.gd_input.room_list[self.name].add_room_plot((self.name + "_" + str(plots_x+1) + "_" + str(plots_y+1)), Plot(self.name, plots_x+1, plots_y+1, img, self.gc_input, self.gd_input, terrain_file))
 
     def generate_room_grid(self):
@@ -113,11 +114,11 @@ class Room(object):
         #TODO: make this uses the plots csv instead of the rooms
         if self.obstacle_map is not None:
             self.gd_input.positioner[self.name].fill_obstacles(self.obstacle_map, self.name)
-            print(self.name)
+
 
         if self.terrain_map is not None:
             self.gd_input.positioner[self.name].fill_terrain(self.terrain_map, self.name)
-            print(self.name)
+
 
 class Room1(Room):
     def __init__(self, gc_input, gd_input):
@@ -386,14 +387,16 @@ class Ringside(Room):
         self.gd_input.room_list[self.name].activate_plot("Ringside_1_1")
 
     def add_room_doors(self):
-        pass
-        #self.gd_input.room_list["Coop"].add_room_door("Coop_door1", Door("Coop", "room2", 1, 57, 13, 11, "Coop_door1"))
+        self.gd_input.room_list[self.name].add_room_door("ringside_to_computer_centre", Door("Ringside", "computer_centre", 11, 84, 3, 3, "ringside_to_computer_centre"))
+        self.gd_input.room_list[self.name].add_room_door("ringside_to_hornby_creative", Door("Ringside", "hornby_creative", 12, 76, 4, 3, "ringside_to_hornby_creative"))
+        self.gd_input.room_list[self.name].add_room_door("ringside_to_to_the_moon", Door("Ringside", "to_the_moon", 41, 81, 2, 3, "ringside_to_to_the_moon"))
+        self.gd_input.room_list[self.name].add_room_door("ringside_to_hornby_realestate", Door("Ringside", "hornby_realestate", 39, 75, 1, 3, "ringside_to_hornby_realestate"))
 
     def add_room_characters(self):
-        self.gd_input.add_character("Deb", GenericNPC(29, 76, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Deb.png", 32, 40), "Deb", self.name, "Hey Shuma, so nice to see you again!, I should probably be in the studio, but when I'm low on inspiration I like to come out here and walk by the water. "))
-        self.gd_input.add_character("Alex", GenericNPC(17, 70, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/alex_lamont_CS.png", 32, 40), "Alex", self.name, "Hey Shuma, nice to see you! Stop by later and I'll sling you some free icecream! haha... I'm just kidding it's $5.00 a cone."))
+        self.gd_input.add_character("Deb", GenericNPC(29, 76, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Deb.png", 32, 40), "Deb", self.name, "Something strange is going on around here, have you heard about the children disapearing? Their parents couldn't even remember their names..."))
+        self.gd_input.add_character("Alex", GenericNPC(17, 70, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/alex_lamont_CS.png", 32, 40), "Alex", self.name, "Hey Shuma, I feel like I haven't seen you in a long time... but didn't we just go to the beach togther on Friday? I seem to be losing track of time so much recently..."))
         self.gd_input.add_character("Jamara", GenericNPC(31, 90, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Jamara_CS.png", 32, 40), "Jamara", self.name, "What do you think the greatest joy in life is? I haven't figured it out yet... I enjoy a whole lot of stuff, but I feel like nothing I've done so far is quite it."))
-        self.gd_input.add_character("Donna", GenericNPC(39, 78, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Donna_Tuelle_CS.png", 32, 40), "Donna", self.name, "You know, Jennessa does such a good job, I'm almost considering retiring... not quite, but a very strong almost."))
+        self.gd_input.add_character("Donna", GenericNPC(39, 78, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Donna_Tuelle_CS.png", 32, 40), "Donna", self.name, "You know, it's the strangest thing, my daughter Alex showed up the other day to ask me to watch her kids... but I don't remember having grandkids. I watched them anyway, but I swear I've never met them..."))
 
 
     def add_room_props(self):
@@ -405,7 +408,7 @@ class Ringside(Room):
             self.gd_input.add_prop("Real_Estate", Building(38, 72, self.gc_input, self.gd_input, (5*32), (5*32), "assets/prop_sprites/Buildings/real_estate_2.png", "Real_Estate", 5, 5, self.name, "assets/prop_sprites/Buildings/building_csv/real_estate_csv.csv"))
             self.gd_input.add_prop("To_The_Moon", Building(39, 78, self.gc_input, self.gd_input, (5 * 32), (5 * 32), "assets/prop_sprites/Buildings/to_the_moon.png", "To_The_Moon", 5, 5, self.name, "assets/prop_sprites/Buildings/building_csv/to_the_moon_fill_map.csv"))
             self.gd_input.add_prop("Fibres", Building(31, 60, self.gc_input, self.gd_input, (5 * 32), (5 * 32), "assets/prop_sprites/Buildings/Fibres.png", "Fibres", 5, 5, self.name, "assets/prop_sprites/Buildings/building_csv/fibres_fill_map.csv"))
-
+            self.gd_input.add_prop("Vorizo", Building(27, 93, self.gc_input, self.gd_input, (3 * 32), (3 * 32), "assets/prop_sprites/Buildings/vorizo.png", "Vorizo", 3, 3, self.name, "assets/prop_sprites/Buildings/building_csv/vorizo_fill_map.csv"))
 
             self.gd_input.add_prop("tree1", Tree(29, 74, "tree1", self.gc_input, self.gd_input, self.name))
             self.gd_input.add_prop("Bench1", BenchHorizontal(28, 78, "Bench1", self.gc_input, self.gd_input, self.name))
@@ -424,3 +427,151 @@ class Ringside(Room):
             self.gd_input.add_prop("Picnic_Table2", PicnicTable(9, 69, "Picnic_Table2", self.gc_input, self.gd_input, self.name))
             self.gd_input.add_prop("Picnic_Table3", PicnicTable(13, 65, "Picnic_Table3", self.gc_input, self.gd_input, self.name))
             self.gd_input.add_prop("Picnic_Table4", PicnicTable(13, 69, "Picnic_Table4", self.gc_input, self.gd_input, self.name))
+
+class ComputerCentreRoom(Room):
+    def __init__(self, gc_input, gd_input):
+        super().__init__(gc_input, gd_input)
+
+        self.terrain_map = None
+        self.obstacle_map = None
+
+        self.name = "computer_centre"
+        self.room_width = 6
+        self.room_height = 2
+        self.left_edge_x = 1
+        self.top_edge_y = 2
+
+        self.right_edge_x = self.left_edge_x + self.room_width - 1
+        self.bottom_edge_y = self.top_edge_y + self.room_height - 1
+
+        self.map_style = "image"
+
+        self.total_plots_x = 1
+        self.total_plots_y = 1
+        self.plot_size_x = int(self.room_width/self.total_plots_x)
+        self.plot_size_y = int(self.room_height/self.total_plots_y)
+
+    def add_room_and_plots(self):
+        comp_map = TileMap("assets/room_maps/computer_centre_map.csv", self.gd_input.tiles_img_dict)
+        self.gd_input.room_list[self.name].add_room_plot("CSM_1_1", Plot("computer_centre", 1, 1, comp_map.return_map(), self.gc_input, self.gd_input, None))
+        self.gd_input.room_list[self.name].activate_plot("CSM_1_1")
+    def add_room_doors(self):
+        self.gd_input.room_list[self.name].add_room_door("computer_centre_to_ringside", Door("computer_centre", "Ringside",  3, 4, 11, 85, "computer_centre_to_ringside"))
+
+
+    def add_room_characters(self):
+        self.gd_input.add_character("Guy2", StandingNPC(2, 2, self.gc_input, self.gd_input, self.name, "Guy2", Spritesheet("assets/NPC_sprites/Sub_CS.png", 32, 40), ["rest", "turning_left"], Facing.LEFT))
+        self.gd_input.add_character("Guy3", StandingNPC(4, 2, self.gc_input, self.gd_input, self.name, "Guy3", Spritesheet("assets/NPC_sprites/Sub_CS.png", 32, 40), ["rest", "turning_left"], Facing.LEFT))
+
+    def add_room_props(self):
+        self.gd_input.add_prop("computer1", Computer(3, 2, "computer1", self.gc_input, self.gd_input, "computer_centre"))
+        self.gd_input.add_prop("computer2", Computer(1, 2, "computer2", self.gc_input, self.gd_input, "computer_centre"))
+
+class HornbyCreativeRoom(Room):
+    def __init__(self, gc_input, gd_input):
+        super().__init__(gc_input, gd_input)
+
+        self.terrain_map = None
+        self.obstacle_map = None
+
+        self.name = "hornby_creative"
+        self.room_width = 6
+        self.room_height = 2
+        self.left_edge_x = 1
+        self.top_edge_y = 2
+
+        self.right_edge_x = self.left_edge_x + self.room_width - 1
+        self.bottom_edge_y = self.top_edge_y + self.room_height - 1
+
+        self.map_style = "image"
+
+        self.total_plots_x = 1
+        self.total_plots_y = 1
+        self.plot_size_x = int(self.room_width/self.total_plots_x)
+        self.plot_size_y = int(self.room_height/self.total_plots_y)
+
+    def add_room_and_plots(self):
+        HC_map = TileMap("assets/room_maps/hornby_creative_map.csv", self.gd_input.tiles_img_dict)
+        self.gd_input.room_list[self.name].add_room_plot("HC_1_1", Plot("hornby_creative", 1, 1, HC_map.return_map(), self.gc_input, self.gd_input, None))
+        self.gd_input.room_list[self.name].activate_plot("HC_1_1")
+    def add_room_doors(self):
+        self.gd_input.room_list[self.name].add_room_door("hornby_creative_to_ringside", Door("hornby_creative", "Ringside", 4, 4, 12, 77, "hornby_creative_to_ringside"))
+
+    def add_room_characters(self):
+        self.gd_input.add_character("Tamma", TammaNPC(1, 2, self.gc_input, self.gd_input, self.name))
+
+    def add_room_props(self):
+        self.gd_input.add_prop("counter1", Counter(2, 2, "counter1", self.gc_input, self.gd_input, self.name))
+
+class ToTheMoon(Room):
+    def __init__(self, gc_input, gd_input):
+        super().__init__(gc_input, gd_input)
+
+        self.terrain_map = None
+        self.obstacle_map = None
+
+        self.name = "to_the_moon"
+        self.room_width = 3
+        self.room_height = 2
+        self.left_edge_x = 1
+        self.top_edge_y = 2
+
+        self.right_edge_x = self.left_edge_x + self.room_width - 1
+        self.bottom_edge_y = self.top_edge_y + self.room_height - 1
+
+        self.map_style = "image"
+
+        self.total_plots_x = 1
+        self.total_plots_y = 1
+        self.plot_size_x = int(self.room_width/self.total_plots_x)
+        self.plot_size_y = int(self.room_height/self.total_plots_y)
+
+    def add_room_and_plots(self):
+        TTM_map = TileMap("assets/room_maps/to_the_moon_map.csv", self.gd_input.tiles_img_dict)
+        self.gd_input.room_list[self.name].add_room_plot("TTM_1_1", Plot("to_the_moon", 1, 1, TTM_map.return_map(), self.gc_input, self.gd_input, None))
+        self.gd_input.room_list[self.name].activate_plot("TTM_1_1")
+
+    def add_room_doors(self):
+        self.gd_input.room_list[self.name].add_room_door("to_the_moon_to_ringside", Door("to_the_moon", "Ringside", 2, 4, 41, 82, "to_the_moon_to_ringside"))
+    def add_room_characters(self):
+        self.gd_input.add_character("Guy1", StandingNPC(2, 2, self.gc_input, self.gd_input, self.name, "Guy1", Spritesheet("assets/NPC_sprites/Sub_CS.png", 32, 40), ["rest", "turning_front"], Facing.FRONT))
+
+    def add_room_props(self):
+        self.gd_input.add_prop("counter2", Counter(1, 2, "counter2", self.gc_input, self.gd_input, self.name))
+
+class HornbyRealestate(Room):
+    def __init__(self, gc_input, gd_input):
+        super().__init__(gc_input, gd_input)
+
+        self.terrain_map = None
+        self.obstacle_map = None
+
+        self.name = "hornby_realestate"
+        self.room_width = 4
+        self.room_height = 2
+        self.left_edge_x = 1
+        self.top_edge_y = 2
+
+        self.right_edge_x = self.left_edge_x + self.room_width - 1
+        self.bottom_edge_y = self.top_edge_y + self.room_height - 1
+
+        self.map_style = "image"
+
+        self.total_plots_x = 1
+        self.total_plots_y = 1
+        self.plot_size_x = int(self.room_width/self.total_plots_x)
+        self.plot_size_y = int(self.room_height/self.total_plots_y)
+
+    def add_room_and_plots(self):
+        HR_map = TileMap("assets/room_maps/hornby_realestate_map.csv", self.gd_input.tiles_img_dict)
+        self.gd_input.room_list[self.name].add_room_plot("HR_1_1", Plot("hornby_realestate", 1, 1, HR_map.return_map(), self.gc_input, self.gd_input, None))
+        self.gd_input.room_list[self.name].activate_plot("HR_1_1")
+
+    def add_room_doors(self):
+        self.gd_input.room_list[self.name].add_room_door("hornby_realestate_to_ringside", Door("hornby_realestate", "Ringside", 1, 4, 39, 76, "hornby_realestate_to_ringside"))
+
+    def add_room_characters(self):
+        self.gd_input.add_character("Guy4", StandingNPC(2, 2, self.gc_input, self.gd_input, self.name, "Guy4", Spritesheet("assets/NPC_sprites/Sub_CS.png", 32, 40), ["rest", "turning_left"], Facing.LEFT))
+
+    def add_room_props(self):
+        self.gd_input.add_prop("computer3", Computer(1, 2, "computer3", self.gc_input, self.gd_input, self.name))
