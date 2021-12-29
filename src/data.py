@@ -176,7 +176,6 @@ class Picaso(object):
             for height in range(drawable.size_y):
                 height += 1
                 drawing_order.append((drawable.name, drawable.y+height, drawable.drawing_priority, height))
-                #print(drawable.name, drawable.y, height)
 
         drawing_order = sorted(drawing_order, key=lambda x: (x[1], x[2]))
 

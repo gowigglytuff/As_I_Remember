@@ -211,7 +211,8 @@ class Building(Prop):
         for item in range(self.size_y):
             self.image_list.append(self.spritesheet.get_strip(item))
             if self.name == "Coop_Building":
-                print(self.spritesheet.get_strip(item))
+                # print(self.spritesheet.get_strip(item))
+                pass
 
         try:
             self.gd_input.room_list[self.room].add_room_prop(self.name)
@@ -299,6 +300,60 @@ class Computer(Prop):
         self.width = (1*32)
         self.height = (2*32)
         self.spritesheet = Spritesheet("assets/prop_sprites/computer.png", 32, 64)
+        self.name = name
+        self.size_x = 1
+        self.size_y = 1
+        self.offset_y = 35
+        self.feature_type = "Prop"
+        self.cur_img = 0
+        self.img = self.spritesheet.get_image(0, 0)
+        self.gc_input = gc_input
+        self.gd_input = gd_input
+        self.room = room_name
+
+        self.gd_input.room_list[self.room].add_room_prop(self.name)
+
+    def draw(self, screen):
+        screen.blit(self.img, [((self.imagex + self.gc_input.camera[0]) * self.gd_input.square_size[0])
+                               + self.gd_input.base_locator_x, ((self.imagey + self.gc_input.camera[1])
+                                * self.gd_input.square_size[1] - self.offset_y) + self.gd_input.base_locator_y])
+
+class ComputerBack(Prop):
+    def __init__(self, x, y, name, gc_input, gd_input, room_name):
+        super().__init__(x, y, gc_input, gd_input)
+        self.drawing_priority = 1
+        self.imagex = x
+        self.imagey = y
+        self.width = (1*32)
+        self.height = (2*32)
+        self.spritesheet = Spritesheet("assets/prop_sprites/computer_back.png", 32, 64)
+        self.name = name
+        self.size_x = 1
+        self.size_y = 1
+        self.offset_y = 35
+        self.feature_type = "Prop"
+        self.cur_img = 0
+        self.img = self.spritesheet.get_image(0, 0)
+        self.gc_input = gc_input
+        self.gd_input = gd_input
+        self.room = room_name
+
+        self.gd_input.room_list[self.room].add_room_prop(self.name)
+
+    def draw(self, screen):
+        screen.blit(self.img, [((self.imagex + self.gc_input.camera[0]) * self.gd_input.square_size[0])
+                               + self.gd_input.base_locator_x, ((self.imagey + self.gc_input.camera[1])
+                                * self.gd_input.square_size[1] - self.offset_y) + self.gd_input.base_locator_y])
+
+class Bookcase(Prop):
+    def __init__(self, x, y, name, gc_input, gd_input, room_name):
+        super().__init__(x, y, gc_input, gd_input)
+        self.drawing_priority = 1
+        self.imagex = x
+        self.imagey = y
+        self.width = (1*32)
+        self.height = (2*32)
+        self.spritesheet = Spritesheet("assets/prop_sprites/book_case.png", 32, 64)
         self.name = name
         self.size_x = 1
         self.size_y = 1

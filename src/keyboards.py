@@ -15,6 +15,7 @@ class Facing(Enum):
     FRONT = 4
     BACK = 3
 
+
 #TODO add other keyboards
 class KeyboardManager():
     @property
@@ -168,24 +169,12 @@ class InGame(KeyboardManager):
 
     def key_return(self):
         # interacts with the feature that is in the tile that the player is facing
-        direction = Direction.DOWN
         print("Player Location: " + str(self.GameData.player["Player"].x), str(self.GameData.player["Player"].y))
 
-        if self.GameData.player["Player"].facing == Facing.LEFT:
-            direction = Direction.LEFT
-        if self.GameData.player["Player"].facing == Facing.RIGHT:
-            direction = Direction.RIGHT
-        if self.GameData.player["Player"].facing == Facing.FRONT:
-            direction = Direction.DOWN
-        if self.GameData.player["Player"].facing == Facing.BACK:
-            direction = Direction.UP
-        self.GameData.player["Player"].interact_with(direction)
+        self.GameData.player["Player"].interact_with()
 
     def key_space(self):
-        for x in self.GameData.room_list["room2"].tiles_array:
-            for y in x:
-
-                print(y.x, y.y, y.terrain)
+        pass
 
     def key_control(self):
         self.GameData.menu_list["start_menu"].set_menu()
@@ -453,23 +442,26 @@ class InConversationOptions(KeyboardManager):
         #TODO: Fix this to use characters name instead of facing tile
         menu_selection = self.GameData.menu_list["character_interact_menu"].get_current_menu_item()
         if menu_selection == self.GameData.menu_list["character_interact_menu"].menu_item_list[0]:
-            self.GameController.set_speaker(self.GameData.player["Player"].get_facing_tile().object_filling)
-            self.GameData.character_list[self.GameData.player["Player"].get_facing_tile().object_filling].set_state("talking")
-            self.GameData.character_list[self.GameData.player["Player"].get_facing_tile().object_filling].set_current_phrase()
-            self.GameData.character_list[self.GameData.player["Player"].get_facing_tile().object_filling].set_speaking_queue()
+
+
+            self.GameController.set_speaker(self.GameData.player["Player"].check_adj_tile(self.GameData.player["Player"].get_direct(self.GameData.player["Player"].facing)).object_filling)
+            self.GameData.character_list[self.GameData.player["Player"].check_adj_tile(self.GameData.player["Player"].get_direct(self.GameData.player["Player"].facing)).object_filling].set_state("talking")
+            self.GameData.character_list[self.GameData.player["Player"].check_adj_tile(self.GameData.player["Player"].get_direct(self.GameData.player["Player"].facing)).object_filling].set_current_phrase()
+            self.GameData.character_list[self.GameData.player["Player"].check_adj_tile(self.GameData.player["Player"].get_direct(self.GameData.player["Player"].facing)).object_filling].set_speaking_queue()
             self.GameController.set_keyboard_manager(InConversation.ID)
+
+
             self.GameData.menu_list["character_interact_menu"].set_talking_to(None)
             self.GameController.MenuManager.character_interact_menu = False
         elif menu_selection == "Give Gift":
             print("here, take this poop")
             self.GameController.set_keyboard_manager(InGame.ID)
             self.GameController.MenuManager.character_interact_menu = False
-            self.GameData.character_list[self.GameData.player["Player"].get_facing_tile().object_filling].set_state(
-                "idle")
+            self.GameData.character_list[self.GameData.player["Player"].check_adj_tile(self.GameData.player["Player"].direction).object_filling].set_state("idle")
         elif menu_selection == "Exit":
             self.GameController.set_keyboard_manager(InGame.ID)
             self.GameController.MenuManager.character_interact_menu = False
-            self.GameData.character_list[self.GameData.player["Player"].get_facing_tile().object_filling].set_state(
+            self.GameData.character_list[self.GameData.player["Player"].check_adj_tile(self.GameData.player["Player"].direction).object_filling].set_state(
                 "idle")
         self.GameData.menu_list["character_interact_menu"].reset_cursor()
 
@@ -515,11 +507,11 @@ class InConversation(KeyboardManager):
         pass
 
     def key_return(self):
-        if self.GameData.character_list[self.GameData.player["Player"].get_facing_tile().object_filling].current_phrase != None:
-            self.GameData.character_list[self.GameData.player["Player"].get_facing_tile().object_filling].set_speaking_queue()
+        if self.GameData.character_list[self.GameData.player["Player"].check_adj_tile(self.GameData.player["Player"].get_direct(self.GameData.player["Player"].facing)).object_filling].current_phrase != None:
+            self.GameData.character_list[self.GameData.player["Player"].check_adj_tile(self.GameData.player["Player"].get_direct(self.GameData.player["Player"].facing)).object_filling].set_speaking_queue()
         else:
             self.GameData.character_list[
-                self.GameData.player["Player"].get_facing_tile().object_filling].clear_speaking_queue()
+                self.GameData.player["Player"].check_adj_tile(self.GameData.player["Player"].get_direct(self.GameData.player["Player"].facing)).object_filling].clear_speaking_queue()
             self.GameController.set_keyboard_manager(InGame.ID)
             self.GameData.character_list[self.GameController.current_speaker].set_state("idle")
             self.GameController.set_text_box(None)

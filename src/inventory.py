@@ -46,9 +46,6 @@ class Inventory(object):
 
     def reset_bag_slot(self):
         self.current_bag_slot = 0
-        print(self.current_bag_slot)
-        print("did it!")
-
 
     def get_item(self, item_name: str, quantity_acquired: int):
         if item_name in self.current_items:
