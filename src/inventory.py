@@ -58,9 +58,11 @@ class Inventory(object):
         #TODO: Make sure this can't go below 0
         if self.GameData.item_list[item_name].quantity > quantity_used:
             self.GameData.item_list[item_name].quantity -= quantity_used
+            print(self.GameData.item_list[item_name].quantity)
         elif self.GameData.item_list[item_name].quantity == quantity_used:
-            self.current_items.pop(self.GameData.item_list[item_name].name)
+            self.current_items.remove(self.GameData.item_list[item_name].name)
             self.GameData.item_list[item_name].quantity -= quantity_used
+            print(str(self.GameData.item_list[item_name].quantity) + " part2")
         else:
             print("you cannot use that now")
 
@@ -72,7 +74,10 @@ class Inventory(object):
         self.GameData.key_item_list[key_item_name].quantity = 0
         self.current_key_items.pop(self.GameData.key_item_list[key_item_name].name)
 
-
+    def sort_current_items(self):
+        print(self.GameController.inventory.current_items)
+        self.GameController.inventory.current_items = sorted(self.GameController.inventory.current_items)
+        print(self.GameController.inventory.current_items)
 
 class Item(object):
     def __init__(self, name, GameData, GameController):
@@ -84,6 +89,7 @@ class Item(object):
 
     def use_item(self):
         print("You used the " + self.name)
+        self.GameController.inventory.use_up_item(self.name, 1)
 
 class KeyItem(object):
     def __init__(self, name, GameData, GameController):
@@ -93,5 +99,5 @@ class KeyItem(object):
         self.quantity = 0
         pass
 
-    def use_item(self):
+    def use_key_item(self):
         print("You used the " + self.name)

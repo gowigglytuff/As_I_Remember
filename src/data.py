@@ -110,7 +110,7 @@ class GameController(object):
         if origin is not None:
             self.GameData.menu_list[menu].set_origin(origin)
 
-    def set_menu(self, active_menu):
+    def set_current_menu(self, active_menu):
         self.current_menu = active_menu
 
     def set_room(self, active_room):
@@ -204,6 +204,10 @@ class Picaso(object):
         if self.GameController.MenuManager.character_interact_menu:
             self.GameData.menu_list["character_interact_menu"].display_menu()
 
+        # give the menus ability to print
+        if self.GameController.MenuManager.shopkeeper_interact_menu:
+            self.GameData.menu_list["shopkeeper_interact_menu"].display_menu()
+
         if self.GameController.MenuManager.start_menu:
             self.GameData.menu_list["start_menu"].display_menu()
 
@@ -218,6 +222,9 @@ class Picaso(object):
 
         if self.GameController.MenuManager.yes_no_menu:
             self.GameData.menu_list["yes_no_menu"].display_menu()
+
+        if self.GameController.MenuManager.buying_menu:
+            self.GameData.menu_list["buying_menu"].display_menu()
 
         # blits any overlays that are always active and ons tghat are associated with currently active menus
         for overlay in self.GameController.current_overlay_list:

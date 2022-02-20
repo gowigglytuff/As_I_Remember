@@ -54,11 +54,15 @@ def load_keyboard_managers(GameController, GameData):
     GameController.add_keyboard_manager(InGame.ID, InGame(GameController, GameData))
     GameController.add_keyboard_manager(InStartMenu.ID, InStartMenu(GameController, GameData))
     GameController.add_keyboard_manager(InConversation.ID, InConversation(GameController, GameData))
+    GameController.add_keyboard_manager(InShopkeeperConversation.ID, InShopkeeperConversation(GameController, GameData))
     GameController.add_keyboard_manager(InConversationOptions.ID, InConversationOptions(GameController, GameData))
+    GameController.add_keyboard_manager(InShopKeeperInteract.ID, InShopKeeperInteract(GameController, GameData))
     GameController.add_keyboard_manager(InInventory.ID, InInventory(GameController, GameData))
     GameController.add_keyboard_manager(InKeyInventory.ID, InKeyInventory(GameController, GameData))
-    GameController.add_keyboard_manager(InUseInventory.ID, InUseInventory(GameController, GameData))
+    GameController.add_keyboard_manager(InUse.ID, InUse(GameController, GameData))
     GameController.add_keyboard_manager(InToDoList.ID, InToDoList(GameController, GameData))
+    GameController.add_keyboard_manager(InBuying.ID, InBuying(GameController, GameData))
+    GameController.add_keyboard_manager(InRegularMenu.ID, InRegularMenu(GameController, GameData))
 
     GameController.add_keyboard_manager(InProfile.ID, InProfile(GameController, GameData))
     GameController.add_keyboard_manager(InYesNo.ID, InYesNo(GameController, GameData))
@@ -78,6 +82,10 @@ def load_menus(GameController, GameData):
     # the menu which pops up when the player has selected bag from the start menu
     GameData.add_overlay("inventory_menu", Overlay(GameController, GameData, "inventory_menu", 700, 200, Spritesheet("assets/menu_images/inventory_menu.png", 200, 400)))
     GameData.add_menu("inventory_menu", InventoryMenu(GameController, GameData, "inventory_menu", GameController.inventory.current_items, True, "inventory_menu"))
+
+    # the menu which pops up when you're shopping
+    GameData.add_overlay("buying_menu", Overlay(GameController, GameData, "buying_menu", 700, 200, Spritesheet("assets/menu_images/inventory_menu.png", 200, 400)))
+    GameData.add_menu("buying_menu", BuyingMenu(GameController, GameData, "buying_menu", [("Cheese", "50"), ("Mask", "100"), ("Stick", "10")], True, "buying_menu"))
 
     # the menu which pops up when the player has selected bag from the start menu and scrolls left or right
     GameData.add_overlay("key_inventory_menu", Overlay(GameController, GameData, "key_inventory_menu", 700, 200, Spritesheet("assets/menu_images/inventory_menu.png", 200, 400)))
@@ -102,8 +110,10 @@ def load_menus(GameController, GameData):
                    TextBox(GameController, GameData, "text_box", 250, 550, Spritesheet("assets/menu_images/text_box.png", 500, 150)))
 
     # the menu that pops up when you talk to an NPC and have to decide how to interact with them
-    GameData.add_menu("character_interact_menu",
-                TalkingMenu(GameController, GameData, "character_interact_menu", ["Talk", "Give Gift"], True, "text_box"))
+    GameData.add_menu("character_interact_menu", TalkingMenu(GameController, GameData, "character_interact_menu", ["Talk", "Give Gift"], True, "text_box"))
+
+    # the menu that pops up when you talk to an NPC and have to decide how to interact with them
+    GameData.add_menu("shopkeeper_interact_menu", ShopKeeperInteractMenu(GameController, GameData, "shopkeeper_interact_menu", ["Buy", "Sell"], True, "text_box"))
 
 def load_items(GameController, GameData):
     # adds all the items that exist in the game to the storage in GameData
@@ -122,6 +132,7 @@ def load_items(GameController, GameData):
     GameData.add_item("Item4", Item("Item4", GameData, GameController))
     GameData.add_item("Item5", Item("Item5", GameData, GameController))
     GameData.add_item("Item6", Item("Item6", GameData, GameController))
+    GameData.add_item("Item7", Item("Item7", GameData, GameController))
 
 
     # adds the number of items to your inventory - temporary - for testing purposes
@@ -134,23 +145,34 @@ def load_items(GameController, GameData):
     GameController.inventory.get_item("Bottle", 91)
     GameController.inventory.get_item("Coin", 91)
     GameController.inventory.get_item("Paper", 91)
-    GameController.inventory.get_item("Item1", 1)
+    GameController.inventory.get_item("Item1", 2)
     GameController.inventory.get_item("Item2", 1)
     GameController.inventory.get_item("Item3", 1)
     GameController.inventory.get_item("Item4", 1)
     GameController.inventory.get_item("Item5", 1)
+    GameController.inventory.get_item("Item6", 1)
+    GameController.inventory.get_item("Item7", 1)
+
     #GameController.inventory.get_item("Item6", 1)
 
 def load_key_items(GameController, GameData):
     # adds all the key items that exist in the game to the storage in GameData
-    GameData.add_key_item("Hammer", Item("Hammer", GameData, GameController))
-    GameData.add_key_item("Shovel", Item("Shovel", GameData, GameController))
-    GameData.add_key_item("Clippers", Item("Clippers", GameData, GameController))
+    GameData.add_key_item("Hammer", KeyItem("Hammer", GameData, GameController))
+    GameData.add_key_item("Shovel", KeyItem("Shovel", GameData, GameController))
+    GameData.add_key_item("Clippers", KeyItem("Clippers", GameData, GameController))
+    GameData.add_key_item("Bottle", KeyItem("Bottle", GameData, GameController))
+    GameData.add_key_item("Radio", KeyItem("Radio", GameData, GameController))
+    GameData.add_key_item("Net", KeyItem("Net", GameData, GameController))
+    GameData.add_key_item("Time Seed", KeyItem("Time Seed", GameData, GameController))
 
     # adds the key item to your key item inventory - for testing purposes
     GameController.inventory.get_key_item("Hammer")
     GameController.inventory.get_key_item("Shovel")
     GameController.inventory.get_key_item("Clippers")
+    GameController.inventory.get_key_item("Bottle")
+    GameController.inventory.get_key_item("Radio")
+    GameController.inventory.get_key_item("Net")
+    GameController.inventory.get_key_item("Time Seed")
 
 
 """
@@ -217,3 +239,9 @@ def init_all_rooms(gc_input, gd_input):
 
     gd_input.add_room("hornby_realestate", HornbyRealestate(gc_input, gd_input))
     gd_input.room_list["hornby_realestate"].activate_room()
+
+    gd_input.add_room("island_potters", IslandPotters(gc_input, gd_input))
+    gd_input.room_list["island_potters"].activate_room()
+
+    gd_input.add_room("bike_shop", BikeShop(gc_input, gd_input))
+    gd_input.room_list["bike_shop"].activate_room()

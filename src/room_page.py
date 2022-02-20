@@ -3,8 +3,8 @@ from random import randrange
 import pygame, csv, os
 
 from TileMap import TileMap
-from features import GenericNPC, Spritesheet, TammaNPC, StandingNPC
-from prop_page import GenericProp, Tree, Decoration, Building, BenchHorizontal, BenchVertical, PlumTree, PicnicTable, Computer, Counter, ComputerBack, Bookcase
+from features import GenericNPC, Spritesheet, TammaNPC, StandingNPC, ShopKeeper
+from prop_page import GenericProp, Tree, Decoration, Building, BenchHorizontal, BenchVertical, PlumTree, PicnicTable, Computer, Counter, ComputerBack, Bookcase, Dress
 from keyboards import Direction, Facing
 from mapClasses import Plot, Door, Tile, Position_Manager
 
@@ -391,13 +391,16 @@ class Ringside(Room):
         self.gd_input.room_list[self.name].add_room_door("ringside_to_hornby_creative", Door("Ringside", "hornby_creative", 12, 76, 4, 3, "ringside_to_hornby_creative"))
         self.gd_input.room_list[self.name].add_room_door("ringside_to_to_the_moon", Door("Ringside", "to_the_moon", 41, 81, 2, 3, "ringside_to_to_the_moon"))
         self.gd_input.room_list[self.name].add_room_door("ringside_to_hornby_realestate", Door("Ringside", "hornby_realestate", 39, 75, 1, 3, "ringside_to_hornby_realestate"))
+        self.gd_input.room_list[self.name].add_room_door("ringside_to_island_potters_1", Door("Ringside", "island_potters", 39, 63, 2, 3,  "ringside_to_island_potters_1"))
+        self.gd_input.room_list[self.name].add_room_door("ringside_to_island_potters_2", Door("Ringside", "island_potters", 41, 63, 4, 3, "ringside_to_island_potters_2"))
+        self.gd_input.room_list[self.name].add_room_door("ringside_to_bike_shop", Door("Ringside", "bike_shop", 40, 91, 2, 6, "ringside_to_bike_shop"))
 
     def add_room_characters(self):
         self.gd_input.add_character("Deb", GenericNPC(29, 76, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Deb.png", 32, 40), "Deb", self.name, "Something strange is going on around here, have you heard about the children disapearing? Their parents couldn't even remember their names...", "look_around", Facing.FRONT))
         self.gd_input.add_character("Alex", GenericNPC(17, 70, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/alex_lamont_CS.png", 32, 40), "Alex", self.name, "Hey Shuma, I feel like I haven't seen you in a long time... but didn't we just go to the beach togther on Friday? I seem to be losing track of time so much recently...", "square", Facing.FRONT))
         self.gd_input.add_character("Jamara", GenericNPC(31, 90, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Jamara_CS.png", 32, 40), "Jamara", self.name, "What do you think the greatest joy in life is? I haven't figured it out yet... I enjoy a whole lot of stuff, but I feel like nothing I've done so far is quite it.", "pace", Facing.FRONT))
         self.gd_input.add_character("Donna", GenericNPC(39, 78, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Donna_Tuelle_CS.png", 32, 40), "Donna", self.name, "You know, it's the strangest thing, my daughter Alex showed up the other day to ask me to watch her kids... but I don't remember having grandkids. I watched them anyway, but I swear I've never met them...", "left_right", Facing.FRONT))
-
+        self.gd_input.add_character("Clair", GenericNPC(30, 60, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Clair_CS.png", 32, 40), "Clair", self.name, "I love this place but sometimes I feel like I should just pack everything up and run far away...", "square", Facing.FRONT))
 
     def add_room_props(self):
             self.gd_input.add_prop("Coop_Building", Building(10, 8, self.gc_input, self.gd_input, 832, 1632, "assets/prop_sprites/Buildings/Coop_Building.png", "Coop_Building", 26, 51, self.name, "assets/prop_sprites/Buildings/building_csv/coop_fill_csv.csv"))
@@ -409,6 +412,7 @@ class Ringside(Room):
             self.gd_input.add_prop("To_The_Moon", Building(39, 78, self.gc_input, self.gd_input, (5 * 32), (5 * 32), "assets/prop_sprites/Buildings/to_the_moon.png", "To_The_Moon", 5, 5, self.name, "assets/prop_sprites/Buildings/building_csv/to_the_moon_fill_map.csv"))
             self.gd_input.add_prop("Fibres", Building(31, 60, self.gc_input, self.gd_input, (5 * 32), (5 * 32), "assets/prop_sprites/Buildings/Fibres.png", "Fibres", 5, 5, self.name, "assets/prop_sprites/Buildings/building_csv/fibres_fill_map.csv"))
             self.gd_input.add_prop("Vorizo", Building(27, 93, self.gc_input, self.gd_input, (3 * 32), (3 * 32), "assets/prop_sprites/Buildings/vorizo.png", "Vorizo", 3, 3, self.name, "assets/prop_sprites/Buildings/building_csv/vorizo_fill_map.csv"))
+            self.gd_input.add_prop("Bike_Shop", Building(39, 85, self.gc_input, self.gd_input, (4 * 32), (7 * 32), "assets/prop_sprites/Buildings/bike_shop.png", "Bike_Shop", 4, 7, self.name, "assets/prop_sprites/Buildings/building_csv/bike_shop_fill_map.csv"))
 
             self.gd_input.add_prop("tree1", Tree(29, 74, "tree1", self.gc_input, self.gd_input, self.name))
             self.gd_input.add_prop("Bench1", BenchHorizontal(28, 78, "Bench1", self.gc_input, self.gd_input, self.name))
@@ -455,12 +459,12 @@ class ComputerCentreRoom(Room):
         comp_map = TileMap("assets/room_maps/computer_centre_map.csv", self.gd_input.tiles_img_dict)
         self.gd_input.room_list[self.name].add_room_plot("CSM_1_1", Plot("computer_centre", 1, 1, comp_map.return_map(), self.gc_input, self.gd_input, None))
         self.gd_input.room_list[self.name].activate_plot("CSM_1_1")
+
     def add_room_doors(self):
         self.gd_input.room_list[self.name].add_room_door("computer_centre_to_ringside", Door("computer_centre", "Ringside",  3, 4, 11, 85, "computer_centre_to_ringside"))
 
-
     def add_room_characters(self):
-        self.gd_input.add_character("CC_Guy2", GenericNPC(2, 2, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Sub_CS.png", 32, 40), "CC_Guy2", self.name, "You have such strange customers here, what in the world is a yurt?", "stay_left", Facing.LEFT))
+        self.gd_input.add_character("CC_Guy2", GenericNPC(2, 2, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Sub_CS.png", 32, 40), "CC_Guy2", self.name, "You have such strange customs here, what in the world is a yurt?", "stay_left", Facing.LEFT))
         self.gd_input.add_character("CC_Guy3", GenericNPC(4, 2, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Sub_CS.png", 32, 40), "CC_Guy3", self.name, "Leave me alone human!.. I mean... dude", "stay_left", Facing.LEFT))
         self.gd_input.add_character("CC_Guy1", GenericNPC(6, 2, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Sub_CS.png", 32, 40), "CC_Guy1", self.name, "Do you know what this strange box is?", "stay_front", Facing.FRONT))
 
@@ -496,14 +500,18 @@ class HornbyCreativeRoom(Room):
         HC_map = TileMap("assets/room_maps/hornby_creative_map.csv", self.gd_input.tiles_img_dict)
         self.gd_input.room_list[self.name].add_room_plot("HC_1_1", Plot("hornby_creative", 1, 1, HC_map.return_map(), self.gc_input, self.gd_input, None))
         self.gd_input.room_list[self.name].activate_plot("HC_1_1")
+
     def add_room_doors(self):
         self.gd_input.room_list[self.name].add_room_door("hornby_creative_to_ringside", Door("hornby_creative", "Ringside", 4, 4, 12, 77, "hornby_creative_to_ringside"))
 
     def add_room_characters(self):
-        self.gd_input.add_character("Tamma", TammaNPC(1, 2, self.gc_input, self.gd_input, self.name))
+        self.gd_input.add_character("Tamma", ShopKeeper(1, 2, self.gc_input, self.gd_input, self.name))
 
     def add_room_props(self):
         self.gd_input.add_prop("counter1", Counter(2, 2, "counter1", self.gc_input, self.gd_input, self.name))
+        self.gd_input.add_prop("pink_dress_stand", Dress(5, 2, "pink_dress_stand", self.gc_input, self.gd_input, self.name, Spritesheet("assets/prop_sprites/pink_dress_stand.png", 32, 32)))
+        self.gd_input.add_prop("green_dress_stand", Dress(6, 2, "green_dress_stand", self.gc_input, self.gd_input, self.name, Spritesheet("assets/prop_sprites/green_dress_stand.png", 32, 32)))
+        self.gd_input.add_prop("blue_dress_stand", Dress(6, 3, "blue_dress_stand", self.gc_input, self.gd_input, self.name, Spritesheet("assets/prop_sprites/blue_dress_stand.png", 32, 32)))
 
 class ToTheMoon(Room):
     def __init__(self, gc_input, gd_input):
@@ -581,3 +589,80 @@ class HornbyRealestate(Room):
     def add_room_props(self):
         self.gd_input.add_prop("HR_computer1", Computer(1, 2, "HR_computer1", self.gc_input, self.gd_input, self.name))
         self.gd_input.add_prop("HR_computer2", ComputerBack(4, 3, "HR_computer2", self.gc_input, self.gd_input, self.name))
+
+class IslandPotters(Room):
+    def __init__(self, gc_input, gd_input):
+        super().__init__(gc_input, gd_input)
+
+        self.terrain_map = None
+        self.obstacle_map = None
+
+        self.name = "island_potters"
+        self.room_width = 5
+        self.room_height = 2
+        self.left_edge_x = 1
+        self.top_edge_y = 2
+
+        self.right_edge_x = self.left_edge_x + self.room_width - 1
+        self.bottom_edge_y = self.top_edge_y + self.room_height - 1
+
+        self.map_style = "image"
+
+        self.total_plots_x = 1
+        self.total_plots_y = 1
+        self.plot_size_x = int(self.room_width/self.total_plots_x)
+        self.plot_size_y = int(self.room_height/self.total_plots_y)
+
+    def add_room_and_plots(self):
+        IP_map = TileMap("assets/room_maps/island_potters_map.csv", self.gd_input.tiles_img_dict)
+        self.gd_input.room_list[self.name].add_room_plot("IP_1_1", Plot(self.name, 1, 1, IP_map.return_map(), self.gc_input, self.gd_input, None))
+        self.gd_input.room_list[self.name].activate_plot("IP_1_1")
+
+    def add_room_doors(self):
+        self.gd_input.room_list[self.name].add_room_door("island_potters_to_ringside_1", Door("island_potters", "Ringside", 2, 4, 39, 64, "island_potters_to_ringside_1"))
+        self.gd_input.room_list[self.name].add_room_door("island_potters_to_ringside_2", Door("island_potters", "Ringside", 4, 4, 41, 64, "island_potters_to_ringside_2"))
+
+    def add_room_characters(self):
+        self.gd_input.add_character("IP_Guy1", GenericNPC(5, 2, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Sub_CS.png", 32, 40), "IP_Guy1", self.name, "I never understood this pottery stuff, now whittling, that I like", "stay_front", Facing.FRONT))
+
+    def add_room_props(self):
+        self.gd_input.add_prop("IP_counter_1", Counter(4, 2, "IP_counter_1", self.gc_input, self.gd_input, self.name))
+
+class BikeShop(Room):
+    def __init__(self, gc_input, gd_input):
+        super().__init__(gc_input, gd_input)
+
+        self.terrain_map = None
+        self.obstacle_map = None
+
+        self.name = "bike_shop"
+        self.room_width = 4
+        self.room_height = 5
+        self.left_edge_x = 1
+        self.top_edge_y = 2
+
+        self.right_edge_x = self.left_edge_x + self.room_width - 1
+        self.bottom_edge_y = self.top_edge_y + self.room_height - 1
+
+        self.map_style = "image"
+
+        self.total_plots_x = 1
+        self.total_plots_y = 1
+        self.plot_size_x = int(self.room_width/self.total_plots_x)
+        self.plot_size_y = int(self.room_height/self.total_plots_y)
+
+    def add_room_and_plots(self):
+        BS_map = TileMap("assets/room_maps/bike_shop_map.csv", self.gd_input.tiles_img_dict)
+        self.gd_input.room_list[self.name].add_room_plot("BS_1_1", Plot(self.name, 1, 1, BS_map.return_map(), self.gc_input, self.gd_input, None))
+        self.gd_input.room_list[self.name].activate_plot("BS_1_1")
+
+    def add_room_doors(self):
+        self.gd_input.room_list[self.name].add_room_door("bike_shop_to_ringside", Door("bike_sho", "Ringside", 2, 7, 40, 92, "bike_shop_to_ringside"))
+
+    def add_room_characters(self):
+        self.gd_input.add_character("BS_Guy1", GenericNPC(2, 2, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Sub_CS.png", 32, 40), "BS_Guy1", self.name, "You don't look like you'd know how to ride a bike...", "stay_front", Facing.FRONT))
+
+
+    def add_room_props(self):
+        self.gd_input.add_prop("BS_counter_1", Counter(1, 3, "BS_counter_1", self.gc_input, self.gd_input, self.name))
+        self.gd_input.add_prop("BS_counter_2", Counter(2, 3, "BS_counter_2", self.gc_input, self.gd_input, self.name))

@@ -111,22 +111,6 @@ class KeyboardManager():
     def direction_key_pressed(self, direction):
         pass
 
-
-    def key_right(self):
-        pass
-
-
-    def key_left(self):
-        pass
-
-
-    def key_down(self):
-        pass
-
-
-    def key_up(self):
-        pass
-
     @abstractmethod
     def key_return(self):
         pass
@@ -181,11 +165,11 @@ class InGame(KeyboardManager):
 
 
     def key_shift(self):
-        self.GameData.menu_list["yes_no_menu"].set_menu()
+        pass
 
 
     def key_caps(self):
-        print(self.GameData.player["Player"].x, self.GameData.player["Player"].y)
+        pass
 
 
 # Keyboard Manager for when the player is in the start menu
@@ -196,61 +180,25 @@ class InStartMenu(KeyboardManager):
         self.GameController = GameController
         self.GameData = GameData
 
-    def key_right(self):
-        pass
-
-    def key_left(self):
-        pass
-
     def direction_key_released(self, direction):
         self.direction = direction
         if self.direction == Direction.DOWN:
-            self.GameData.menu_list["start_menu"].cursor_down()
+            self.GameData.menu_list[self.GameController.current_menu].cursor_down()
         if self.direction == Direction.UP:
-            self.GameData.menu_list["start_menu"].cursor_up()
+            self.GameData.menu_list[self.GameController.current_menu].cursor_up()
 
     def direction_key_pressed(self, direction):
         pass
 
 
     def key_return(self):
-        menu_selection = self.GameData.menu_list["start_menu"].get_current_menu_item()
-        if menu_selection == "Bag":
-            print("You looked in your bag!")
-            self.GameData.menu_list["inventory_menu"].set_menu()
-
-        elif menu_selection == "Key Items":
-            print("You looked in your bag!")
-            self.GameData.menu_list["key_inventory_menu"].set_menu()
-
-        elif menu_selection == "Profile":
-            self.GameController.add_current_overlay("ID_card")
-            self.GameController.MenuManager.start_menu = False
-            self.GameController.set_keyboard_manager(InProfile.ID)
-            self.GameData.menu_list["start_menu"].reset_cursor()
-
-        elif menu_selection == "Chore List":
-            self.GameController.add_current_overlay("To_do_list")
-            self.GameController.MenuManager.start_menu = False
-            self.GameController.set_keyboard_manager(InToDoList.ID)
-            self.GameData.menu_list["start_menu"].reset_cursor()
-
-
-        else:
-            print("You exited the menu")
-            self.GameController.set_keyboard_manager(InGame.ID)
-            # self.GameController.set_menu(None)
-            self.GameController.MenuManager.start_menu = False
-            self.GameData.menu_list["start_menu"].reset_cursor()
-
+        self.GameData.menu_list[self.GameController.current_menu].choose_option()
 
     def key_space(self):
         pass
 
     def key_control(self):
-        self.GameController.set_keyboard_manager(InGame.ID)
-        # self.GameController.set_menu(None)
-        self.GameController.MenuManager.start_menu = False
+        self.GameData.menu_list[self.GameController.current_menu].exit_menus()
 
     def key_shift(self):
         pass
@@ -268,11 +216,6 @@ class InInventory(KeyboardManager):
         self.GameController = GameController
         self.GameData = GameData
 
-    def key_right(self):
-        pass
-
-    def key_left(self):
-        pass
 
     def direction_key_released(self, direction):
         self.direction = direction
@@ -281,19 +224,15 @@ class InInventory(KeyboardManager):
         if self.direction == Direction.UP:
             self.GameData.menu_list["inventory_menu"].cursor_up()
         if self.direction == Direction.LEFT:
-            self.GameController.inventory.bag_slot_left()
+
+            self.GameData.menu_list["inventory_menu"].cursor_left()
 
         if self.direction == Direction.RIGHT:
-            self.GameController.inventory.bag_slot_right()
+            self.GameData.menu_list["inventory_menu"].cursor_right()
 
     def direction_key_pressed(self, direction):
         pass
 
-    def key_up(self):
-        pass
-
-    def key_down(self):
-        pass
 
     def key_return(self):
         self.GameData.menu_list[self.GameController.current_menu].choose_option()
@@ -309,18 +248,12 @@ class InInventory(KeyboardManager):
 
 
 # Keyboard Manager for when the player has selected an item in inventory and is deciding what to do with it
-class InUseInventory(KeyboardManager):
-    ID = "IUM_Keyer"
+class InUse(KeyboardManager):
+    ID = "IU_Keyer"
 
     def __init__(self, GameController, GameData):
         self.GameController = GameController
         self.GameData = GameData
-
-    def key_right(self):
-        pass
-
-    def key_left(self):
-        pass
 
     def direction_key_released(self, direction):
         self.direction = direction
@@ -332,12 +265,6 @@ class InUseInventory(KeyboardManager):
     def direction_key_pressed(self, direction):
         pass
 
-    def key_up(self):
-        pass
-
-    def key_down(self):
-        pass
-
     def key_return(self):
         self.GameData.menu_list[self.GameController.current_menu].choose_option()
 
@@ -346,7 +273,7 @@ class InUseInventory(KeyboardManager):
 
     def key_control(self):
         self.GameController.set_keyboard_manager(InGame.ID)
-        # self.GameController.set_menu(None)
+        # self.GameController.set_current_menu(None)
         self.GameController.MenuManager.start_menu = False
 
     def key_shift(self):
@@ -373,26 +300,13 @@ class InKeyInventory(KeyboardManager):
             self.GameData.menu_list["key_inventory_menu"].cursor_up()
 
         if self.direction == Direction.LEFT:
-            self.GameController.inventory.bag_slot_left()
+            self.GameData.menu_list["key_inventory_menu"].cursor_left()
 
         if self.direction == Direction.RIGHT:
-            self.GameController.inventory.bag_slot_right()
-
-    def key_right(self):
-        pass
-
-    def key_left(self):
-        pass
-
-    def key_up(self):
-        pass
-
-    def key_down(self):
-        pass
+            self.GameData.menu_list["key_inventory_menu"].cursor_right()
 
     def key_return(self):
         self.GameData.menu_list[self.GameController.current_menu].choose_option()
-
 
     def key_space(self):
         pass
@@ -406,6 +320,7 @@ class InKeyInventory(KeyboardManager):
     def key_caps(self):
         pass
 
+
 # Conversation Keyboard Managers
 # Keyboard Manager for when the player is talking to a NPC and choosing how to interact with them
 class InConversationOptions(KeyboardManager):
@@ -414,12 +329,6 @@ class InConversationOptions(KeyboardManager):
     def __init__(self, GameController, GameData):
         self.GameController = GameController
         self.GameData = GameData
-
-    def key_right(self):
-        pass
-
-    def key_left(self):
-        pass
 
     def direction_key_released(self, direction):
         self.direction = direction
@@ -431,12 +340,6 @@ class InConversationOptions(KeyboardManager):
     def direction_key_pressed(self, direction):
         pass
 
-    def key_up(self):
-        print("hi")
-        self.GameData.menu_list["character_interact_menu"].cursor_up()
-
-    def key_down(self):
-        self.GameData.menu_list["character_interact_menu"].cursor_down()
 
     def key_return(self):
         #TODO: Fix this to use characters name instead of facing tile
@@ -456,13 +359,14 @@ class InConversationOptions(KeyboardManager):
         elif menu_selection == "Give Gift":
             print("here, take this poop")
             self.GameController.set_keyboard_manager(InGame.ID)
+            self.GameData.menu_list["character_interact_menu"].set_talking_to(None)
             self.GameController.MenuManager.character_interact_menu = False
-            self.GameData.character_list[self.GameData.player["Player"].check_adj_tile(self.GameData.player["Player"].direction).object_filling].set_state("idle")
+            self.GameData.character_list[self.GameData.player["Player"].check_adj_tile(self.GameData.player["Player"].get_direct(self.GameData.player["Player"].facing)).object_filling].set_state("idle")
+
         elif menu_selection == "Exit":
             self.GameController.set_keyboard_manager(InGame.ID)
             self.GameController.MenuManager.character_interact_menu = False
-            self.GameData.character_list[self.GameData.player["Player"].check_adj_tile(self.GameData.player["Player"].direction).object_filling].set_state(
-                "idle")
+            self.GameData.character_list[self.GameData.player["Player"].check_adj_tile(self.GameData.player["Player"].get_direct(self.GameData.player["Player"].facing)).object_filling].set_state("idle")
         self.GameData.menu_list["character_interact_menu"].reset_cursor()
 
     def key_space(self):
@@ -483,11 +387,6 @@ class InConversation(KeyboardManager):
         self.GameController = GameController
         self.GameData = GameData
 
-    def key_right(self):
-        pass
-
-    def key_left(self):
-        pass
 
     def direction_key_released(self, direction):
         self.direction = direction
@@ -500,23 +399,126 @@ class InConversation(KeyboardManager):
         if self.direction == Direction.RIGHT:
             pass
 
-    def key_up(self):
-        pass
-
-    def key_down(self):
-        pass
 
     def key_return(self):
         if self.GameData.character_list[self.GameData.player["Player"].check_adj_tile(self.GameData.player["Player"].get_direct(self.GameData.player["Player"].facing)).object_filling].current_phrase != None:
             self.GameData.character_list[self.GameData.player["Player"].check_adj_tile(self.GameData.player["Player"].get_direct(self.GameData.player["Player"].facing)).object_filling].set_speaking_queue()
         else:
-            self.GameData.character_list[
-                self.GameData.player["Player"].check_adj_tile(self.GameData.player["Player"].get_direct(self.GameData.player["Player"].facing)).object_filling].clear_speaking_queue()
+            self.GameData.character_list[self.GameData.player["Player"].check_adj_tile(self.GameData.player["Player"].get_direct(self.GameData.player["Player"].facing)).object_filling].clear_speaking_queue()
             self.GameController.set_keyboard_manager(InGame.ID)
             self.GameData.character_list[self.GameController.current_speaker].set_state("idle")
             self.GameController.set_text_box(None)
             self.GameController.set_speaker(None)
 
+
+    def key_space(self):
+        pass
+
+    def key_control(self):
+        pass
+
+    def key_shift(self):
+        pass
+
+    def key_caps(self):
+        pass
+
+
+class InShopKeeperInteract(KeyboardManager):
+    ID = "ISKCO_Keyer"
+
+    def __init__(self, GameController, GameData):
+        self.GameController = GameController
+        self.GameData = GameData
+
+    def direction_key_released(self, direction):
+        self.direction = direction
+        if self.direction == Direction.DOWN:
+            self.GameData.menu_list["shopkeeper_interact_menu"].cursor_down()
+        if self.direction == Direction.UP:
+            self.GameData.menu_list["shopkeeper_interact_menu"].cursor_up()
+
+    def direction_key_pressed(self, direction):
+        pass
+
+
+    def key_return(self):
+        self.GameData.menu_list[self.GameController.current_menu].choose_option()
+
+    def key_space(self):
+        pass
+
+    def key_control(self):
+        pass
+
+    def key_shift(self):
+        pass
+
+
+class InShopkeeperConversation(KeyboardManager):
+    ID = "ISC_Keyer"
+
+    def __init__(self, GameController, GameData):
+        self.GameController = GameController
+        self.GameData = GameData
+
+
+    def direction_key_released(self, direction):
+        self.direction = direction
+        if self.direction == Direction.DOWN:
+            pass
+        if self.direction == Direction.UP:
+            pass
+        if self.direction == Direction.LEFT:
+            pass
+        if self.direction == Direction.RIGHT:
+            pass
+
+    def key_return(self):
+        if self.GameData.character_list[self.GameData.player["Player"].check_adj_tile(self.GameData.player["Player"].get_direct(self.GameData.player["Player"].facing)).object_filling].current_phrase != None:
+            self.GameData.character_list[self.GameData.player["Player"].check_adj_tile(self.GameData.player["Player"].get_direct(self.GameData.player["Player"].facing)).object_filling].set_speaking_queue()
+        else:
+            self.GameData.character_list[self.GameData.player["Player"].check_adj_tile(self.GameData.player["Player"].get_direct(self.GameData.player["Player"].facing)).object_filling].clear_speaking_queue()
+            self.GameController.set_keyboard_manager(InGame.ID)
+            self.GameData.character_list[self.GameController.current_speaker].set_state("idle")
+            self.GameController.set_text_box(None)
+            self.GameController.set_speaker(None)
+
+
+    def key_space(self):
+        pass
+
+    def key_control(self):
+        pass
+
+    def key_shift(self):
+        pass
+
+    def key_caps(self):
+        pass
+
+
+class InBuying(KeyboardManager):
+    ID = "IB_Keyer"
+
+    def __init__(self, GameController, GameData):
+        self.GameController = GameController
+        self.GameData = GameData
+
+
+    def direction_key_released(self, direction):
+        self.direction = direction
+        if self.direction == Direction.DOWN:
+            pass
+        if self.direction == Direction.UP:
+            pass
+        if self.direction == Direction.LEFT:
+            pass
+        if self.direction == Direction.RIGHT:
+            pass
+
+    def key_return(self):
+        self.GameData.menu_list[self.GameController.current_menu].choose_option()
 
     def key_space(self):
         pass
@@ -538,18 +540,6 @@ class InProfile(KeyboardManager):
     def __init__(self, GameController, GameData):
         self.GameController = GameController
         self.GameData = GameData
-
-    def key_right(self):
-        pass
-
-    def key_left(self):
-        pass
-
-    def key_up(self):
-        pass
-
-    def key_down(self):
-        pass
 
     def key_return(self):
         self.GameController.set_keyboard_manager(InGame.ID)
@@ -577,17 +567,6 @@ class InToDoList(KeyboardManager):
         self.GameController = GameController
         self.GameData = GameData
 
-    def key_right(self):
-        pass
-
-    def key_left(self):
-        pass
-
-    def key_up(self):
-        pass
-
-    def key_down(self):
-        pass
 
     def key_return(self):
         self.GameController.set_keyboard_manager(InGame.ID)
@@ -614,11 +593,6 @@ class InYesNo(KeyboardManager):
         self.GameController = GameController
         self.GameData = GameData
 
-    def key_right(self):
-        pass
-
-    def key_left(self):
-        pass
 
     def direction_key_released(self, direction):
         self.direction = direction
@@ -629,11 +603,7 @@ class InYesNo(KeyboardManager):
 
     def direction_key_pressed(self, direction):
         pass
-    def key_up(self):
-        pass
 
-    def key_down(self):
-        pass
 
     def key_return(self):
         self.GameData.menu_list[self.GameController.current_menu].choose_option()
@@ -649,4 +619,38 @@ class InYesNo(KeyboardManager):
         pass
 
     def key_caps(self):
+        pass
+
+class InRegularMenu(KeyboardManager):
+    ID = "IRM_Keyer"
+
+    def __init__(self, GameController, GameData):
+        self.GameController = GameController
+        self.GameData = GameData
+
+
+    def direction_key_released(self, direction):
+        self.direction = direction
+        if self.direction == Direction.DOWN:
+            self.GameData.menu_list[self.GameController.current_menu].cursor_down()
+        if self.direction == Direction.UP:
+            self.GameData.menu_list[self.GameController.current_menu].cursor_up()
+        if self.direction == Direction.LEFT:
+            self.GameData.menu_list[self.GameController.current_menu].cursor_left()
+        if self.direction == Direction.RIGHT:
+            self.GameData.menu_list[self.GameController.current_menu].cursor_right()
+
+    def direction_key_pressed(self, direction):
+        pass
+
+    def key_return(self):
+        self.GameData.menu_list[self.GameController.current_menu].choose_option()
+
+    def key_space(self):
+        pass
+
+    def key_control(self):
+        pass
+
+    def key_shift(self):
         pass

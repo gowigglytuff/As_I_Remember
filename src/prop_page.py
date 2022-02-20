@@ -398,3 +398,30 @@ class Counter(Prop):
         screen.blit(self.img, [((self.imagex + self.gc_input.camera[0]) * self.gd_input.square_size[0])
                                + self.gd_input.base_locator_x, ((self.imagey + self.gc_input.camera[1])
                                 * self.gd_input.square_size[1] - self.offset_y) + self.gd_input.base_locator_y])
+
+class Dress(Prop):
+    def __init__(self, x, y, name, gc_input, gd_input, room_name, spritesheet):
+        super().__init__(x, y, gc_input, gd_input)
+        self.drawing_priority = 1
+        self.imagex = x
+        self.imagey = y
+        self.width = (1*32)
+        self.height = (1*32)
+        self.spritesheet = spritesheet
+        self.name = name
+        self.size_x = 1
+        self.size_y = 1
+        self.offset_y = 11
+        self.feature_type = "Prop"
+        self.cur_img = 0
+        self.img = self.spritesheet.get_image(0, 0)
+        self.gc_input = gc_input
+        self.gd_input = gd_input
+        self.room = room_name
+
+        self.gd_input.room_list[self.room].add_room_prop(self.name)
+
+    def draw(self, screen):
+        screen.blit(self.img, [((self.imagex + self.gc_input.camera[0]) * self.gd_input.square_size[0])
+                               + self.gd_input.base_locator_x, ((self.imagey + self.gc_input.camera[1])
+                                * self.gd_input.square_size[1] - self.offset_y) + self.gd_input.base_locator_y])

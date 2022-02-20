@@ -507,7 +507,6 @@ class GenericNPC(NPC):
         pygame.time.set_timer(self.action_clock, 80)
 
     def do_activity(self):
-        print(self.name)
         if self.state == "idle":
             if self.current_step_number == len(self.step) -1:
                 self.current_step_number = 0
@@ -567,7 +566,7 @@ class GenericNPC(NPC):
             elif self.gd_input.player["Player"].facing == Facing.RIGHT:
                 self.turn_left()
             self.gc_input.set_keyboard_manager(InConversationOptions.ID)
-            # self.GameController.set_menu("character_interact_menu")
+            # self.GameController.set_current_menu("character_interact_menu")
             self.gc_input.MenuManager.character_interact_menu = True
             self.gd_input.menu_list["character_interact_menu"].set_talking_to(self.name)
             self.set_state("talking")
@@ -708,7 +707,7 @@ class StandingNPC(NPC):
             elif self.gd_input.player["Player"].facing == Facing.RIGHT:
                 self.turn_left()
             self.gc_input.set_keyboard_manager(InConversationOptions.ID)
-            # self.GameController.set_menu("character_interact_menu")
+            # self.GameController.set_current_menu("character_interact_menu")
             self.gc_input.MenuManager.character_interact_menu = True
             self.gd_input.menu_list["character_interact_menu"].set_talking_to(self.name)
             self.set_state("talking")
@@ -848,7 +847,7 @@ class TammaNPC(NPC):
             elif self.gd_input.player["Player"].facing == Facing.RIGHT:
                 self.turn_left()
             self.gc_input.set_keyboard_manager(InConversationOptions.ID)
-            # self.GameController.set_menu("character_interact_menu")
+            # self.GameController.set_current_menu("character_interact_menu")
             self.gc_input.MenuManager.character_interact_menu = True
             self.gd_input.menu_list["character_interact_menu"].set_talking_to(self.name)
             self.set_state("talking")
@@ -862,6 +861,117 @@ class TammaNPC(NPC):
         my_font = pygame.font.Font(self.gc_input.font, 10)
         item = my_font.render(chosen_phrase, 1, (0, 0, 0))
         self.gc_input.screen.blit(item, (self.gd_input.overlay_list["text_box"].x + 150, self.gd_input.overlay_list["text_box"].y + 60))
+
+    def display_name(self):
+        my_font = pygame.font.Font(self.gc_input.font, 10)
+        item = my_font.render(self.name + ":", 1, (0, 0, 0))
+        self.gc_input.screen.blit(item, (self.gd_input.overlay_list["text_box"].x + 150, self.gd_input.overlay_list["text_box"].y + 20))
+
+    def test_speak(self):
+        text_line = 0
+        for line in self.current_phrase:
+            my_font = pygame.font.Font(self.gc_input.font, 10)
+            item = my_font.render(line, 1, (0, 0, 0))
+            self.gc_input.screen.blit(item, (self.gd_input.overlay_list["text_box"].x + 150, self.gd_input.overlay_list["text_box"].y + 60 + 25 * text_line))
+            text_line += 1
+
+    def set_current_phrase(self):
+        self.current_phrase = textwrap.wrap(self.phrase, width=30)
+
+    def set_speaking_queue(self):
+
+        phrase_counter = 0
+        self.speaking_queue = []
+        for line in range(3):
+            if len(self.current_phrase) > 0:
+                self.speaking_queue.append(self.current_phrase[0])
+                self.current_phrase.pop(0)
+
+        if len(self.current_phrase) == 0:
+            self.current_phrase = None
+
+    def clear_speaking_queue(self):
+        self.speaking_queue = None
+
+class ShopKeeper(NPC):
+    IDLE = "idle"
+    AVAILABLE_STATES = [IDLE]
+
+    def __init__(self, x, y, gc_input, gd_input, room):
+        super().__init__(x, y, gc_input, gd_input)
+
+        self.actions = ["turning_left", "turning_front", "turning_right", "rest", "rest", "rest", "rest"]
+        self.available_actions = ["turning_front"]
+        self.spritesheet = Spritesheet("assets/NPC_sprites/Tamma_CS.png", 32, 40)
+        self.state = "idle"
+        self.phrase = "Hi, welcome to my store, what would you like to do?"
+        self.current_phrase = None
+        self.speaking_queue = None #textwrap.wrap("Hi everyone, it's so nice to see you here today! I hope you have all been doing well", width=30)
+        self.img = self.spritesheet.get_image(0, 0)
+        self.imagex = x
+        self.imagey = y
+        self.name = "Tamma"
+        self.items_list = ["Cheese", "Item 1", "Stick"]
+
+        self.current_step_number = 0
+        self.step1 = ["turning_left", "rest", "walk_left", "rest", "turning_right", "rest", "walk_right", "rest"]
+        self.walk_pattern = "random"
+
+        self.room = room
+        self.gd_input.room_list[self.room].add_room_character(self.name)
+
+    def activate_timers(self):
+        pygame.time.set_timer(self.initiate, 1000)
+        pygame.time.set_timer(self.action_clock, 80)
+
+    def do_activity(self):
+        if self.state == "idle":
+            result = None
+            if self.walk_pattern == "step1":
+                if self.current_step_number == len(self.step1) - 1:
+                    self.current_step_number = 0
+                elif self.current_step_number < len(self.step1) - 1:
+                    self.current_step_number += 1
+                result = self.step1[self.current_step_number]
+            elif self.walk_pattern == "random":
+                result = choice(self.actions)
+
+            if result == "rest":
+                pass
+
+            elif result == "turning_front":
+                self.turn_front()
+
+    def get_interacted_with(self):
+        print("I, a shopkeeper, got interacted with")
+        # TODO: Fix all of this mess - make their picture pop up in their speech bubble thing
+        if self.state == "idle":
+            if self.gd_input.player["Player"].facing == Facing.BACK:
+                self.turn_front()
+            elif self.gd_input.player["Player"].facing == Facing.FRONT:
+                self.turn_back()
+            elif self.gd_input.player["Player"].facing == Facing.LEFT:
+                self.turn_right()
+            elif self.gd_input.player["Player"].facing == Facing.RIGHT:
+                self.turn_left()
+            self.gc_input.set_keyboard_manager(InShopKeeperInteract.ID)
+            # self.GameController.set_current_menu("character_interact_menu")
+            self.gd_input.menu_list["shopkeeper_interact_menu"].set_menu(self.name)
+            self.set_state("selling")
+
+    def speak(self, chosen_phrase):
+        my_font = pygame.font.Font(self.gc_input.font, 10)
+        item = my_font.render(self.name + ":", 1, (0, 0, 0))
+        self.gc_input.screen.blit(item, (
+            self.gd_input.overlay_list["text_box"].x + 150, self.gd_input.overlay_list["text_box"].y + 20))
+
+        my_font = pygame.font.Font(self.gc_input.font, 10)
+        item = my_font.render(chosen_phrase, 1, (0, 0, 0))
+        self.gc_input.screen.blit(item, (self.gd_input.overlay_list["text_box"].x + 150, self.gd_input.overlay_list["text_box"].y + 60))
+
+    def speak_items(self):
+        for item in self.items_list:
+            print(item)
 
     def display_name(self):
         my_font = pygame.font.Font(self.gc_input.font, 10)
