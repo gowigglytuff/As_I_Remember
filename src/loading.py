@@ -3,6 +3,7 @@
 import pygame
 from data import *
 from features import *
+from main import gl
 from mapClasses import *
 from room_page import *
 from TileMap import *
@@ -127,6 +128,7 @@ def load_items(GameController, GameData):
     GameData.add_item("Item5", Item("Item5", GameData, GameController))
     GameData.add_item("Item6", Item("Item6", GameData, GameController))
     GameData.add_item("Item7", Item("Item7", GameData, GameController))
+    GameData.add_item("TimeSeed", Item("TimeSeed", GameData, GameController))
 
 
     # adds the number of items to your inventory - temporary - for testing purposes

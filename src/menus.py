@@ -160,6 +160,7 @@ class StaticMenu(object):
             item = my_font.render(self.menu_item_list[quantitity][1], 1, (0, 0, 0))
             self.screen.blit(item, (self.x + 80 - (10 * len(self.menu_item_list[quantitity][1])), self.y + (quantitity * self.menu_spread)))
 
+
 class GameActionDialogue(object):
     def __init__(self, GameController, GameData):
         self.GameController = GameController

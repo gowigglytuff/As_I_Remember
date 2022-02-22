@@ -168,8 +168,60 @@ class Updater(object):
         self.GameData = GameData
         self.GameController = GameController
 
+
     def run_updates(self):
         self.GameData.menu_list["stats_menu"].update_menu_items_list()
+
+    def check_for_goals(self):
+        pass
+        #TODO: make this run through a list of goals and see if any are completed
+
+class Goal(object):
+    def __init__(self, name, requirement, reward, status):
+        self.requirement = requirement
+        self.reward = reward
+        self.name = name
+        self.status = status
+
+# TODO: Fix this whole mess
+class Goallist(object):
+    def __init__(self, GameData, GameController):
+        self.GameData = GameData
+        self.GameController = GameController
+        self.goal1_complete = False
+        self.goal_1 = None
+        self.goal_2 = None
+
+    def add_goals(self):
+        if self.goal_1 == None:
+            self.goal_1 = Goal("goal 1", ("You saved the game!" in self.GameData.menu_list["game_action_dialogue_menu"].menu_item_list), "TimeSeed", "incomplete")
+        if self.goal_2 == None:
+            self.goal_2 = Goal("goal 2", self.GameController.current_speaker == "Donna", "Item2", "incomplete")
+
+    def update_goals(self):
+        if self.goal_1.status != "complete":
+            self.goal_1.requirement = ("You saved the game!" in self.GameData.menu_list["game_action_dialogue_menu"].menu_item_list)
+        if self.goal_2.status != "complete":
+            self.goal_2.requirement = self.GameController.current_speaker == "Donna"
+
+
+    def check_goal(self, goal_to_check):
+        if goal_to_check.status == "incomplete":
+            self.update_goals()
+            if goal_to_check.requirement:
+                self.GameController.update_game_dialogue(str(goal_to_check.name) + " done, have a " + goal_to_check.reward + "!")
+                self.GameController.inventory.get_item(goal_to_check.reward, 1)
+                goal_to_check.status = "complete"
+                print(goal_to_check.status)
+                return True
+            else:
+                return False
+        else:
+            pass
+
+    def check_goal_1(self):
+        self.check_goal(self.goal_1)
+        self.check_goal(self.goal_2)
 
 class EventsManager(object):
     def __init__(self, GameData, GameController):
