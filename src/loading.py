@@ -52,20 +52,9 @@ def load_keyboard_managers(GameController, GameData):
     # load all keyboard managers
     # TODO: add other possible Keyboard_managers
     GameController.add_keyboard_manager(InGame.ID, InGame(GameController, GameData))
-    GameController.add_keyboard_manager(InStartMenu.ID, InStartMenu(GameController, GameData))
-    GameController.add_keyboard_manager(InConversation.ID, InConversation(GameController, GameData))
-    GameController.add_keyboard_manager(InShopkeeperConversation.ID, InShopkeeperConversation(GameController, GameData))
-    GameController.add_keyboard_manager(InConversationOptions.ID, InConversationOptions(GameController, GameData))
-    GameController.add_keyboard_manager(InShopKeeperInteract.ID, InShopKeeperInteract(GameController, GameData))
-    GameController.add_keyboard_manager(InInventory.ID, InInventory(GameController, GameData))
-    GameController.add_keyboard_manager(InKeyInventory.ID, InKeyInventory(GameController, GameData))
-    GameController.add_keyboard_manager(InUse.ID, InUse(GameController, GameData))
-    GameController.add_keyboard_manager(InToDoList.ID, InToDoList(GameController, GameData))
-    GameController.add_keyboard_manager(InBuying.ID, InBuying(GameController, GameData))
     GameController.add_keyboard_manager(InRegularMenu.ID, InRegularMenu(GameController, GameData))
 
     GameController.add_keyboard_manager(InProfile.ID, InProfile(GameController, GameData))
-    GameController.add_keyboard_manager(InYesNo.ID, InYesNo(GameController, GameData))
 
     # sets the initial Keyboard Manager to be the InGame Manager
     GameController.set_keyboard_manager(InGame.ID)
@@ -85,7 +74,7 @@ def load_menus(GameController, GameData):
 
     # the menu which pops up when you're shopping
     GameData.add_overlay("buying_menu", Overlay(GameController, GameData, "buying_menu", 700, 200, Spritesheet("assets/menu_images/inventory_menu.png", 200, 400)))
-    GameData.add_menu("buying_menu", BuyingMenu(GameController, GameData, "buying_menu", [("Cheese", "50"), ("Mask", "100"), ("Stick", "10")], True, "buying_menu"))
+    GameData.add_menu("buying_menu", BuyingMenu(GameController, GameData, "buying_menu", [("Cheese", 2), ("Item1", 2), ("Stick", 100)], True, "buying_menu"))
 
     # the menu which pops up when the player has selected bag from the start menu and scrolls left or right
     GameData.add_overlay("key_inventory_menu", Overlay(GameController, GameData, "key_inventory_menu", 700, 200, Spritesheet("assets/menu_images/inventory_menu.png", 200, 400)))
@@ -99,21 +88,26 @@ def load_menus(GameController, GameData):
     # the overlay that presents the profile card
     GameData.add_overlay("ID_card", ProfileCard(GameController, GameData, "ID_Card", 350, 300, Spritesheet("assets/misc_sprites/ID.png", 300, 200)))
 
-    GameData.add_overlay("To_do_list", ToDoList(GameController, GameData, "To_do_list", 350, 200, Spritesheet("assets/misc_sprites/to_do_list.png", 300, 400)))
+    GameData.add_overlay("To_do_list", Overlay(GameController, GameData, "To_do_list", 350, 200, Spritesheet("assets/misc_sprites/to_do_list.png", 300, 400)))
+    GameData.add_menu("to_do_list_menu", ToDoListMenu(GameController, GameData, "to_do_list_menu", ["say hi to your mom", "kiss your cat", "eat a pear", "say hi to your mom", "kiss your cat", "eat a pear", "say hi to your mom", "kiss your cat", "eat a pear", "say hi to your mom", "kiss your cat", "eat a pear"], True, "To_do_list"))
+
 
     # the overlay that is always present at the top of the screen containing current statur information
     #TODO: Make this actually a thing
     GameData.add_overlay("top_bar", Overlay(GameController, GameData, "top_bar", 100, 100, Spritesheet("assets/menu_images/top_bar.png", 700, 100)))
 
     #TODO: Fix this
-    GameData.add_overlay("text_box",
-                   TextBox(GameController, GameData, "text_box", 250, 550, Spritesheet("assets/menu_images/text_box.png", 500, 150)))
+    GameData.add_overlay("text_box", TextBox(GameController, GameData, "text_box", 250, 550, Spritesheet("assets/menu_images/text_box.png", 500, 150)))
 
     # the menu that pops up when you talk to an NPC and have to decide how to interact with them
-    GameData.add_menu("character_interact_menu", TalkingMenu(GameController, GameData, "character_interact_menu", ["Talk", "Give Gift"], True, "text_box"))
+    GameData.add_menu("conversation_options_menu", ConversationOptionsMenu(GameController, GameData, "conversation_options_menu", ["Talk", "Give Gift"], True, "text_box"))
+    GameData.add_menu("in_conversation_menu", InConversationMenu(GameController, GameData, "in_conversation_menu", [], True, "text_box"))
 
     # the menu that pops up when you talk to an NPC and have to decide how to interact with them
     GameData.add_menu("shopkeeper_interact_menu", ShopKeeperInteractMenu(GameController, GameData, "shopkeeper_interact_menu", ["Buy", "Sell"], True, "text_box"))
+
+    GameData.add_menu("stats_menu", StaticMenu(GameController, GameData))
+    GameData.add_menu("game_action_dialogue_menu", GameActionDialogue(GameController, GameData))
 
 def load_items(GameController, GameData):
     # adds all the items that exist in the game to the storage in GameData
@@ -136,22 +130,22 @@ def load_items(GameController, GameData):
 
 
     # adds the number of items to your inventory - temporary - for testing purposes
-    GameController.inventory.get_item("Cheese", 9)
-    GameController.inventory.get_item("Mask", 102)
-    GameController.inventory.get_item("Stick", 91)
-    GameController.inventory.get_item("Fork", 91)
-    GameController.inventory.get_item("Pen", 91)
-    GameController.inventory.get_item("Cup", 91)
-    GameController.inventory.get_item("Bottle", 91)
-    GameController.inventory.get_item("Coin", 91)
-    GameController.inventory.get_item("Paper", 91)
-    GameController.inventory.get_item("Item1", 2)
-    GameController.inventory.get_item("Item2", 1)
-    GameController.inventory.get_item("Item3", 1)
-    GameController.inventory.get_item("Item4", 1)
-    GameController.inventory.get_item("Item5", 1)
-    GameController.inventory.get_item("Item6", 1)
-    GameController.inventory.get_item("Item7", 1)
+    GameController.inventory.get_item("Cheese", 2)
+    # GameController.inventory.get_item("Mask", 102)
+    # GameController.inventory.get_item("Stick", 91)
+    # GameController.inventory.get_item("Fork", 91)
+    # GameController.inventory.get_item("Pen", 91)
+    # GameController.inventory.get_item("Cup", 91)
+    # GameController.inventory.get_item("Bottle", 91)
+    # GameController.inventory.get_item("Coin", 91)
+    # GameController.inventory.get_item("Paper", 91)
+    # GameController.inventory.get_item("Item1", 2)
+    # GameController.inventory.get_item("Item2", 1)
+    # GameController.inventory.get_item("Item3", 1)
+    # GameController.inventory.get_item("Item4", 1)
+    # GameController.inventory.get_item("Item5", 1)
+    # GameController.inventory.get_item("Item6", 1)
+    # GameController.inventory.get_item("Item7", 1)
 
     #GameController.inventory.get_item("Item6", 1)
 
@@ -160,7 +154,7 @@ def load_key_items(GameController, GameData):
     GameData.add_key_item("Hammer", KeyItem("Hammer", GameData, GameController))
     GameData.add_key_item("Shovel", KeyItem("Shovel", GameData, GameController))
     GameData.add_key_item("Clippers", KeyItem("Clippers", GameData, GameController))
-    GameData.add_key_item("Bottle", KeyItem("Bottle", GameData, GameController))
+    GameData.add_key_item("Gameboy", KeyItem("Gameboy", GameData, GameController))
     GameData.add_key_item("Radio", KeyItem("Radio", GameData, GameController))
     GameData.add_key_item("Net", KeyItem("Net", GameData, GameController))
     GameData.add_key_item("Time Seed", KeyItem("Time Seed", GameData, GameController))
@@ -169,7 +163,7 @@ def load_key_items(GameController, GameData):
     GameController.inventory.get_key_item("Hammer")
     GameController.inventory.get_key_item("Shovel")
     GameController.inventory.get_key_item("Clippers")
-    GameController.inventory.get_key_item("Bottle")
+    GameController.inventory.get_key_item("Gameboy")
     GameController.inventory.get_key_item("Radio")
     GameController.inventory.get_key_item("Net")
     GameController.inventory.get_key_item("Time Seed")

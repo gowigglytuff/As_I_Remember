@@ -18,7 +18,7 @@ em = EventsManager(gd, gc)
 Picaso = Picaso(gd, gc)
 inv = Inventory(gc, gd)
 gc.set_inventory(inv)
-
+up = Updater(gd, gc)
 
 
 def main():
@@ -73,7 +73,7 @@ def run_game_loop():
                 if not gd.player["Player"].check_if_walking():
                     gd.player["Player"].try_walk(gc.current_keyboard_manager.current_direction_key)
 
-
+        up.run_updates()
         Picaso.big_draw()
         pygame.display.update()
         gc.tick()

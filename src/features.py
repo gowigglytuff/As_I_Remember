@@ -565,10 +565,8 @@ class GenericNPC(NPC):
                 self.turn_right()
             elif self.gd_input.player["Player"].facing == Facing.RIGHT:
                 self.turn_left()
-            self.gc_input.set_keyboard_manager(InConversationOptions.ID)
-            # self.GameController.set_current_menu("character_interact_menu")
-            self.gc_input.MenuManager.character_interact_menu = True
-            self.gd_input.menu_list["character_interact_menu"].set_talking_to(self.name)
+            self.gd_input.menu_list["conversation_options_menu"].set_menu(self.name)
+            # self.gd_input.menu_list["conversation_options_menu"].set_talking_to(self.name)
             self.set_state("talking")
 
     def speak(self, chosen_phrase):
@@ -707,9 +705,9 @@ class StandingNPC(NPC):
             elif self.gd_input.player["Player"].facing == Facing.RIGHT:
                 self.turn_left()
             self.gc_input.set_keyboard_manager(InConversationOptions.ID)
-            # self.GameController.set_current_menu("character_interact_menu")
-            self.gc_input.MenuManager.character_interact_menu = True
-            self.gd_input.menu_list["character_interact_menu"].set_talking_to(self.name)
+            # self.GameController.set_current_menu("conversation_options_menu")
+            self.gc_input.MenuManager.conversation_options_menu = True
+            self.gd_input.menu_list["conversation_options_menu"].set_talking_to(self.name)
             self.set_state("talking")
 
     def speak(self, chosen_phrase):
@@ -847,9 +845,9 @@ class TammaNPC(NPC):
             elif self.gd_input.player["Player"].facing == Facing.RIGHT:
                 self.turn_left()
             self.gc_input.set_keyboard_manager(InConversationOptions.ID)
-            # self.GameController.set_current_menu("character_interact_menu")
-            self.gc_input.MenuManager.character_interact_menu = True
-            self.gd_input.menu_list["character_interact_menu"].set_talking_to(self.name)
+            # self.GameController.set_current_menu("conversation_options_menu")
+            self.gc_input.MenuManager.conversation_options_menu = True
+            self.gd_input.menu_list["conversation_options_menu"].set_talking_to(self.name)
             self.set_state("talking")
 
     def speak(self, chosen_phrase):
@@ -911,7 +909,7 @@ class ShopKeeper(NPC):
         self.imagex = x
         self.imagey = y
         self.name = "Tamma"
-        self.items_list = ["Cheese", "Item 1", "Stick"]
+        self.items_list = [("Cheese", 2), ("Item1", 2), ("Stick", 1)]
 
         self.current_step_number = 0
         self.step1 = ["turning_left", "rest", "walk_left", "rest", "turning_right", "rest", "walk_right", "rest"]
@@ -954,8 +952,8 @@ class ShopKeeper(NPC):
                 self.turn_right()
             elif self.gd_input.player["Player"].facing == Facing.RIGHT:
                 self.turn_left()
-            self.gc_input.set_keyboard_manager(InShopKeeperInteract.ID)
-            # self.GameController.set_current_menu("character_interact_menu")
+            self.gc_input.set_keyboard_manager(InRegularMenu.ID)
+            # self.GameController.set_current_menu("conversation_options_menu")
             self.gd_input.menu_list["shopkeeper_interact_menu"].set_menu(self.name)
             self.set_state("selling")
 

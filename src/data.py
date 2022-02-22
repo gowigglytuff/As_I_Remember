@@ -98,6 +98,8 @@ class GameController(object):
         self.keyboard_manager_list = {}
         self.current_keyboard_manager = None # type: KeyboardManager
         self.current_key_pressed = None
+        self.your_coins = 9
+        self.your_seeds = 30
 
 
     def add_keyboard_manager(self, keyboard_manager_name, keyboard_manager_object):
@@ -142,6 +144,32 @@ class GameController(object):
             drawables_list.append(self.GameData.prop_list[prop])
         drawables_list.append(self.GameData.player["Player"])
         return drawables_list
+
+    def get_coins(self, amount):
+        self.your_coins = self.your_coins + amount
+
+    def use_coins(self, amount):
+        self.your_coins = self.your_coins - amount
+
+    def try_use_coins(self, amount):
+        success = False
+        if self.your_coins >= amount:
+            self.use_coins(amount)
+            success = True
+        else:
+            success = False
+        return success
+
+    def update_game_dialogue(self, phrase):
+        self.GameData.menu_list["game_action_dialogue_menu"].show_dialogue(phrase)
+
+class Updater(object):
+    def __init__(self, GameData, GameController):
+        self.GameData = GameData
+        self.GameController = GameController
+
+    def run_updates(self):
+        self.GameData.menu_list["stats_menu"].update_menu_items_list()
 
 class EventsManager(object):
     def __init__(self, GameData, GameController):
@@ -200,31 +228,11 @@ class Picaso(object):
         for drawable in drawable_list:
             drawable[0].draw(self.GameController.screen)
 
-        # give the menus ability to print
-        if self.GameController.MenuManager.character_interact_menu:
-            self.GameData.menu_list["character_interact_menu"].display_menu()
+        for item in self.GameController.MenuManager.active:
+            self.GameData.menu_list[item].display_menu()
 
-        # give the menus ability to print
-        if self.GameController.MenuManager.shopkeeper_interact_menu:
-            self.GameData.menu_list["shopkeeper_interact_menu"].display_menu()
 
-        if self.GameController.MenuManager.start_menu:
-            self.GameData.menu_list["start_menu"].display_menu()
 
-        if self.GameController.MenuManager.key_inventory_menu:
-            self.GameData.menu_list["key_inventory_menu"].display_menu()
-
-        if self.GameController.MenuManager.inventory_menu:
-            self.GameData.menu_list["inventory_menu"].display_menu()
-
-        if self.GameController.MenuManager.use_menu:
-            self.GameData.menu_list["use_menu"].display_menu()
-
-        if self.GameController.MenuManager.yes_no_menu:
-            self.GameData.menu_list["yes_no_menu"].display_menu()
-
-        if self.GameController.MenuManager.buying_menu:
-            self.GameData.menu_list["buying_menu"].display_menu()
 
         # blits any overlays that are always active and ons tghat are associated with currently active menus
         for overlay in self.GameController.current_overlay_list:

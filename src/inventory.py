@@ -27,11 +27,11 @@ class Inventory(object):
             self.current_bag_slot +=1
         elif self.current_bag_slot == (len(self.bag_slots)-1):
             self.current_bag_slot = 0
+        # TODO: Fix this up
+        # self.GameData.menu_list[self.bag_slots[self.current_bag_slot]].set_menu()
         self.GameController.MenuManager.activate_menu(self.bag_slots[self.current_bag_slot])
         self.GameController.current_menu = self.bag_slots[self.current_bag_slot]
-        self.GameController.set_keyboard_manager(self.GameData.menu_list[self.GameController.current_menu].associated_manager)
-
-
+        self.GameController.set_keyboard_manager(self.GameData.menu_list[self.GameController.current_menu].associated_keyer_ID)
 
     def bag_slot_left(self):
         self.GameController.MenuManager.deactivate_menu(self.bag_slots[self.current_bag_slot])
@@ -39,10 +39,11 @@ class Inventory(object):
             self.current_bag_slot -=1
         else:
             self.current_bag_slot = (len(self.bag_slots)-1)
+        # TODO: Fix this up
+        # self.GameData.menu_list[self.bag_slots[self.current_bag_slot]].set_menu()
         self.GameController.MenuManager.activate_menu(self.bag_slots[self.current_bag_slot])
         self.GameController.current_menu = self.bag_slots[self.current_bag_slot]
-        self.GameController.set_keyboard_manager(self.GameData.menu_list[self.GameController.current_menu].associated_manager)
-
+        self.GameController.set_keyboard_manager(self.GameData.menu_list[self.GameController.current_menu].associated_keyer_ID)
 
     def reset_bag_slot(self):
         self.current_bag_slot = 0
