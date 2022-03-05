@@ -3,7 +3,7 @@ from random import randrange
 import pygame, csv, os
 
 from TileMap import TileMap
-from features import GenericNPC, Spritesheet, TammaNPC, StandingNPC, ShopKeeper
+from features import GenericNPC, Spritesheet, TammaNPC, StandingNPC, ShopKeeper, ShopKeeperTamma, ShopKeeperCheryl
 from prop_page import GenericProp, Tree, Decoration, Building, BenchHorizontal, BenchVertical, PlumTree, PicnicTable, Computer, Counter, ComputerBack, Bookcase, Dress
 from keyboards import Direction, Facing
 from mapClasses import Plot, Door, Tile, Position_Manager
@@ -505,7 +505,8 @@ class HornbyCreativeRoom(Room):
         self.gd_input.room_list[self.name].add_room_door("hornby_creative_to_ringside", Door("hornby_creative", "Ringside", 4, 4, 12, 77, "hornby_creative_to_ringside"))
 
     def add_room_characters(self):
-        self.gd_input.add_character("Tamma", ShopKeeper(1, 2, self.gc_input, self.gd_input, self.name))
+        self.gd_input.add_character("Tamma", ShopKeeperTamma(1, 2, self.gc_input, self.gd_input, self.name))
+        self.gd_input.add_character("Cheryl", ShopKeeperCheryl(3, 2, self.gc_input, self.gd_input, self.name))
 
     def add_room_props(self):
         self.gd_input.add_prop("counter1", Counter(2, 2, "counter1", self.gc_input, self.gd_input, self.name))

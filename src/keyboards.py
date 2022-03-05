@@ -166,38 +166,11 @@ class InGame(KeyboardManager):
 
 
     def key_shift(self):
-        pass
+        self.GameData.menu_list["inventory_select_menu"].set_menu()
 
 
     def key_caps(self):
         pass
-
-
-# Keyboard Manager for when you are looking at your profile card
-class InProfile(KeyboardManager):
-    ID = "IPM_Keyer"
-
-    def __init__(self, GameController, GameData):
-        self.GameController = GameController
-        self.GameData = GameData
-
-    def key_return(self):
-        self.GameController.set_keyboard_manager(InGame.ID)
-        self.GameController.remove_current_overlay("ID_card")
-
-    def key_space(self):
-        pass
-
-    def key_control(self):
-        self.GameController.set_keyboard_manager(InGame.ID)
-        self.GameController.remove_current_overlay("ID_card")
-
-    def key_shift(self):
-        pass
-
-    def key_caps(self):
-        pass
-
 
 class InRegularMenu(KeyboardManager):
     ID = "IRM_Keyer"

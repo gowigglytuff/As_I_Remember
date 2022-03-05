@@ -55,27 +55,23 @@ def load_keyboard_managers(GameController, GameData):
     GameController.add_keyboard_manager(InGame.ID, InGame(GameController, GameData))
     GameController.add_keyboard_manager(InRegularMenu.ID, InRegularMenu(GameController, GameData))
 
-    GameController.add_keyboard_manager(InProfile.ID, InProfile(GameController, GameData))
-
     # sets the initial Keyboard Manager to be the InGame Manager
     GameController.set_keyboard_manager(InGame.ID)
 
 def load_menus(GameController, GameData):
+
+    #TODO: Fix this
+    GameData.add_overlay("text_box", TextBox(GameController, GameData, "text_box", 250, 550, Spritesheet("assets/menu_images/text_box.png", 500, 150)))
+
     # load menus - stores all the information for the various menus in the game in GameData
     # The start menu which pops up when the player presses left control
     GameData.add_overlay("start_menu", Overlay(GameController, GameData, "start_menu", 700, 200, Spritesheet("assets/menu_images/start_menu.png", 150, 400)))
     GameData.add_menu("start_menu", StartMenu(GameController, GameData, "start_menu", ["Chore List", "Map", "Bag", "Outfits", "Profile", "Save", "Options", "Vibes"], True, "start_menu"))
 
-    GameData.add_overlay("yes_no_menu", Overlay(GameController, GameData, "yes_no_menu", 490, 200, Spritesheet("assets/menu_images/yes_no_menu.png", 90, 76)))
-    GameData.add_menu("yes_no_menu", YesNoMenu(GameController, GameData, "yes_no_menu", ["Yes", "No"], True, "yes_no_menu"))
-
     # the menu which pops up when the player has selected bag from the start menu
     GameData.add_overlay("inventory_menu", Overlay(GameController, GameData, "inventory_menu", 700, 200, Spritesheet("assets/menu_images/inventory_menu.png", 200, 400)))
     GameData.add_menu("inventory_menu", InventoryMenu(GameController, GameData, "inventory_menu", GameController.inventory.current_items, True, "inventory_menu"))
-
-    # the menu which pops up when you're shopping
-    GameData.add_overlay("buying_menu", Overlay(GameController, GameData, "buying_menu", 700, 200, Spritesheet("assets/menu_images/inventory_menu.png", 200, 400)))
-    GameData.add_menu("buying_menu", BuyingMenu(GameController, GameData, "buying_menu", [("Cheese", 2), ("Item1", 2), ("Stick", 100)], True, "buying_menu"))
+    GameData.add_menu("inventory_select_menu", InventorySelectMenu(GameController, GameData, "inventory_select_menu", GameController.inventory.current_items, True, "inventory_menu"))
 
     # the menu which pops up when the player has selected bag from the start menu and scrolls left or right
     GameData.add_overlay("key_inventory_menu", Overlay(GameController, GameData, "key_inventory_menu", 700, 200, Spritesheet("assets/menu_images/inventory_menu.png", 200, 400)))
@@ -85,30 +81,37 @@ def load_menus(GameController, GameData):
     GameData.add_overlay("use_menu", Overlay(GameController, GameData, "use_menu", 590, 200, Spritesheet("assets/menu_images/use_menu.png", 100, 100)))
     GameData.add_menu("use_menu", UseMenu(GameController, GameData, "use_menu", ["Use", "Toss"], True, "use_menu"))
 
-    # Add non-menu overlays
+    GameData.add_overlay("yes_no_menu", Overlay(GameController, GameData, "yes_no_menu", 490, 200, Spritesheet("assets/menu_images/yes_no_menu.png", 90, 76)))
+    GameData.add_menu("yes_no_menu", YesNoMenu(GameController, GameData, "yes_no_menu", ["Yes", "No"], True, "yes_no_menu"))
+
     # the overlay that presents the profile card
-    GameData.add_overlay("ID_card", ProfileCard(GameController, GameData, "ID_Card", 350, 300, Spritesheet("assets/misc_sprites/ID.png", 300, 200)))
+    GameData.add_overlay("profile_menu_overlay", Overlay(GameController, GameData, "profile_menu_overlay", 350, 300, Spritesheet("assets/misc_sprites/ID.png", 300, 200)))
+    GameData.add_menu("profile_menu", ProfileMenu(GameController, GameData, "profile_menu", [], True, "profile_menu_overlay"))
 
     GameData.add_overlay("To_do_list", Overlay(GameController, GameData, "To_do_list", 350, 200, Spritesheet("assets/misc_sprites/to_do_list.png", 300, 400)))
-    GameData.add_menu("to_do_list_menu", ToDoListMenu(GameController, GameData, "to_do_list_menu", ["say hi to your mom", "kiss your cat", "eat a pear", "say hi to your mom", "kiss your cat", "eat a pear", "say hi to your mom", "kiss your cat", "eat a pear", "say hi to your mom", "kiss your cat", "eat a pear"], True, "To_do_list"))
-
-
-    # the overlay that is always present at the top of the screen containing current statur information
-    #TODO: Make this actually a thing
-    GameData.add_overlay("top_bar", Overlay(GameController, GameData, "top_bar", 100, 100, Spritesheet("assets/menu_images/top_bar.png", 700, 100)))
-
-    #TODO: Fix this
-    GameData.add_overlay("text_box", TextBox(GameController, GameData, "text_box", 250, 550, Spritesheet("assets/menu_images/text_box.png", 500, 150)))
+    GameData.add_menu("to_do_list_menu", ProfileMenu(GameController, GameData, "to_do_list_menu", ["say hi to your mom", "kiss your cat", "eat a pear", "say hi to your mom", "kiss your cat", "eat a pear", "say hi to your mom", "kiss your cat", "eat a pear", "say hi to your mom", "kiss your cat", "eat a pear"], True, "To_do_list"))
 
     # the menu that pops up when you talk to an NPC and have to decide how to interact with them
     GameData.add_menu("conversation_options_menu", ConversationOptionsMenu(GameController, GameData, "conversation_options_menu", ["Talk", "Give Gift"], True, "text_box"))
     GameData.add_menu("in_conversation_menu", InConversationMenu(GameController, GameData, "in_conversation_menu", [], True, "text_box"))
 
+    # the menu which pops up when you're shopping
+    GameData.add_overlay("buying_menu", Overlay(GameController, GameData, "buying_menu", 700, 200, Spritesheet("assets/menu_images/inventory_menu.png", 200, 400)))
+    GameData.add_menu("buying_menu", BuyingMenu(GameController, GameData, "buying_menu", [], True, "buying_menu"))
+
     # the menu that pops up when you talk to an NPC and have to decide how to interact with them
     GameData.add_menu("shopkeeper_interact_menu", ShopKeeperInteractMenu(GameController, GameData, "shopkeeper_interact_menu", ["Buy", "Sell"], True, "text_box"))
 
     GameData.add_menu("stats_menu", StaticMenu(GameController, GameData))
+
     GameData.add_menu("game_action_dialogue_menu", GameActionDialogue(GameController, GameData))
+
+    # the overlay that is always present at the top of the screen containing current statur information
+    #TODO: Make this actually a thing
+    GameData.add_overlay("top_bar", Overlay(GameController, GameData, "top_bar", 100, 100, Spritesheet("assets/menu_images/top_bar.png", 700, 100)))
+
+
+
 
 def load_items(GameController, GameData):
     # adds all the items that exist in the game to the storage in GameData
@@ -129,25 +132,28 @@ def load_items(GameController, GameData):
     GameData.add_item("Item6", Item("Item6", GameData, GameController))
     GameData.add_item("Item7", Item("Item7", GameData, GameController))
     GameData.add_item("TimeSeed", Item("TimeSeed", GameData, GameController))
+    GameData.add_item("Book 1", Item("Book 1", GameData, GameController))
+    GameData.add_item("Book 2", Item("Book 2", GameData, GameController))
+    GameData.add_item("Book 3", Item("Book 3", GameData, GameController))
 
 
     # adds the number of items to your inventory - temporary - for testing purposes
     GameController.inventory.get_item("Cheese", 2)
-    # GameController.inventory.get_item("Mask", 102)
-    # GameController.inventory.get_item("Stick", 91)
-    # GameController.inventory.get_item("Fork", 91)
-    # GameController.inventory.get_item("Pen", 91)
-    # GameController.inventory.get_item("Cup", 91)
-    # GameController.inventory.get_item("Bottle", 91)
-    # GameController.inventory.get_item("Coin", 91)
-    # GameController.inventory.get_item("Paper", 91)
-    # GameController.inventory.get_item("Item1", 2)
-    # GameController.inventory.get_item("Item2", 1)
-    # GameController.inventory.get_item("Item3", 1)
-    # GameController.inventory.get_item("Item4", 1)
-    # GameController.inventory.get_item("Item5", 1)
-    # GameController.inventory.get_item("Item6", 1)
-    # GameController.inventory.get_item("Item7", 1)
+    GameController.inventory.get_item("Mask", 102)
+    GameController.inventory.get_item("Stick", 91)
+    GameController.inventory.get_item("Fork", 91)
+    GameController.inventory.get_item("Pen", 91)
+    GameController.inventory.get_item("Cup", 91)
+    GameController.inventory.get_item("Bottle", 91)
+    GameController.inventory.get_item("Coin", 91)
+    GameController.inventory.get_item("Paper", 91)
+    GameController.inventory.get_item("Item1", 2)
+    GameController.inventory.get_item("Item2", 1)
+    GameController.inventory.get_item("Item3", 1)
+    GameController.inventory.get_item("Item4", 1)
+    GameController.inventory.get_item("Item5", 1)
+    GameController.inventory.get_item("Item6", 1)
+    GameController.inventory.get_item("Item7", 1)
 
     #GameController.inventory.get_item("Item6", 1)
 

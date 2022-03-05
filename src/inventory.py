@@ -31,7 +31,6 @@ class Inventory(object):
         # self.GameData.menu_list[self.bag_slots[self.current_bag_slot]].set_menu()
         self.GameController.MenuManager.activate_menu(self.bag_slots[self.current_bag_slot])
         self.GameController.current_menu = self.bag_slots[self.current_bag_slot]
-        self.GameController.set_keyboard_manager(self.GameData.menu_list[self.GameController.current_menu].associated_keyer_ID)
 
     def bag_slot_left(self):
         self.GameController.MenuManager.deactivate_menu(self.bag_slots[self.current_bag_slot])
@@ -43,7 +42,6 @@ class Inventory(object):
         # self.GameData.menu_list[self.bag_slots[self.current_bag_slot]].set_menu()
         self.GameController.MenuManager.activate_menu(self.bag_slots[self.current_bag_slot])
         self.GameController.current_menu = self.bag_slots[self.current_bag_slot]
-        self.GameController.set_keyboard_manager(self.GameData.menu_list[self.GameController.current_menu].associated_keyer_ID)
 
     def reset_bag_slot(self):
         self.current_bag_slot = 0
@@ -91,6 +89,10 @@ class Item(object):
     def use_item(self):
         print("You used the " + self.name)
         self.GameController.inventory.use_up_item(self.name, 1)
+        self.GameController.update_game_dialogue("You used 1 " + str(self.name))
+
+        if self.name == "Cheese":
+            self.GameController.get_coins(10)
 
 class KeyItem(object):
     def __init__(self, name, GameData, GameController):

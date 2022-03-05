@@ -568,6 +568,7 @@ class GenericNPC(NPC):
             self.gd_input.menu_list["conversation_options_menu"].set_menu(self.name)
             # self.gd_input.menu_list["conversation_options_menu"].set_talking_to(self.name)
             self.set_state("talking")
+            self.gc_input.update_game_dialogue("You talked to " + self.name)
 
     def speak(self, chosen_phrase):
         my_font = pygame.font.Font(self.gc_input.font, 10)
@@ -1001,3 +1002,58 @@ class ShopKeeper(NPC):
 
     def clear_speaking_queue(self):
         self.speaking_queue = None
+
+class ShopKeeperTamma(ShopKeeper):
+    IDLE = "idle"
+    AVAILABLE_STATES = [IDLE]
+
+    def __init__(self, x, y, gc_input, gd_input, room):
+        super().__init__(x, y, gc_input, gd_input, room)
+
+        self.actions = ["turning_left", "turning_front", "turning_right", "rest", "rest", "rest", "rest"]
+        self.available_actions = ["turning_front"]
+        self.spritesheet = Spritesheet("assets/NPC_sprites/Tamma_CS.png", 32, 40)
+        self.state = "idle"
+        self.phrase = "Hi, welcome to my store, what would you like to do?"
+        self.current_phrase = None
+        self.speaking_queue = None #textwrap.wrap("Hi everyone, it's so nice to see you here today! I hope you have all been doing well", width=30)
+        self.img = self.spritesheet.get_image(0, 0)
+        self.imagex = x
+        self.imagey = y
+        self.name = "Tamma"
+        self.items_list = [("Cheese", 2), ("Item1", 2), ("Stick", 1)]
+
+        self.current_step_number = 0
+        self.step1 = ["turning_left", "rest", "walk_left", "rest", "turning_right", "rest", "walk_right", "rest"]
+        self.walk_pattern = "random"
+
+        self.room = room
+        self.gd_input.room_list[self.room].add_room_character(self.name)
+
+
+class ShopKeeperCheryl(ShopKeeper):
+    IDLE = "idle"
+    AVAILABLE_STATES = [IDLE]
+
+    def __init__(self, x, y, gc_input, gd_input, room):
+        super().__init__(x, y, gc_input, gd_input, room)
+
+        self.actions = ["turning_left", "turning_front", "turning_right", "rest", "rest", "rest", "rest"]
+        self.available_actions = ["turning_front"]
+        self.spritesheet = Spritesheet("assets/NPC_sprites/Sub_CS.png", 32, 40)
+        self.state = "idle"
+        self.phrase = "Hi, welcome to the bookstore, what would you like to do?"
+        self.current_phrase = None
+        self.speaking_queue = None  # textwrap.wrap("Hi everyone, it's so nice to see you here today! I hope you have all been doing well", width=30)
+        self.img = self.spritesheet.get_image(0, 0)
+        self.imagex = x
+        self.imagey = y
+        self.name = "Cheryl"
+        self.items_list = [("Book 1", 5), ("Book 2", 7), ("Book 3", 10)]
+
+        self.current_step_number = 0
+        self.step1 = ["turning_left", "rest", "walk_left", "rest", "turning_right", "rest", "walk_right", "rest"]
+        self.walk_pattern = "random"
+
+        self.room = room
+        self.gd_input.room_list[self.room].add_room_character(self.name)

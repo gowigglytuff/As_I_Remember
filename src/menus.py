@@ -17,21 +17,6 @@ class Overlay(object):
     def display_overlay(self):
         self.screen.blit(self.image, (self.x, self.y))
 
-class ProfileCard(Overlay):
-    def __init__(self, GameController, GameData, name, x, y, image):
-        super().__init__(GameController, GameData, name, x, y, image)
-
-    def display_overlay(self):
-        self.screen.blit(self.image, (self.x, self.y))
-        self.screen.blit(self.GameData.player["Player"].spritesheet.get_image(0, 0),( self.x +57, self.y +50))
-
-        my_font = pygame.font.Font(self.GameController.font, 10)
-        item = my_font.render("Name: Jayden", 1, (0, 0, 0))
-        self.GameController.screen.blit(item, (self.x +125, self.y + 40))
-
-        item2 = my_font.render("Reputation: ", 1, (0, 0, 0))
-        self.GameController.screen.blit(item2, (self.x + 125, self.y + 60))
-
 
 class TextBox(Overlay):
     def __init__(self, GameController, GameData, name, x, y, image):
@@ -139,7 +124,7 @@ class StaticMenu(object):
 
 
         self.origin = None
-        self.associated_keyer_ID = None
+
 
     def update_menu_items_list(self):
         self.menu_item_list = [("Coins: ", str(self.GameController.your_coins)), ("Seeds:", str(self.GameController.your_seeds)), ("Love: ", "100")]
@@ -181,7 +166,7 @@ class GameActionDialogue(object):
 
 
         self.origin = None
-        self.associated_keyer_ID = None
+
 
     def update_menu_items_list(self):
         self.menu_item_list = [("Coins: ", str(self.GameController.your_coins)), ("Seeds:", str(self.GameController.your_seeds)), ("Love: ", "100")]
@@ -206,7 +191,7 @@ class GameActionDialogue(object):
 
 
 class NewMenu(object):
-    def __init__(self, GameController, GameData, name, menu_item_list, menu_go, overlay, associated_keyer_ID, offset_x=30, offset_y=20):
+    def __init__(self, GameController, GameData, name, menu_item_list, menu_go, overlay, offset_x=30, offset_y=20):
         self.GameController = GameController
         self.GameData = GameData
         self.screen = self.GameController.screen
@@ -221,7 +206,7 @@ class NewMenu(object):
         self.y_spacing = 0
 
         self.origin = None
-        self.associated_keyer_ID = associated_keyer_ID
+
 
     # Same for most menus
     def cursor_down(self):
@@ -271,7 +256,7 @@ class NewMenu(object):
             self.set_origin(self.GameController.current_menu)
             self.GameController.MenuManager.deactivate_menu(self.origin)
             self.GameData.menu_list[self.origin].reset_cursor()
-        self.GameController.set_keyboard_manager(self.associated_keyer_ID)
+        self.GameController.set_keyboard_manager("IRM_Keyer")
         self.GameController.MenuManager.activate_menu(self.name)
         self.GameController.set_current_menu(self.name)
         print(print(self.GameController.current_menu))
@@ -312,23 +297,9 @@ class NewMenu(object):
 
 class ToDoListMenu(NewMenu):
     def __init__(self, GameController, GameData, name, menu_item_list, menu_go, overlay):
-        super().__init__(GameController, GameData, name, menu_item_list, menu_go, overlay, associated_keyer_ID="IRM_Keyer")
+        super().__init__(GameController, GameData, name, menu_item_list, menu_go, overlay)
 
     def display_menu(self):
-        # self.screen.blit(self.image, (self.x, self.y))
-        # my_font = pygame.font.Font(self.GameController.font, 20)
-        # item = my_font.render("To Do List", 1, (0, 0, 0))
-        # self.GameController.screen.blit(item, (self.x + 45, self.y + 40))
-        #
-        # item_number = 0
-        # item_number = 1
-        # for item in self.menu_item_list:
-        #     my_font = pygame.font.Font(self.GameController.font, 10)
-        #     item = my_font.render(str(item_number) + ". " + item, 1, (0, 0, 0))
-        #     self.GameController.screen.blit(item, (self.x + 45, self.y + 50 + (20 * item_number)))
-        #     item_number += 1
-        #
-        print(str(self.GameController.current_menu))
         self.GameData.overlay_list[self.overlay].display_overlay()
         for option in range(self.size):
             my_font = pygame.font.Font(self.GameController.font, 10)
@@ -345,7 +316,7 @@ class ToDoListMenu(NewMenu):
 
 class ConversationOptionsMenu(NewMenu):
     def __init__(self, GameController, GameData, name, menu_item_list, menu_go, overlay):
-        super().__init__(GameController, GameData, name, menu_item_list, menu_go, overlay, offset_x=150, offset_y = 50, associated_keyer_ID="IRM_Keyer")
+        super().__init__(GameController, GameData, name, menu_item_list, menu_go, overlay, offset_x=150, offset_y = 50)
         self.talking_to = None
         self.menu_item_list.append("Exit")
 
@@ -401,7 +372,7 @@ class ConversationOptionsMenu(NewMenu):
             self.set_origin(self.GameController.current_menu)
             self.GameController.MenuManager.deactivate_menu(self.origin)
             self.GameData.menu_list[self.origin].reset_cursor()
-        self.GameController.set_keyboard_manager(self.associated_keyer_ID)
+        self.GameController.set_keyboard_manager("IRM_Keyer")
         self.GameController.MenuManager.activate_menu(self.name)
         self.GameController.set_current_menu(self.name)
         self.set_talking_to(person_talking_to)
@@ -409,7 +380,7 @@ class ConversationOptionsMenu(NewMenu):
 
 class InConversationMenu(NewMenu):
     def __init__(self, GameController, GameData, name, menu_item_list, menu_go, overlay):
-        super().__init__(GameController, GameData, name, menu_item_list, menu_go, overlay, offset_x=150, offset_y = 50, associated_keyer_ID="IRM_Keyer")
+        super().__init__(GameController, GameData, name, menu_item_list, menu_go, overlay, offset_x=150, offset_y = 50)
         self.talking_to = None
 
     def set_talking_to(self, talking_to):
@@ -453,7 +424,7 @@ class InConversationMenu(NewMenu):
             self.set_origin(self.GameController.current_menu)
             self.GameController.MenuManager.deactivate_menu(self.origin)
             self.GameData.menu_list[self.origin].reset_cursor()
-        self.GameController.set_keyboard_manager(self.associated_keyer_ID)
+        self.GameController.set_keyboard_manager("IRM_Keyer")
         self.GameController.MenuManager.activate_menu(self.name)
         self.GameController.set_current_menu(self.name)
         self.set_talking_to(person_talking_to)
@@ -461,7 +432,7 @@ class InConversationMenu(NewMenu):
 
 class StartMenu(NewMenu):
     def __init__(self, GameController, GameData, name, menu_item_list, menu_go, overlay):
-        super().__init__(GameController, GameData, name, menu_item_list, menu_go, overlay, associated_keyer_ID="IRM_Keyer")
+        super().__init__(GameController, GameData, name, menu_item_list, menu_go, overlay)
         self.menu_item_list.append("Exit")
 
     def do_option(self):
@@ -480,11 +451,7 @@ class StartMenu(NewMenu):
             self.GameData.menu_list["to_do_list_menu"].set_menu()
 
         elif menu_selection == "Profile":
-            # TODO: Fix profile
-            self.GameData.menu_list["start_menu"].exit_menus()
-            self.GameController.add_current_overlay("ID_card")
-            self.GameController.set_keyboard_manager("IPM_Keyer")
-
+            self.GameData.menu_list["profile_menu"].set_menu()
 
         elif menu_selection == "Exit":
             self.exit_menus()
@@ -516,7 +483,7 @@ class StartMenu(NewMenu):
 
 class KeyInventoryMenu(NewMenu):
     def __init__(self, GameController, GameData, name, menu_item_list, menu_go, overlay):
-        super().__init__(GameController, GameData, name, menu_item_list, menu_go, overlay, associated_keyer_ID="IRM_Keyer")
+        super().__init__(GameController, GameData, name, menu_item_list, menu_go, overlay)
         self.y_spacing = 20
 
     def display_menu(self):
@@ -554,7 +521,6 @@ class KeyInventoryMenu(NewMenu):
             self.GameController.inventory.reset_bag_slot()
             self.exit_menus()
 
-
     def do_not_do_option(self):
         self.GameController.inventory.reset_bag_slot()
         self.exit_menus()
@@ -572,7 +538,7 @@ class KeyInventoryMenu(NewMenu):
 
 class InventoryMenu(NewMenu):
     def __init__(self, GameController, GameData, name, menu_item_list, menu_go, overlay):
-        super().__init__(GameController, GameData, name, menu_item_list, menu_go, overlay, associated_keyer_ID="IRM_Keyer")
+        super().__init__(GameController, GameData, name, menu_item_list, menu_go, overlay)
         self.y_spacing = 20
         self.max_length = 14
 
@@ -682,7 +648,7 @@ class InventoryMenu(NewMenu):
 
 class UseMenu(NewMenu):
     def __init__(self, GameController, GameData, name, menu_item_list, menu_go, overlay):
-        super().__init__(GameController, GameData, name, menu_item_list, menu_go, overlay, associated_keyer_ID="IRM_Keyer")
+        super().__init__(GameController, GameData, name, menu_item_list, menu_go, overlay)
         self.menu_item_list.append("Exit")
 
     def set_menu(self):
@@ -692,7 +658,7 @@ class UseMenu(NewMenu):
             menu_selection = self.GameData.menu_list[self.origin].get_current_menu_item()
             self.GameController.inventory.select_item(menu_selection)
 
-        self.GameController.set_keyboard_manager(self.associated_keyer_ID)
+        self.GameController.set_keyboard_manager("IRM_Keyer")
         self.GameController.MenuManager.activate_menu(self.name)
         self.GameController.set_current_menu(self.name)
 
@@ -734,13 +700,13 @@ class UseMenu(NewMenu):
 
 class YesNoMenu(NewMenu):
     def __init__(self, GameController, GameData, name, menu_item_list, menu_go, overlay):
-        super().__init__(GameController, GameData, name, menu_item_list, menu_go, overlay, associated_keyer_ID="IRM_Keyer")
+        super().__init__(GameController, GameData, name, menu_item_list, menu_go, overlay)
 
     def set_menu(self):
         self.update_menu_items_list()
         if self.GameController.current_menu is not None:
             self.set_origin(self.GameController.current_menu)
-        self.GameController.set_keyboard_manager(self.associated_keyer_ID)
+        self.GameController.set_keyboard_manager("IRM_Keyer")
         self.GameController.MenuManager.activate_menu(self.name)
         self.GameController.set_current_menu(self.name)
 
@@ -758,7 +724,7 @@ class YesNoMenu(NewMenu):
 
 class ShopKeeperInteractMenu(NewMenu):
     def __init__(self, GameController, GameData, name, menu_item_list, menu_go, overlay):
-        super().__init__(GameController, GameData, name, menu_item_list, menu_go, overlay, offset_x=150, offset_y = 50, associated_keyer_ID="IRM_Keyer")
+        super().__init__(GameController, GameData, name, menu_item_list, menu_go, overlay, offset_x=150, offset_y = 50)
         self.talking_to = None
         self.menu_item_list.append("Exit")
 
@@ -767,14 +733,12 @@ class ShopKeeperInteractMenu(NewMenu):
 
     def set_menu(self, talking_to):
         self.update_menu_items_list()
-        print(self.GameController.current_menu)
         if self.GameController.current_menu is not None:
-            print("hi")
             self.set_origin(self.GameController.current_menu)
             self.GameController.MenuManager.deactivate_menu(self.origin)
             self.GameData.menu_list[self.origin].reset_cursor()
         self.set_talking_to(talking_to)
-        self.GameController.set_keyboard_manager(self.associated_keyer_ID)
+        self.GameController.set_keyboard_manager("IRM_Keyer")
         self.GameController.MenuManager.activate_menu(self.name)
         self.GameController.set_current_menu(self.name)
 
@@ -801,19 +765,23 @@ class ShopKeeperInteractMenu(NewMenu):
             self.GameData.menu_list["buying_menu"].set_menu()
 
         elif menu_selection == "Sell":
-            print("You sold an item")
-            self.GameData.character_list[self.GameData.player["Player"].check_adj_tile(self.GameData.player["Player"].direction).object_filling].set_state("idle")
-            self.exit_menus()
+            # print("You sold an item")
+            # self.GameData.character_list[self.GameData.player["Player"].check_adj_tile(self.GameData.player["Player"].direction).object_filling].set_state("idle")
+            # self.exit_menus()
+            self.GameData.menu_list["inventory_select_menu"].set_menu()
 
         elif menu_selection == "Exit":
             print("Please come again!")
             self.GameData.character_list[self.GameData.player["Player"].check_adj_tile(self.GameData.player["Player"].direction).object_filling].set_state("idle")
             self.exit_menus()
 
+    def sell_item(self, item):
+        self.GameData.character_list[self.GameData.player["Player"].check_adj_tile(self.GameData.player["Player"].direction).object_filling].set_state("idle")
+        print("You sold 1 " + str(item))
 
 class BuyingMenu(NewMenu):
     def __init__(self, GameController, GameData, name, menu_item_list, menu_go, overlay):
-        super().__init__(GameController, GameData, name, menu_item_list, menu_go, overlay, associated_keyer_ID="IRM_Keyer")
+        super().__init__(GameController, GameData, name, menu_item_list, menu_go, overlay)
 
     def display_menu(self):
         self.GameData.overlay_list[self.overlay].display_overlay()
@@ -867,3 +835,137 @@ class BuyingMenu(NewMenu):
             success = False
             self.GameController.update_game_dialogue("You can't afford 1 " + menu_selection[0])
         return success
+
+    def set_menu(self):
+
+        if self.GameController.current_menu is not None:
+            self.set_origin(self.GameController.current_menu)
+            self.GameController.MenuManager.deactivate_menu(self.origin)
+            self.GameData.menu_list[self.origin].reset_cursor()
+        self.update_menu_items_list()
+        self.GameController.set_keyboard_manager("IRM_Keyer")
+        self.GameController.MenuManager.activate_menu(self.name)
+        self.GameController.set_current_menu(self.name)
+        print(print(self.GameController.current_menu))
+
+    def update_menu_items_list(self):
+        self.menu_item_list = self.GameData.character_list[self.GameData.menu_list[self.origin].talking_to].items_list
+
+
+class ProfileMenu(NewMenu):
+    def __init__(self, GameController, GameData, name, menu_item_list, menu_go, overlay):
+        super().__init__(GameController, GameData, name, menu_item_list, menu_go, overlay)
+
+    def display_menu(self):
+        self.GameData.overlay_list[self.overlay].display_overlay()
+        self.screen.blit(self.GameData.player["Player"].spritesheet.get_image(0, 0),( self.x + 27, self.y + 30))
+
+        my_font = pygame.font.Font(self.GameController.font, 10)
+        item = my_font.render("Name: Shuma", 1, (0, 0, 0))
+        self.GameController.screen.blit(item, (self.x +125, self.y + 40))
+
+        item2 = my_font.render("Reputation: ", 1, (0, 0, 0))
+        self.GameController.screen.blit(item2, (self.x + 125, self.y + 60))
+
+    def do_option(self):
+        self.exit_menus()
+
+    def choose_option(self):
+        self.do_option()
+
+
+class InventorySelectMenu(NewMenu):
+    def __init__(self, GameController, GameData, name, menu_item_list, menu_go, overlay):
+        super().__init__(GameController, GameData, name, menu_item_list, menu_go, overlay)
+        self.y_spacing = 20
+        self.max_length = 14
+
+    def update_menu_items_list(self):
+        self.menu_item_list = sorted(self.GameController.inventory.current_items)
+        # TODO: Add exit to menu
+
+    def display_menu(self):
+        self.GameData.overlay_list[self.overlay].display_overlay()
+
+        my_font = pygame.font.Font(self.GameController.font, 10)
+        item = my_font.render("     ITEMS     ", 1, (0, 0, 0))
+        self.screen.blit(item, (self.x, self.y))
+
+        menu_length_calc = 0
+        if self.size >= self.max_length:
+            menu_length_calc = self.max_length
+        elif self.size < self.max_length:
+            menu_length_calc = self.size
+
+        for option in range(menu_length_calc):
+            item = my_font.render(self.menu_item_list[option], 1, (0, 0, 0))
+            self.screen.blit(item, (self.x, self.y + self.y_spacing + (option * self.menu_spread)))
+
+            spacing = 0
+            if len(str(self.GameData.item_list[self.menu_item_list[option]].quantity)) == 3:
+                spacing = 110
+            elif len(str(self.GameData.item_list[self.menu_item_list[option]].quantity)) == 2:
+                spacing = 120
+            else:
+                spacing = 130
+
+            item = my_font.render("x" + str(self.GameData.item_list[self.menu_item_list[option]].quantity), 1, (0, 0, 0))
+            self.screen.blit(item, (self.x + spacing, self.y + self.y_spacing + (option * self.menu_spread)))
+        self.display_cursor()
+
+    def choose_option(self):
+        self.GameData.menu_list["yes_no_menu"].set_menu()
+
+    def do_option(self):
+        chosen_item = None
+        self.GameController.inventory.select_item(None)
+        chosen_item = self.get_current_menu_item()
+        self.GameData.menu_list[self.origin].sell_item(chosen_item)
+        self.exit_menus()
+
+    def do_not_do_option(self):
+        self.exit_menus()
+
+    def cursor_down(self):
+        menu_length_calc = 0
+        if self.size >= self.max_length:
+            menu_length_calc = self.max_length
+        elif self.size < self.max_length:
+            menu_length_calc = self.size
+
+        if self.size > self.max_length and self.cursor_at == self.max_length - 1 and self.size > 1:
+            self.menu_item_list.append(self.menu_item_list.pop(0))
+
+        elif self.cursor_at == menu_length_calc - 1:
+            pass
+
+        elif self.size > 1:
+            self.cursor_at += 1
+
+        else:
+            pass
+
+    def cursor_up(self):
+        menu_length_calc = 0
+        if self.size >= self.max_length:
+            menu_length_calc = self.max_length
+        elif self.size < self.max_length:
+            menu_length_calc = self.size
+
+        if self.cursor_at == 0 and self.size > 1:
+            self.menu_item_list.insert(0, self.menu_item_list.pop(self.max_length - 1))
+
+        elif self.size > 1:
+            self.cursor_at -= 1
+
+        else:
+            pass
+
+    def exit_menu(self):
+        self.reset_cursor()
+        self.GameController.current_menu = None
+        if self.origin is not None:
+            self.GameData.menu_list[self.origin].reset_cursor()
+            self.origin = None
+        self.GameController.MenuManager.deactivate_menu(self.name)
+        self.GameController.set_keyboard_manager(InGame.ID)
