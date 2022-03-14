@@ -53,6 +53,14 @@ class Inventory(object):
             self.current_items.append(self.GameData.item_list[item_name].name)
             self.GameData.item_list[item_name].quantity += quantity_acquired
 
+    def unget_item(self, item_name: str, quantity_used: int):
+        if item_name in self.current_items:
+            self.GameData.item_list[item_name].quantity -= quantity_used
+        else:
+            print("there was nothing to remove??")
+        if self.GameData.item_list[item_name].quantity == 0:
+            self.current_items.remove(self.GameData.item_list[item_name].name)
+
     def use_up_item(self, item_name: str, quantity_used: int):
         #TODO: Make sure this can't go below 0
         if self.GameData.item_list[item_name].quantity > quantity_used:
@@ -79,11 +87,12 @@ class Inventory(object):
         print(self.GameController.inventory.current_items)
 
 class Item(object):
-    def __init__(self, name, GameData, GameController):
+    def __init__(self, name, GameData, GameController, sell_price):
         self.GameController = GameController
         self.GameData = GameData
         self.name = name
         self.quantity = 0
+        self.sell_price = sell_price
         pass
 
     def use_item(self):

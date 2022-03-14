@@ -177,7 +177,7 @@ class Position_Manager(object):
         self.empty_tile(self.GameData.player["Player"])
         x_change = self.GameData.player["Player"].x - door.exit_x
         y_change = self.GameData.player["Player"].y - door.exit_y
-        # if self.GameData.player["Player"].facing == Facing.FRONT:
+        # if self.GameData.player["Player"].facing == Direction.DOWN:
         #     self.GameData.player["Player"].turn_player(Direction.DOWN)
         self.GameData.player["Player"].x = door.exit_x
         self.GameData.player["Player"].y = door.exit_y
@@ -207,7 +207,7 @@ class Position_Manager(object):
     def can_move_NPC(self, mover):
         move = False
         facing_tile = mover.get_facing_tile()
-        if mover.facing == Facing.LEFT:
+        if mover.facing == Direction.LEFT:
             if mover.x <= self.GameData.room_list[self.GameController.current_room].left_edge_x:
                 move = False
             else:
@@ -215,7 +215,7 @@ class Position_Manager(object):
                     move = True
                 else:
                     move = False
-        elif mover.facing == Facing.RIGHT:
+        elif mover.facing == Direction.RIGHT:
             if mover.x >= self.GameData.room_list[self.GameController.current_room].right_edge_x:
                 move = False
             else:
@@ -223,7 +223,7 @@ class Position_Manager(object):
                     move = True
                 else:
                     move = False
-        elif mover.facing == Facing.FRONT:
+        elif mover.facing == Direction.DOWN:
             if mover.y >= self.GameData.room_list[self.GameController.current_room].bottom_edge_y:
                 move = False
             else:
@@ -231,7 +231,7 @@ class Position_Manager(object):
                     move = True
                 else:
                     move = False
-        if mover.facing == Facing.BACK:
+        if mover.facing == Direction.UP:
             if mover.y <= self.GameData.room_list[self.GameController.current_room].top_edge_y:
                 move = False
             else:

@@ -3,7 +3,7 @@ from random import randrange
 import pygame, csv, os
 
 from TileMap import TileMap
-from features import GenericNPC, Spritesheet, TammaNPC, StandingNPC, ShopKeeper, ShopKeeperTamma, ShopKeeperCheryl
+from features import GenericNPC, Spritesheet, ShopKeeper, ShopKeeperTamma, ShopKeeperCheryl
 from prop_page import GenericProp, Tree, Decoration, Building, BenchHorizontal, BenchVertical, PlumTree, PicnicTable, Computer, Counter, ComputerBack, Bookcase, Dress
 from keyboards import Direction, Facing
 from mapClasses import Plot, Door, Tile, Position_Manager
@@ -151,9 +151,9 @@ class Room1(Room):
         self.gd_input.room_list[self.name].add_room_door("ringside_door2", Door(self.name, "room4", 5, 1, 2, 4, "room1_door2"))
 
     def add_room_characters(self):
-        self.gd_input.add_character("Shuma", GenericNPC(2, 4, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Shuma.png", 32, 40), "Shuma", self.name, "Your dad have manure for sale? I'd really love to get my hands on a couple bags of it. It's great for the turnips and the kale! Though I think I might get some nitrogen fixed stuff from the co-op for the lettuce...", "pace", Facing.FRONT))
-        self.gd_input.add_character("Maggie", GenericNPC(5, 5, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Maggie.png", 32, 40), "Maggie", self.name, "This outfit makes me feel really cool and powerful, so I've decided I'm going to wear it everywhere.", "stand_still", Facing.FRONT))
-        self.gd_input.add_character("Laurie", GenericNPC(4, 3, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Laurie.png", 32, 40), "Laurie", self.name, "Have you seen my drink anywhere?", "square", Facing.FRONT))
+        self.gd_input.add_character("Shuma", GenericNPC(2, 4, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Shuma.png", 32, 40), "Shuma", self.name, "Your dad have manure for sale? I'd really love to get my hands on a couple bags of it. It's great for the turnips and the kale! Though I think I might get some nitrogen fixed stuff from the co-op for the lettuce...", "pace", Direction.DOWN, Spritesheet("assets/NPC_sprites/faces/NeutralFace.png", 150, 150)))
+        self.gd_input.add_character("Maggie", GenericNPC(5, 5, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Maggie.png", 32, 40), "Maggie", self.name, "This outfit makes me feel really cool and powerful, so I've decided I'm going to wear it everywhere.", "stand_still", Direction.DOWN, Spritesheet("assets/NPC_sprites/faces/NeutralFace.png", 150, 150)))
+        self.gd_input.add_character("Laurie", GenericNPC(4, 3, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Laurie.png", 32, 40), "Laurie", self.name, "Have you seen my drink anywhere?", "square", Direction.DOWN, Spritesheet("assets/NPC_sprites/faces/NeutralFace.png", 150, 150)))
 
     def add_room_props(self):
         self.gd_input.add_prop("trunk", GenericProp(3, 2, self.gc_input, self.gd_input, 32, 40, Spritesheet("assets/prop_sprites/trunk.png", 32, 40), "trunk", 1, 1, self.name))
@@ -193,10 +193,10 @@ class Room2(Room):
         self.gd_input.room_list[self.name].add_room_door("room2_door4", Door(self.name, "room6", 14, 8, 7, 4, "room2_door4"))
 
     def add_room_characters(self):
-        self.gd_input.add_character("Deb", GenericNPC(4, 4, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Deb.png", 32, 40), "Deb", self.name, "Hey Shuma, so nice to see you again!, I should probably be in the studio, but when I'm low on inspiration I like to come out here and walk by the water. ", "square", Facing.FRONT))
-        self.gd_input.add_character("Alex", GenericNPC(9, 9, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/alex_lamont_CS.png", 32, 40), "Alex", self.name, "Hey Shuma, nice to see you! Stop by later and I'll sling you some free icecream! haha... I'm just kidding it's $5.00 a cone.", "left_right", Facing.FRONT))
-        self.gd_input.add_character("Jamara", GenericNPC(6, 8, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Jamara_CS.png", 32, 40), "Jamara", self.name, "What do you think the greatest joy in life is? I haven't figured it out yet... I enjoy a whole lot of stuff, but I feel like nothing I've done so far is quite it.", "pace", Facing.FRONT))
-        self.gd_input.add_character("Donna", GenericNPC(3, 11, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Donna_Tuelle_CS.png", 32, 40), "Donna", self.name, "You know, Jennessa does such a good job, I'm almost considering retiring... not quite, but a very strong almost.", "square", Facing.FRONT))
+        self.gd_input.add_character("Deb", GenericNPC(4, 4, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Deb.png", 32, 40), "Deb", self.name, "Hey Shuma, so nice to see you again!, I should probably be in the studio, but when I'm low on inspiration I like to come out here and walk by the water. ", "square", Direction.DOWN, Spritesheet("assets/NPC_sprites/faces/NeutralFace.png", 150, 150)))
+        self.gd_input.add_character("Alex", GenericNPC(9, 9, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/alex_lamont_CS.png", 32, 40), "Alex", self.name, "Hey Shuma, nice to see you! Stop by later and I'll sling you some free icecream! haha... I'm just kidding it's $5.00 a cone.", "left_right", Direction.DOWN, Spritesheet("assets/NPC_sprites/faces/NeutralFace.png", 150, 150)))
+        self.gd_input.add_character("Jamara", GenericNPC(6, 8, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Jamara_CS.png", 32, 40), "Jamara", self.name, "What do you think the greatest joy in life is? I haven't figured it out yet... I enjoy a whole lot of stuff, but I feel like nothing I've done so far is quite it.", "pace", Direction.DOWN, Spritesheet("assets/NPC_sprites/faces/NeutralFace.png", 150, 150)))
+        self.gd_input.add_character("Donna", GenericNPC(3, 11, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Donna_Tuelle_CS.png", 32, 40), "Donna", self.name, "You know, Jennessa does such a good job, I'm almost considering retiring... not quite, but a very strong almost.", "square", Direction.DOWN, Spritesheet("assets/NPC_sprites/faces/NeutralFace.png", 150, 150)))
 
     def add_room_props(self):
         self.gd_input.add_prop("house", GenericProp(5, 10, self.gc_input, self.gd_input, 160, 128, Spritesheet("assets/prop_sprites/Buildings/House.png", 160, 128), "house", 5, 3, self.name))
@@ -236,9 +236,9 @@ class Room3(Room):
         self.gd_input.room_list[self.name].add_room_door("room3_door1", Door(self.name, "room2", 2, 5, 8, 13, "room3_door1"))
 
     def add_room_characters(self):
-        self.gd_input.add_character("Pixie", GenericNPC(2, 2, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/sprite_sheet.png", 32, 40), "Pixie", "room3", "Hi!", "stand_still", Facing.FRONT))
-        self.gd_input.add_character("Pixie_b", GenericNPC(3, 4, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/sprite2_sheet.png", 32, 40), "Pixie_b", "room3", "Hi!", "stand_still", Facing.FRONT))
-        self.gd_input.add_character("Ian", GenericNPC(3, 2, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Ian.png", 32, 40), "Ian", "room3", "Damnit, the cows got out again... If you see Kleyo can you ask her to give me a call? I should be back at the house by five.", "stand_still", Facing.FRONT))
+        self.gd_input.add_character("Pixie", GenericNPC(2, 2, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/sprite_sheet.png", 32, 40), "Pixie", "room3", "Hi!", "stand_still", Direction.DOWN, Spritesheet("assets/NPC_sprites/faces/NeutralFace.png", 150, 150)))
+        self.gd_input.add_character("Pixie_b", GenericNPC(3, 4, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/sprite2_sheet.png", 32, 40), "Pixie_b", "room3", "Hi!", "stand_still", Direction.DOWN, Spritesheet("assets/NPC_sprites/faces/NeutralFace.png", 150, 150)))
+        self.gd_input.add_character("Ian", GenericNPC(3, 2, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Ian.png", 32, 40), "Ian", "room3", "Damnit, the cows got out again... If you see Kleyo can you ask her to give me a call? I should be back at the house by five.", "stand_still", Direction.DOWN, Spritesheet("assets/NPC_sprites/faces/NeutralFace.png", 150, 150)))
 
     def add_room_props(self):
         pass
@@ -276,10 +276,11 @@ class Room4(Room):
         self.gd_input.room_list[self.name].add_room_door("room4_door1", Door(self.name, "room1", 2, 3, 5, 2, "room4_door1"))
 
     def add_room_characters(self):
-        for name in range(50):
-            rand_x = randrange(1, 100)
-            rand_y = randrange(1, 50)
-            self.gd_input.add_character(("Sheep" + str(name)), GenericNPC(rand_x, rand_y, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/sheep.png", 32, 40), ("Sheep" + str(name)), "room4", "Baaaahhhh", "stand_still", Facing.FRONT))
+        # for name in range(50):
+        #     rand_x = randrange(1, 100)
+        #     rand_y = randrange(1, 50)
+        #     self.gd_input.add_character(("Sheep" + str(name)), GenericNPC(rand_x, rand_y, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/sheep.png", 32, 40), ("Sheep" + str(name)), "room4", "Baaaahhhh", "stand_still", Direction.DOWN))
+        pass
 
     def add_room_props(self):
         pass
@@ -396,11 +397,11 @@ class Ringside(Room):
         self.gd_input.room_list[self.name].add_room_door("ringside_to_bike_shop", Door("Ringside", "bike_shop", 40, 91, 2, 6, "ringside_to_bike_shop"))
 
     def add_room_characters(self):
-        self.gd_input.add_character("Deb", GenericNPC(29, 76, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Deb.png", 32, 40), "Deb", self.name, "Something strange is going on around here, have you heard about the children disapearing? Their parents couldn't even remember their names...", "look_around", Facing.FRONT))
-        self.gd_input.add_character("Alex", GenericNPC(17, 70, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/alex_lamont_CS.png", 32, 40), "Alex", self.name, "Hey Shuma, I feel like I haven't seen you in a long time... but didn't we just go to the beach togther on Friday? I seem to be losing track of time so much recently...", "square", Facing.FRONT))
-        self.gd_input.add_character("Jamara", GenericNPC(31, 90, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Jamara_CS.png", 32, 40), "Jamara", self.name, "What do you think the greatest joy in life is? I haven't figured it out yet... I enjoy a whole lot of stuff, but I feel like nothing I've done so far is quite it.", "pace", Facing.FRONT))
-        self.gd_input.add_character("Donna", GenericNPC(39, 78, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Donna_Tuelle_CS.png", 32, 40), "Donna", self.name, "You know, it's the strangest thing, my daughter Alex showed up the other day to ask me to watch her kids... but I don't remember having grandkids. I watched them anyway, but I swear I've never met them...", "left_right", Facing.FRONT))
-        self.gd_input.add_character("Clair", GenericNPC(30, 60, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Clair_CS.png", 32, 40), "Clair", self.name, "I love this place but sometimes I feel like I should just pack everything up and run far away...", "square", Facing.FRONT))
+        self.gd_input.add_character("Deb", GenericNPC(29, 76, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Deb.png", 32, 40), "Deb", self.name, "Something strange is going on around here, have you heard about the children disapearing? Their parents couldn't even remember their names...", "look_around", Direction.DOWN, Spritesheet("assets/NPC_sprites/faces/DebFace.png", 150, 150)))
+        self.gd_input.add_character("Alex", GenericNPC(17, 70, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/alex_lamont_CS.png", 32, 40), "Alex", self.name, "Hey Shuma, I feel like I haven't seen you in a long time... but didn't we just go to the beach togther on Friday? I seem to be losing track of time so much recently...", "square", Direction.DOWN, Spritesheet("assets/NPC_sprites/faces/AlexFace.png", 150, 150)))
+        self.gd_input.add_character("Jamara", GenericNPC(31, 90, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Jamara_CS.png", 32, 40), "Jamara", self.name, "What do you think the greatest joy in life is? I haven't figured it out yet... I enjoy a whole lot of stuff, but I feel like nothing I've done so far is quite it.", "pace", Direction.DOWN, Spritesheet("assets/NPC_sprites/faces/JamaraFace.png", 150, 150)))
+        self.gd_input.add_character("Donna", GenericNPC(39, 78, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Donna_Tuelle_CS.png", 32, 40), "Donna", self.name, "You know, it's the strangest thing, my daughter Alex showed up the other day to ask me to watch her kids... but I don't remember having grandkids. I watched them anyway, but I swear I've never met them...", "left_right", Direction.DOWN, Spritesheet("assets/NPC_sprites/faces/DonnaFace.png", 150, 150)))
+        self.gd_input.add_character("Clair", GenericNPC(30, 60, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Clair_CS.png", 32, 40), "Clair", self.name, "I love this place but sometimes I feel like I should just pack everything up and run far away...", "square", Direction.DOWN, Spritesheet("assets/NPC_sprites/faces/ClairFace.png", 150, 150)))
 
     def add_room_props(self):
             self.gd_input.add_prop("Coop_Building", Building(10, 8, self.gc_input, self.gd_input, 832, 1632, "assets/prop_sprites/Buildings/Coop_Building.png", "Coop_Building", 26, 51, self.name, "assets/prop_sprites/Buildings/building_csv/coop_fill_csv.csv"))
@@ -464,9 +465,9 @@ class ComputerCentreRoom(Room):
         self.gd_input.room_list[self.name].add_room_door("computer_centre_to_ringside", Door("computer_centre", "Ringside",  3, 4, 11, 85, "computer_centre_to_ringside"))
 
     def add_room_characters(self):
-        self.gd_input.add_character("CC_Guy2", GenericNPC(2, 2, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Sub_CS.png", 32, 40), "CC_Guy2", self.name, "You have such strange customs here, what in the world is a yurt?", "stay_left", Facing.LEFT))
-        self.gd_input.add_character("CC_Guy3", GenericNPC(4, 2, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Sub_CS.png", 32, 40), "CC_Guy3", self.name, "Leave me alone human!.. I mean... dude", "stay_left", Facing.LEFT))
-        self.gd_input.add_character("CC_Guy1", GenericNPC(6, 2, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Sub_CS.png", 32, 40), "CC_Guy1", self.name, "Do you know what this strange box is?", "stay_front", Facing.FRONT))
+        self.gd_input.add_character("CC_Guy2", GenericNPC(2, 2, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Sub_CS.png", 32, 40), "CC_Guy2", self.name, "You have such strange customs here, what in the world is a yurt?", "stay_left", Direction.LEFT, Spritesheet("assets/NPC_sprites/faces/NeutralFace.png", 150, 150)))
+        self.gd_input.add_character("CC_Guy3", GenericNPC(4, 2, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Sub_CS.png", 32, 40), "CC_Guy3", self.name, "Leave me alone human!.. I mean... dude", "stay_left", Direction.LEFT, Spritesheet("assets/NPC_sprites/faces/NeutralFace.png", 150, 150)))
+        self.gd_input.add_character("CC_Guy1", GenericNPC(6, 2, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Sub_CS.png", 32, 40), "CC_Guy1", self.name, "Do you know what this strange box is?", "stay_front", Direction.DOWN, Spritesheet("assets/NPC_sprites/faces/NeutralFace.png", 150, 150)))
 
     def add_room_props(self):
         self.gd_input.add_prop("CC_computer1", Computer(3, 2, "CC_computer1", self.gc_input, self.gd_input, "computer_centre"))
@@ -546,7 +547,7 @@ class ToTheMoon(Room):
         self.gd_input.room_list[self.name].add_room_door("to_the_moon_to_ringside", Door("to_the_moon", "Ringside", 2, 4, 41, 82, "to_the_moon_to_ringside"))
 
     def add_room_characters(self):
-        self.gd_input.add_character("Guy1", GenericNPC(1, 2, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Sub_CS.png", 32, 40), "Guy1", self.name, "We've got a lil section by local authors", "stay_front", Facing.FRONT))
+        self.gd_input.add_character("Guy1", GenericNPC(1, 2, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Sub_CS.png", 32, 40), "Guy1", self.name, "We've got a lil section by local authors", "stay_front", Direction.DOWN, Spritesheet("assets/NPC_sprites/faces/NeutralFace.png", 150, 150)))
 
     def add_room_props(self):
         self.gd_input.add_prop("TTM_Bookcase_2", Bookcase(3, 2, "TTM_Bookcase_2", self.gc_input, self.gd_input, self.name))
@@ -585,8 +586,8 @@ class HornbyRealestate(Room):
         self.gd_input.room_list[self.name].add_room_door("hornby_realestate_to_ringside", Door("hornby_realestate", "Ringside", 1, 4, 39, 76, "hornby_realestate_to_ringside"))
 
     def add_room_characters(self):
-        self.gd_input.add_character("Guy4", GenericNPC(2, 2, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Sub_CS.png", 32, 40), "Guy4", self.name, "Sorry, Jenessa's out for the day.", "stay_left", Facing.LEFT))
-        self.gd_input.add_character("Guy5", GenericNPC(4, 2, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Sub_CS.png", 32, 40), "Guy5", self.name, "Sorry, Donna's out for the day.", "stay_front", Facing.FRONT))
+        self.gd_input.add_character("Guy4", GenericNPC(2, 2, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Sub_CS.png", 32, 40), "Guy4", self.name, "Sorry, Jenessa's out for the day.", "stay_left", Direction.LEFT, Spritesheet("assets/NPC_sprites/faces/NeutralFace.png", 150, 150)))
+        self.gd_input.add_character("Guy5", GenericNPC(4, 2, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Sub_CS.png", 32, 40), "Guy5", self.name, "Sorry, Donna's out for the day.", "stay_front", Direction.DOWN, Spritesheet("assets/NPC_sprites/faces/NeutralFace.png", 150, 150)))
     def add_room_props(self):
         self.gd_input.add_prop("HR_computer1", Computer(1, 2, "HR_computer1", self.gc_input, self.gd_input, self.name))
         self.gd_input.add_prop("HR_computer2", ComputerBack(4, 3, "HR_computer2", self.gc_input, self.gd_input, self.name))
@@ -624,7 +625,7 @@ class IslandPotters(Room):
         self.gd_input.room_list[self.name].add_room_door("island_potters_to_ringside_2", Door("island_potters", "Ringside", 4, 4, 41, 64, "island_potters_to_ringside_2"))
 
     def add_room_characters(self):
-        self.gd_input.add_character("IP_Guy1", GenericNPC(5, 2, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Sub_CS.png", 32, 40), "IP_Guy1", self.name, "I never understood this pottery stuff, now whittling, that I like", "stay_front", Facing.FRONT))
+        self.gd_input.add_character("IP_Guy1", GenericNPC(5, 2, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Sub_CS.png", 32, 40), "IP_Guy1", self.name, "I never understood this pottery stuff, now whittling, that I like", "stay_front", Direction.DOWN, Spritesheet("assets/NPC_sprites/faces/NeutralFace.png", 150, 150)))
 
     def add_room_props(self):
         self.gd_input.add_prop("IP_counter_1", Counter(4, 2, "IP_counter_1", self.gc_input, self.gd_input, self.name))
@@ -661,7 +662,7 @@ class BikeShop(Room):
         self.gd_input.room_list[self.name].add_room_door("bike_shop_to_ringside", Door("bike_sho", "Ringside", 2, 7, 40, 92, "bike_shop_to_ringside"))
 
     def add_room_characters(self):
-        self.gd_input.add_character("BS_Guy1", GenericNPC(2, 2, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Sub_CS.png", 32, 40), "BS_Guy1", self.name, "You don't look like you'd know how to ride a bike...", "stay_front", Facing.FRONT))
+        self.gd_input.add_character("BS_Guy1", GenericNPC(2, 2, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Sub_CS.png", 32, 40), "BS_Guy1", self.name, "You don't look like you'd know how to ride a bike...", "stay_front", Direction.DOWN, Spritesheet("assets/NPC_sprites/faces/NeutralFace.png", 150, 150)))
 
 
     def add_room_props(self):

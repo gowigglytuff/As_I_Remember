@@ -154,9 +154,8 @@ class InGame(KeyboardManager):
 
     def key_return(self):
         # interacts with the feature that is in the tile that the player is facing
-        print("Player Location: " + str(self.GameData.player["Player"].x), str(self.GameData.player["Player"].y))
-
         self.GameData.player["Player"].interact_with()
+
 
     def key_space(self):
         pass
@@ -170,7 +169,9 @@ class InGame(KeyboardManager):
 
 
     def key_caps(self):
-        pass
+        self.GameData.menu_list["character_dialogue_menu"].set_menu()
+
+
 
 class InRegularMenu(KeyboardManager):
     ID = "IRM_Keyer"

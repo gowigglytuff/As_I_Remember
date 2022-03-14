@@ -71,7 +71,8 @@ def load_menus(GameController, GameData):
     # the menu which pops up when the player has selected bag from the start menu
     GameData.add_overlay("inventory_menu", Overlay(GameController, GameData, "inventory_menu", 700, 200, Spritesheet("assets/menu_images/inventory_menu.png", 200, 400)))
     GameData.add_menu("inventory_menu", InventoryMenu(GameController, GameData, "inventory_menu", GameController.inventory.current_items, True, "inventory_menu"))
-    GameData.add_menu("inventory_select_menu", InventorySelectMenu(GameController, GameData, "inventory_select_menu", GameController.inventory.current_items, True, "inventory_menu"))
+    GameData.add_menu("inventory_select_menu", SellingMenu(GameController, GameData, "inventory_select_menu", GameController.inventory.current_items, True, "inventory_menu"))
+    GameData.add_menu("gift_menu", GiftingMenu(GameController, GameData, "gift_menu", GameController.inventory.current_items, True, "inventory_menu"))
 
     # the menu which pops up when the player has selected bag from the start menu and scrolls left or right
     GameData.add_overlay("key_inventory_menu", Overlay(GameController, GameData, "key_inventory_menu", 700, 200, Spritesheet("assets/menu_images/inventory_menu.png", 200, 400)))
@@ -105,6 +106,7 @@ def load_menus(GameController, GameData):
     GameData.add_menu("stats_menu", StaticMenu(GameController, GameData))
 
     GameData.add_menu("game_action_dialogue_menu", GameActionDialogue(GameController, GameData))
+    GameData.add_menu("character_dialogue_menu", CharacterDialogue(GameController, GameData))
 
     # the overlay that is always present at the top of the screen containing current statur information
     #TODO: Make this actually a thing
@@ -115,26 +117,26 @@ def load_menus(GameController, GameData):
 
 def load_items(GameController, GameData):
     # adds all the items that exist in the game to the storage in GameData
-    GameData.add_item("Cheese", Item("Cheese", GameData, GameController))
-    GameData.add_item("Mask", Item("Mask", GameData, GameController))
-    GameData.add_item("Stick", Item("Stick", GameData, GameController))
-    GameData.add_item("Fork", Item("Fork", GameData, GameController))
-    GameData.add_item("Pen", Item("Pen", GameData, GameController))
-    GameData.add_item("Cup", Item("Cup", GameData, GameController))
-    GameData.add_item("Bottle", Item("Bottle", GameData, GameController))
-    GameData.add_item("Coin", Item("Coin", GameData, GameController))
-    GameData.add_item("Paper", Item("Paper", GameData, GameController))
-    GameData.add_item("Item1", Item("Item1", GameData, GameController))
-    GameData.add_item("Item2", Item("Item2", GameData, GameController))
-    GameData.add_item("Item3", Item("Item3", GameData, GameController))
-    GameData.add_item("Item4", Item("Item4", GameData, GameController))
-    GameData.add_item("Item5", Item("Item5", GameData, GameController))
-    GameData.add_item("Item6", Item("Item6", GameData, GameController))
-    GameData.add_item("Item7", Item("Item7", GameData, GameController))
-    GameData.add_item("TimeSeed", Item("TimeSeed", GameData, GameController))
-    GameData.add_item("Book 1", Item("Book 1", GameData, GameController))
-    GameData.add_item("Book 2", Item("Book 2", GameData, GameController))
-    GameData.add_item("Book 3", Item("Book 3", GameData, GameController))
+    GameData.add_item("Cheese", Item("Cheese", GameData, GameController, 5))
+    GameData.add_item("Mask", Item("Mask", GameData, GameController, 10))
+    GameData.add_item("Stick", Item("Stick", GameData, GameController, 5))
+    GameData.add_item("Fork", Item("Fork", GameData, GameController, 10))
+    GameData.add_item("Pen", Item("Pen", GameData, GameController, 100))
+    GameData.add_item("Cup", Item("Cup", GameData, GameController, 10))
+    GameData.add_item("Bottle", Item("Bottle", GameData, GameController, 5))
+    GameData.add_item("Coin", Item("Coin", GameData, GameController, 5))
+    GameData.add_item("Paper", Item("Paper", GameData, GameController, 10))
+    GameData.add_item("Item1", Item("Item1", GameData, GameController, 5))
+    GameData.add_item("Item2", Item("Item2", GameData, GameController, 10))
+    GameData.add_item("Item3", Item("Item3", GameData, GameController, 100))
+    GameData.add_item("Item4", Item("Item4", GameData, GameController, 10))
+    GameData.add_item("Item5", Item("Item5", GameData, GameController, 100))
+    GameData.add_item("Item6", Item("Item6", GameData, GameController, 10))
+    GameData.add_item("Item7", Item("Item7", GameData, GameController, 5))
+    GameData.add_item("TimeSeed", Item("TimeSeed", GameData, GameController, 10))
+    GameData.add_item("Book 1", Item("Book 1", GameData, GameController, 100))
+    GameData.add_item("Book 2", Item("Book 2", GameData, GameController, 10))
+    GameData.add_item("Book 3", Item("Book 3", GameData, GameController, 10))
 
 
     # adds the number of items to your inventory - temporary - for testing purposes
