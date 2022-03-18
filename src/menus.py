@@ -6,41 +6,6 @@ from keyboards import InGame
 from spritesheet import Spritesheet
 
 
-class Overlay(object):
-    def __init__(self, GameController, GameData, name, x, y, image):
-        self.GameController = GameController
-        self.GameData = GameData
-        self.screen = self.GameController.screen
-        self.x = x
-        self.y = y
-        self.name = name
-        self.image = image.get_image(0, 0)
-
-    def display_overlay(self):
-        self.screen.blit(self.image, (self.x, self.y))
-
-
-class TextBox(Overlay):
-    def __init__(self, GameController, GameData, name, x, y, image):
-        super().__init__(GameController, GameData, name, x, y, image)
-
-    def display_phrase(self, character):
-    # prints the speakers name
-        my_font = pygame.font.Font(self.GameController.font, 10)
-        item = my_font.render(self.GameData.character_list[character].name + ":", 1, (0, 0, 0))
-        self.GameController.screen.blit(item, (
-        self.GameData.overlay_list["text_box"].x + 150, self.GameData.overlay_list["text_box"].y + 20))
-
-        # prints phrases to be spoke
-        text_line = 0
-        for line in self.GameData.character_list[character].speaking_queue:
-            my_font = pygame.font.Font(self.GameController.font, 10)
-            item = my_font.render(line, 1, (0, 0, 0))
-            self.GameController.screen.blit(item, (self.GameData.overlay_list["text_box"].x + 150,
-                                                   self.GameData.overlay_list["text_box"].y + 50 + 25 * text_line))
-            text_line += 1
-
-
 class MenuManager(object):
     def __init__(self):
         self.conversation_options_menu = False
@@ -53,7 +18,15 @@ class MenuManager(object):
         self.buying_menu = False
         self.to_do_list_menu = False
         self.in_conversation_menu = False
-        self.active = ["stats_menu", "game_action_dialogue_menu"]
+        self.static_menus = ["stats_menu", "game_action_dialogue_menu"]
+        self.active = []
+        self.menu_stack = []
+        self.visable_menus = []
+
+    def add_menu_to_stack(self, menu_to_add):
+        self.menu_stack.insert(0, menu_to_add)
+
+
 
     def activate_menu(self, menu_to_activate):
         self.active.append(menu_to_activate)
@@ -104,6 +77,41 @@ class MenuManager(object):
             self.to_do_list_menu = False
         if menu_to_deactivate == "in_conversation_menu":
             self.in_conversation_menu = False
+
+
+class Overlay(object):
+    def __init__(self, GameController, GameData, name, x, y, image):
+        self.GameController = GameController
+        self.GameData = GameData
+        self.screen = self.GameController.screen
+        self.x = x
+        self.y = y
+        self.name = name
+        self.image = image.get_image(0, 0)
+
+    def display_overlay(self):
+        self.screen.blit(self.image, (self.x, self.y))
+
+
+class TextBox(Overlay):
+    def __init__(self, GameController, GameData, name, x, y, image):
+        super().__init__(GameController, GameData, name, x, y, image)
+
+    def display_phrase(self, character):
+    # prints the speakers name
+        my_font = pygame.font.Font(self.GameController.font, 10)
+        item = my_font.render(self.GameData.character_list[character].name + ":", 1, (0, 0, 0))
+        self.GameController.screen.blit(item, (
+        self.GameData.overlay_list["text_box"].x + 150, self.GameData.overlay_list["text_box"].y + 20))
+
+        # prints phrases to be spoke
+        text_line = 0
+        for line in self.GameData.character_list[character].speaking_queue:
+            my_font = pygame.font.Font(self.GameController.font, 10)
+            item = my_font.render(line, 1, (0, 0, 0))
+            self.GameController.screen.blit(item, (self.GameData.overlay_list["text_box"].x + 150,
+                                                   self.GameData.overlay_list["text_box"].y + 50 + 25 * text_line))
+            text_line += 1
 
 
 class StaticMenu(object):
@@ -221,28 +229,23 @@ class CharacterDialogue(object):
 
     def set_current_phrase(self):
         self.current_phrase = textwrap.wrap(self.menu_item_list, width=30)
-        print(self.current_phrase)
 
     def set_speaking_queue(self):
         phrase_counter = 0
         self.speaking_queue = []
 
         if len(self.current_phrase) > 2:
-            print(len(self.current_phrase))
-            print(self.current_phrase)
             for line in range(3):
                 self.speaking_queue.append(self.current_phrase[0])
                 self.current_phrase.pop(0)
-                print(self.current_phrase)
 
         elif (len(self.current_phrase) <= 2) and (len(self.current_phrase) > 0):
             for line in range(len(self.current_phrase)):
                 self.speaking_queue.append(self.current_phrase[0])
                 self.current_phrase.pop(0)
-                print(self.current_phrase)
 
         elif len(self.current_phrase) == 0:
-                self.exit_menus()
+            self.exit_menus()
 
     @property
     def size(self):
@@ -283,10 +286,10 @@ class CharacterDialogue(object):
         self.GameController.MenuManager.deactivate_menu(self.name)
         self.GameController.set_keyboard_manager(InGame.ID)
 
-    def set_menu(self, talking_to):
+    def set_menu(self, talking_to, phrase):
         self.talking_to = talking_to
         # self.update_menu_items_list()
-        self.update_menu_items_list(self.GameData.character_list[talking_to].phrase)
+        self.update_menu_items_list(phrase)
         self.set_current_phrase()
         self.set_speaking_queue()
 
@@ -297,6 +300,7 @@ class CharacterDialogue(object):
         self.GameController.set_keyboard_manager("IRM_Keyer")
         self.GameController.MenuManager.activate_menu(self.name)
         self.GameController.set_current_menu(self.name)
+
 
     def cursor_down(self):
         pass
@@ -386,7 +390,6 @@ class NewMenu(object):
         self.GameController.set_keyboard_manager("IRM_Keyer")
         self.GameController.MenuManager.activate_menu(self.name)
         self.GameController.set_current_menu(self.name)
-        print(print(self.GameController.current_menu))
 
     def unset_menu(self):
         pass
@@ -399,6 +402,11 @@ class NewMenu(object):
             self.origin = None
         self.GameController.MenuManager.deactivate_menu(self.name)
         self.GameController.set_keyboard_manager(InGame.ID)
+
+    def exit_this_menu(self):
+        self.reset_cursor()
+        self.GameController.current_menu = None
+        self.GameController.MenuManager.deactivate_menu(self.name)
 
     @property
     def size(self):
@@ -465,7 +473,6 @@ class ConversationOptionsMenu(NewMenu):
 
         # Display speakers name
         my_font = pygame.font.Font(self.GameController.font, 10)
-        print(self.GameData.character_list[self.talking_to].name)
         item = my_font.render(self.GameData.character_list[self.talking_to].name + ":", 1, (0, 0, 0))
         self.GameController.screen.blit(item, (self.x, self.y))
 
@@ -485,14 +492,7 @@ class ConversationOptionsMenu(NewMenu):
     def do_option(self):
         menu_selection = self.GameData.menu_list["conversation_options_menu"].get_current_menu_item()
         if menu_selection == "Talk":
-            # self.GameController.set_speaker(self.GameData.player["Player"].check_adj_tile(self.GameData.player["Player"].get_direct(self.GameData.player["Player"].facing)).object_filling)
-            # self.GameData.character_list[self.GameData.player["Player"].check_adj_tile(self.GameData.player["Player"].get_direct(self.GameData.player["Player"].facing)).object_filling].set_state("talking")
-            # self.GameData.character_list[self.GameData.player["Player"].check_adj_tile(self.GameData.player["Player"].get_direct(self.GameData.player["Player"].facing)).object_filling].set_current_phrase()
-            # self.GameData.character_list[self.GameData.player["Player"].check_adj_tile(self.GameData.player["Player"].get_direct(self.GameData.player["Player"].facing)).object_filling].set_speaking_queue()
-            # self.GameData.menu_list["in_conversation_menu"].set_menu(self.GameData.menu_list["conversation_options_menu"].talking_to)
-            # self.GameData.menu_list["conversation_options_menu"].set_talking_to(None)
-            print("talking to: " + self.talking_to)
-            self.GameData.menu_list["character_dialogue_menu"].set_menu(self.talking_to)
+            self.GameData.menu_list["character_dialogue_menu"].set_menu(self.talking_to, self.GameData.character_list[self.talking_to].phrase)
             self.GameData.menu_list["conversation_options_menu"].set_talking_to(None)
 
         elif menu_selection == "Give Gift":
@@ -502,6 +502,11 @@ class ConversationOptionsMenu(NewMenu):
             self.GameData.menu_list["conversation_options_menu"].set_talking_to(None)
             self.GameData.character_list[self.GameData.player["Player"].check_adj_tile(self.GameData.player["Player"].get_direct(self.GameData.player["Player"].facing)).object_filling].set_state("idle")
             self.exit_menus()
+
+    def do_not_do_option(self):
+        self.GameData.menu_list["conversation_options_menu"].set_talking_to(None)
+        self.GameData.character_list[self.GameData.player["Player"].check_adj_tile(self.GameData.player["Player"].get_direct(self.GameData.player["Player"].facing)).object_filling].set_state("idle")
+        self.exit_menus()
 
     def set_menu(self, person_talking_to):
         self.update_menu_items_list()
@@ -515,64 +520,11 @@ class ConversationOptionsMenu(NewMenu):
         self.set_talking_to(person_talking_to)
 
     def give_item(self, item):
+
         self.GameController.inventory.unget_item(item, 1)
-        print("you gave a gift")
         self.GameController.update_game_dialogue("You gave " + self.talking_to + " 1 " + item)
-        print()
+        self.GameData.menu_list["character_dialogue_menu"].set_menu(self.talking_to, self.GameData.character_list[self.talking_to].phrase_thanks)
         self.set_talking_to(None)
-        self.GameData.character_list[self.GameData.player["Player"].check_adj_tile(self.GameData.player["Player"].get_direct(self.GameData.player["Player"].facing)).object_filling].set_state("idle")
-
-
-class InConversationMenu(NewMenu):
-    def __init__(self, GameController, GameData, name, menu_item_list, menu_go, overlay):
-        super().__init__(GameController, GameData, name, menu_item_list, menu_go, overlay, offset_x=150, offset_y = 50)
-        self.talking_to = None
-
-    def set_talking_to(self, talking_to):
-        self.talking_to = talking_to
-
-    def unset_talking_to(self):
-        self.talking_to = None
-
-    def display_menu(self):
-        self.GameData.overlay_list[self.overlay].display_overlay()
-        for option in range(self.size):
-            my_font = pygame.font.Font(self.GameController.font, 10)
-            item = my_font.render(self.menu_item_list[option], 1, (0, 0, 0))
-            self.screen.blit(item, (self.x, self.y + (option*self.menu_spread)))
-        self.display_cursor()
-
-        my_font = pygame.font.Font(self.GameController.font, 10)
-        print(self.GameData.character_list[self.talking_to].name)
-        item = my_font.render(self.GameData.character_list[self.talking_to].name + ":", 1, (0, 0, 0))
-        self.GameController.screen.blit(item, (self.GameData.overlay_list["text_box"].x + 150, self.GameData.overlay_list["text_box"].y + 20))
-
-        # for option in range(self.size):
-        #     my_font = pygame.font.Font(self.GameController.font, 10)
-        #     item = my_font.render(self.menu_item_list[option], 1, (0, 0, 0))
-        #     self.screen.blit(item, (self.x, self.y + (option*self.menu_spread)))
-
-    def do_option(self):
-        print("we talking rn")
-        if self.GameData.character_list[self.GameData.player["Player"].check_adj_tile(self.GameData.player["Player"].get_direct(self.GameData.player["Player"].facing)).object_filling].current_phrase != None:
-            self.GameData.character_list[self.GameData.player["Player"].check_adj_tile(self.GameData.player["Player"].get_direct(self.GameData.player["Player"].facing)).object_filling].set_speaking_queue()
-        else:
-            self.GameData.character_list[self.GameData.player["Player"].check_adj_tile(self.GameData.player["Player"].get_direct(self.GameData.player["Player"].facing)).object_filling].clear_speaking_queue()
-            self.GameData.character_list[self.GameController.current_speaker].set_state("idle")
-            self.GameController.set_text_box(None)
-            self.GameController.set_speaker(None)
-            self.exit_menus()
-
-    def set_menu(self, person_talking_to):
-        self.update_menu_items_list()
-        if self.GameController.current_menu is not None:
-            self.set_origin(self.GameController.current_menu)
-            self.GameController.MenuManager.deactivate_menu(self.origin)
-            self.GameData.menu_list[self.origin].reset_cursor()
-        self.GameController.set_keyboard_manager("IRM_Keyer")
-        self.GameController.MenuManager.activate_menu(self.name)
-        self.GameController.set_current_menu(self.name)
-        self.set_talking_to(person_talking_to)
 
 
 class StartMenu(NewMenu):
@@ -584,15 +536,12 @@ class StartMenu(NewMenu):
         menu_selection = self.get_current_menu_item()
 
         if menu_selection == "Bag":
-            print("You looked in your bag!")
             self.GameData.menu_list["inventory_menu"].set_menu()
 
         elif menu_selection == "Key Items":
-            print("You looked in your bag!")
             self.GameData.menu_list["key_inventory_menu"].set_menu()
 
         elif menu_selection == "Chore List":
-            print("You got out your ToDo List")
             self.GameData.menu_list["to_do_list_menu"].set_menu()
 
         elif menu_selection == "Profile":
@@ -859,12 +808,20 @@ class YesNoMenu(NewMenu):
         menu_selection = self.GameData.menu_list[self.name].get_current_menu_item()
 
         if menu_selection == "Yes":
+            self.exit_this_menu()
             self.GameData.menu_list[self.origin].do_option()
-            self.exit_menus()
+            self.origin = None
+
 
         if menu_selection == "No":
+            print(self.GameController.MenuManager.active)
             self.GameData.menu_list[self.origin].do_not_do_option()
             self.exit_menus()
+
+    def exit_this_menu(self):
+        self.reset_cursor()
+        self.GameController.current_menu = None
+        self.GameController.MenuManager.deactivate_menu(self.name)
 
 
 class ShopKeeperInteractMenu(NewMenu):
@@ -910,7 +867,6 @@ class ShopKeeperInteractMenu(NewMenu):
         menu_selection = self.get_current_menu_item()
 
         if menu_selection == "Buy":
-            print(self.GameController.MenuManager.active)
             self.GameData.menu_list["buying_menu"].set_menu()
 
         elif menu_selection == "Sell":
@@ -920,7 +876,6 @@ class ShopKeeperInteractMenu(NewMenu):
             self.GameData.menu_list["inventory_select_menu"].set_menu()
 
         elif menu_selection == "Exit":
-            print("Please come again!")
             self.GameData.character_list[self.GameData.player["Player"].check_adj_tile(self.GameData.player["Player"].direction).object_filling].set_state("idle")
             self.exit_menus()
 
@@ -928,7 +883,6 @@ class ShopKeeperInteractMenu(NewMenu):
         print("You sold 1 " + str(item))
         self.GameController.inventory.unget_item(item, 1)
         self.GameController.get_coins(self.GameData.item_list[item].sell_price)
-
 
 
 class BuyingMenu(NewMenu):
@@ -970,7 +924,6 @@ class BuyingMenu(NewMenu):
     def try_buy_item(self):
         success = False
         menu_selection = self.GameData.menu_list[self.name].get_current_menu_item()
-        print(menu_selection[0])
         if self.GameController.your_coins >= menu_selection[1]:
             try_buy = self.GameController.try_use_coins(menu_selection[1])
             if try_buy:
@@ -998,11 +951,9 @@ class BuyingMenu(NewMenu):
         self.GameController.set_keyboard_manager("IRM_Keyer")
         self.GameController.MenuManager.activate_menu(self.name)
         self.GameController.set_current_menu(self.name)
-        print(print(self.GameController.current_menu))
 
     def update_menu_items_list(self):
         self.menu_item_list = self.GameData.character_list[self.GameData.menu_list[self.origin].talking_to].items_list
-
 
 
 class ProfileMenu(NewMenu):
@@ -1070,14 +1021,18 @@ class GiftingMenu(NewMenu):
         self.GameData.menu_list["yes_no_menu"].set_menu()
 
     def do_option(self):
+
         chosen_item = None
         # self.GameController.inventory.select_item(None)
         chosen_item = self.get_current_menu_item()
+        self.exit_this_menu()
         self.GameData.menu_list[self.origin].give_item(chosen_item)
-        self.exit_menus()
+        print(self.GameController.current_menu)
+
 
 
     def do_not_do_option(self):
+        self.GameData.menu_list[self.origin].do_not_do_option()
         self.exit_menus()
 
     def cursor_down(self):

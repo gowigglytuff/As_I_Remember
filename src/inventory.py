@@ -82,9 +82,8 @@ class Inventory(object):
         self.current_key_items.pop(self.GameData.key_item_list[key_item_name].name)
 
     def sort_current_items(self):
-        print(self.GameController.inventory.current_items)
         self.GameController.inventory.current_items = sorted(self.GameController.inventory.current_items)
-        print(self.GameController.inventory.current_items)
+
 
 class Item(object):
     def __init__(self, name, GameData, GameController, sell_price):

@@ -154,11 +154,13 @@ class InGame(KeyboardManager):
 
     def key_return(self):
         # interacts with the feature that is in the tile that the player is facing
+
         self.GameData.player["Player"].interact_with()
 
 
     def key_space(self):
-        pass
+        self.GameData.player["Player"].perform_diagnostic()
+
 
     def key_control(self):
         self.GameData.menu_list["start_menu"].set_menu()

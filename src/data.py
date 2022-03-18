@@ -80,17 +80,19 @@ class GameData(object):
     def add_tile_dict(self, tiles_dict):
         self.tiles_img_dict = tiles_dict
 
+
 class GameController(object):
     def __init__(self, GameData, MenuManager):
         self.GameData = GameData
         self.MenuManager = MenuManager
         self.inventory = None
+        self.menu_manager = None
         self.screen = pygame.display.set_mode(GameData.settings["resolution"])
         self.clock = pygame.time.Clock()
         self._FPS = GameData.settings["FPS"]
         self.font = "assets/fonts/PressStart.ttf"
-        self.current_room = "room1"
-        self.camera = [0, 0]
+        self.current_room = "Ringside"
+        self.camera = [-24, -79]
         self.current_overlay_list = ["top_bar"]
         self.current_menu = None # type: Menu
         self.current_text_box = None # type: Overlay
@@ -127,6 +129,9 @@ class GameController(object):
     def set_inventory(self, inv):
         self.inventory = inv
 
+    def set_menu_manager(self, mm):
+        self.menu_manager = mm
+
     def set_text_box(self, active_text_box):
         self.current_text_box = active_text_box
 
@@ -138,8 +143,10 @@ class GameController(object):
 
     def get_current_drawables(self, fillable):
         drawables_list = []
+
         for character in self.GameData.room_list[fillable].character_list:
-            drawables_list.append(self.GameData.character_list[character])
+            if character != None:
+                drawables_list.append(self.GameData.character_list[character])
         for prop in self.GameData.room_list[fillable].prop_list:
             drawables_list.append(self.GameData.prop_list[prop])
         drawables_list.append(self.GameData.player["Player"])
@@ -279,6 +286,9 @@ class Picaso(object):
         drawable_list = self.get_all_drawable()
         for drawable in drawable_list:
             drawable[0].draw(self.GameController.screen)
+
+        for item in self.GameController.MenuManager.static_menus:
+            self.GameData.menu_list[item].display_menu()
 
         for item in self.GameController.MenuManager.active:
             self.GameData.menu_list[item].display_menu()

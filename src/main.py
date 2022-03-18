@@ -10,10 +10,13 @@ from mapClasses import *
 from keyboards import *
 from inventory import *
 from menus import *
+from menus_2 import *
 
 mm = MenuManager()
 gd = GameData()
 gc = GameController(gd, mm)
+smm = SubMenuManager(gd, gc)
+gc.set_menu_manager(smm)
 em = EventsManager(gd, gc)
 Picaso = Picaso(gd, gc)
 inv = Inventory(gc, gd)

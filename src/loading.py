@@ -42,7 +42,7 @@ def init_game(gd_input, gc_input):
     gd_input.add_tile_dict(FT.load_tile_images())
 
     # add the player to the game
-    gd_input.add_player("Player", Player(2, 3, gc_input, gd_input))
+    gd_input.add_player("Player", Player(0, 0, gc_input, gd_input))
     gd_input.player["Player"].activate_timer()
 
     # run functions that initiate all rooms
@@ -94,7 +94,6 @@ def load_menus(GameController, GameData):
 
     # the menu that pops up when you talk to an NPC and have to decide how to interact with them
     GameData.add_menu("conversation_options_menu", ConversationOptionsMenu(GameController, GameData, "conversation_options_menu", ["Talk", "Give Gift"], True, "text_box"))
-    GameData.add_menu("in_conversation_menu", InConversationMenu(GameController, GameData, "in_conversation_menu", [], True, "text_box"))
 
     # the menu which pops up when you're shopping
     GameData.add_overlay("buying_menu", Overlay(GameController, GameData, "buying_menu", 700, 200, Spritesheet("assets/menu_images/inventory_menu.png", 200, 400)))
@@ -112,7 +111,8 @@ def load_menus(GameController, GameData):
     #TODO: Make this actually a thing
     GameData.add_overlay("top_bar", Overlay(GameController, GameData, "top_bar", 100, 100, Spritesheet("assets/menu_images/top_bar.png", 700, 100)))
 
-
+def load_menus2(GameController, GameData):
+    pass
 
 
 def load_items(GameController, GameData):
