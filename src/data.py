@@ -7,6 +7,7 @@ from spritesheet import *
 from Phrases import*
 from TileMap import *
 from menus import *
+from menus_2 import *
 
 class Game(object):
     def __init__(self, state, tick):
@@ -168,7 +169,7 @@ class GameController(object):
         return success
 
     def update_game_dialogue(self, phrase):
-        self.GameData.menu_list["game_action_dialogue_menu"].show_dialogue(phrase)
+        self.GameData.menu_list["game_action_dialogue_menu_2"].show_dialogue(phrase)
 
 class Updater(object):
     def __init__(self, GameData, GameController):
@@ -293,6 +294,14 @@ class Picaso(object):
         for item in self.GameController.MenuManager.active:
             self.GameData.menu_list[item].display_menu()
 
+
+
+
+        for item in self.GameController.menu_manager.static_menus:
+            self.GameData.menu_list[item].display_menu()
+
+        for item in self.GameController.menu_manager.visible_menus:
+            self.GameData.menu_list[item].display_menu()
 
 
 

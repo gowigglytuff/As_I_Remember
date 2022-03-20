@@ -558,7 +558,7 @@ class GenericNPC(NPC):
     def get_interacted_with(self):
         if self.state == "idle":
             self.npc_face_player()
-            self.gd_input.menu_list["conversation_options_menu"].set_menu(self.name)
+            self.gd_input.menu_list["conversation_options_menu_2"].set_menu(self.name)
             self.set_state("talking")
             self.gc_input.update_game_dialogue("You talked to " + self.name)
         else:
@@ -582,7 +582,7 @@ class ShopKeeper(NPC):
     def get_interacted_with(self):
         if self.state == "idle":
             self.npc_face_player()
-            self.gd_input.menu_list["shopkeeper_interact_menu"].set_menu(self.name)
+            self.gd_input.menu_list["shopkeeper_interact_menu_2"].set_menu(self.name)
             self.set_state("selling")
         else:
             pass

@@ -8,10 +8,11 @@ class Inventory(object):
 
         self.current_items = []
         self.current_key_items = []
-        self.bag_slots = ["inventory_menu", "key_inventory_menu"]
+        self.bag_slots = ["inventory_menu_2", "key_inventory_menu_2"]
         self.current_bag_slot = 0
         self.selected_item = None
 
+    # TODO: Remove this
     def select_item(self, selected_item):
         self.selected_item = selected_item
 
@@ -19,29 +20,26 @@ class Inventory(object):
         self.bag_slots.append(self.bag_slots.pop(self.bag_slots.index(self.bag_slots[0])))
 
     def change_bag_slot(self):
-        self.GameController.MenuManager.self.bag_slots[0] = True
+        self.GameController.menu_manager.self.bag_slots[0] = True
 
     def bag_slot_right(self):
-        self.GameController.MenuManager.deactivate_menu(self.bag_slots[self.current_bag_slot])
+        self.GameData.menu_list[self.bag_slots[self.current_bag_slot]].exit_menu()
         if self.current_bag_slot < (len(self.bag_slots)-1):
             self.current_bag_slot +=1
         elif self.current_bag_slot == (len(self.bag_slots)-1):
             self.current_bag_slot = 0
         # TODO: Fix this up
-        # self.GameData.menu_list[self.bag_slots[self.current_bag_slot]].set_menu()
-        self.GameController.MenuManager.activate_menu(self.bag_slots[self.current_bag_slot])
-        self.GameController.current_menu = self.bag_slots[self.current_bag_slot]
+        self.GameData.menu_list[self.bag_slots[self.current_bag_slot]].set_menu()
+
 
     def bag_slot_left(self):
-        self.GameController.MenuManager.deactivate_menu(self.bag_slots[self.current_bag_slot])
+        self.GameData.menu_list[self.bag_slots[self.current_bag_slot]].exit_menu()
         if self.current_bag_slot > 0:
             self.current_bag_slot -=1
         else:
             self.current_bag_slot = (len(self.bag_slots)-1)
-        # TODO: Fix this up
-        # self.GameData.menu_list[self.bag_slots[self.current_bag_slot]].set_menu()
-        self.GameController.MenuManager.activate_menu(self.bag_slots[self.current_bag_slot])
-        self.GameController.current_menu = self.bag_slots[self.current_bag_slot]
+
+        self.GameData.menu_list[self.bag_slots[self.current_bag_slot]].set_menu()
 
     def reset_bag_slot(self):
         self.current_bag_slot = 0

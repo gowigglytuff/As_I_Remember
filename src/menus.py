@@ -18,7 +18,7 @@ class MenuManager(object):
         self.buying_menu = False
         self.to_do_list_menu = False
         self.in_conversation_menu = False
-        self.static_menus = ["stats_menu", "game_action_dialogue_menu"]
+        self.static_menus = []
         self.active = []
         self.menu_stack = []
         self.visable_menus = []
