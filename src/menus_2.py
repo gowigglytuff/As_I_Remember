@@ -54,16 +54,16 @@ class TextBox2(Overlay2):
         super().__init__(gc_input, gd_input, name, x, y, image)
 
     def display_phrase(self, character):
-    # prints the speakers name
+        # prints the speakers name
         my_font = pygame.font.Font(self.gc_input.font, 10)
-        item = my_font.render(self.gd_input.character_list[character].name + ":", 1, (0, 0, 0))
+        item = my_font.render(self.gd_input.character_list[character].name + ":", True, (0, 0, 0))
         self.gc_input.screen.blit(item, (self.gd_input.overlay_list["text_box"].x + 150, self.gd_input.overlay_list["text_box"].y + 20))
 
         # prints phrases to be spoke
         text_line = 0
         for line in self.gd_input.character_list[character].speaking_queue:
             my_font = pygame.font.Font(self.gc_input.font, 10)
-            item = my_font.render(line, 1, (0, 0, 0))
+            item = my_font.render(line, True, (0, 0, 0))
             self.gc_input.screen.blit(item, (self.gd_input.overlay_list["text_box"].x + 150, self.gd_input.overlay_list["text_box"].y + 50 + 25 * text_line))
             text_line += 1
 
@@ -98,14 +98,13 @@ class GameActionDialogue2(object):
         if len(self.menu_item_list) >= 4:
             del self.menu_item_list[0]
         self.menu_item_list.append(phrase)
-        print(self.menu_item_list)
         # self.display_menu()
 
     def display_menu(self):
         self.gd_input.overlay_list[self.overlay].display_overlay()
         for option in range(self.size):
             my_font = pygame.font.Font(self.gc_input.font, 6)
-            item = my_font.render(self.menu_item_list[option], 1, (0, 0, 0))
+            item = my_font.render(self.menu_item_list[option], True, (0, 0, 0))
             self.screen.blit(item, (self.x, self.y + (option*self.menu_spread)))
 
 
@@ -135,12 +134,12 @@ class StaticMenu2(object):
         self.gd_input.overlay_list[self.overlay].display_overlay()
         for option in range(self.size):
             my_font = pygame.font.Font(self.gc_input.font, 10)
-            item = my_font.render(self.menu_item_list[option][0], 1, (0, 0, 0))
+            item = my_font.render(self.menu_item_list[option][0], True, (0, 0, 0))
             self.screen.blit(item, (self.x, self.y + (option*self.menu_spread)))
 
         for quantitity in range(self.size):
             my_font = pygame.font.Font(self.gc_input.font, 10)
-            item = my_font.render(self.menu_item_list[quantitity][1], 1, (0, 0, 0))
+            item = my_font.render(self.menu_item_list[quantitity][1], True, (0, 0, 0))
             self.screen.blit(item, (self.x + 80 - (10 * len(self.menu_item_list[quantitity][1])), self.y + (quantitity * self.menu_spread)))
 
     def update_menu_items_list(self):
@@ -167,7 +166,6 @@ class NewMenu2(object):
         self.y_spacing = 0
         self.name = self.NAME
         self.menu_type = "base"
-
 
     # Same for most menus
     def cursor_down(self):
@@ -196,7 +194,7 @@ class NewMenu2(object):
 
     def display_cursor(self):
         my_font = pygame.font.Font(self.gc_input.font, 10)
-        item = my_font.render("-", 1, (0, 0, 0))
+        item = my_font.render("-", True, (0, 0, 0))
         self.screen.blit(item, (self.x - 12, (self.y+2 + self.y_spacing) + (self.cursor_at * self.menu_spread)))
 
     def get_current_menu_item(self):
@@ -212,6 +210,7 @@ class NewMenu2(object):
     def exit_menu(self):
         self.reset_cursor()
         self.gc_input.menu_manager.deactivate_menu(self.name)
+
 
     @property
     def size(self):
@@ -234,9 +233,11 @@ class NewMenu2(object):
     def try_to_exit(self):
         pass
 
-    def do_not_do_option(self):
-        for menu in self.gc_input.menu_manager.menu_stack:
-            self.gd_input.menu_list[menu].exit_menu()
+    def exit_all_menus(self):
+        self.exit_menu()
+        if len(self.gc_input.menu_manager.menu_stack) > 0:
+            self.gd_input.menu_list[self.gc_input.menu_manager.menu_stack[0]].exit_all_menus()
+
 
 class StartMenu2(NewMenu2):
     NAME = "start_menu_2"
@@ -255,27 +256,23 @@ class StartMenu2(NewMenu2):
         menu_selection = self.get_current_menu_item()
 
         if menu_selection == "Bag":
-            self.exit_menu()
             self.gd_input.menu_list["inventory_menu_2"].set_menu()
+            print("opening inv")
 
         elif menu_selection == "Key Items":
-            self.exit_menu()
             self.gd_input.menu_list["key_inventory_menu"].set_menu()
 
         elif menu_selection == "Chore List":
-            self.exit_menu()
             self.gd_input.menu_list["to_do_list_menu_2"].set_menu()
 
         elif menu_selection == "Profile":
-            self.exit_menu()
             self.gd_input.menu_list["profile_menu_2"].set_menu()
 
         elif menu_selection == "Map":
-            self.exit_menu()
             self.gd_input.menu_list[MapMenu.NAME].set_menu()
 
         elif menu_selection == "Exit":
-            self.exit_menu()
+            self.exit_all_menus()
 
         elif menu_selection == "Outfits":
             # TODO: Add outfit selection
@@ -287,7 +284,7 @@ class StartMenu2(NewMenu2):
             self.exit_menu()
 
         else:
-            self.exit_menu()
+            self.exit_all_menus()
 
     def choose_option(self):
         self.do_option()
@@ -301,8 +298,8 @@ class InventoryMenu2(NewMenu2):
         super().__init__(gc_input, gd_input, menu_item_list)
         self.y_spacing = 20
         self.max_length = 14
-        gd_input.add_overlay("inventory_menu_2", Overlay2(gc_input, gd_input, "inventory_menu_2", 700, 200, Spritesheet("assets/menu_images/inventory_menu.png", 200, 400)))
-        self.overlay = "inventory_menu_2"
+        gd_input.add_overlay("inventory_menu_2_overlay", Overlay2(gc_input, gd_input, "inventory_menu_2_overlay", 700, 200, Spritesheet("assets/menu_images/inventory_menu.png", 200, 400)))
+        self.overlay = "inventory_menu_2_overlay"
         self.x = self.gd_input.overlay_list[self.overlay].x + self.offset_x
         self.y = self.gd_input.overlay_list[self.overlay].y + self.offset_y
         self.menu_type = "base"
@@ -315,7 +312,7 @@ class InventoryMenu2(NewMenu2):
         self.gd_input.overlay_list[self.overlay].display_overlay()
 
         my_font = pygame.font.Font(self.gc_input.font, 10)
-        item = my_font.render("<    ITEMS    >", 1, (0, 0, 0))
+        item = my_font.render("<    ITEMS    >", True, (0, 0, 0))
         self.screen.blit(item, (self.x, self.y))
 
         menu_length_calc = 0
@@ -325,7 +322,7 @@ class InventoryMenu2(NewMenu2):
             menu_length_calc = self.size
 
         for option in range(menu_length_calc):
-            item = my_font.render(self.menu_item_list[option], 1, (0, 0, 0))
+            item = my_font.render(self.menu_item_list[option], True, (0, 0, 0))
             self.screen.blit(item, (self.x, self.y + self.y_spacing + (option * self.menu_spread)))
 
             spacing = 0
@@ -336,7 +333,7 @@ class InventoryMenu2(NewMenu2):
             else:
                 spacing = 130
 
-            item = my_font.render("x" + str(self.gd_input.item_list[self.menu_item_list[option]].quantity), 1, (0, 0, 0))
+            item = my_font.render("x" + str(self.gd_input.item_list[self.menu_item_list[option]].quantity), True, (0, 0, 0))
             self.screen.blit(item, (self.x + spacing, self.y + self.y_spacing + (option * self.menu_spread)))
         self.display_cursor()
 
@@ -345,24 +342,18 @@ class InventoryMenu2(NewMenu2):
 
     def do_option(self, choice=None):
         menu_selection = choice
-        print("menu_selection")
 
         if menu_selection == "Use":
             self.gd_input.item_list[self.get_current_menu_item()].use_item()
-            self.gc_input.inventory.reset_bag_slot()
-            self.exit_menu()
+            self.exit_all_menus()
 
+        # TODO: Make this actually toss
         elif menu_selection == "Toss":
             print("You tossed out the " + str(self.get_current_menu_item()) + "!")
-            self.gc_input.inventory.reset_bag_slot()
-            self.exit_menu()
+            self.exit_all_menus()
 
         elif menu_selection == "Exit":
-            self.gc_input.inventory.reset_bag_slot()
-            self.exit_menu()
-
-    def do_not_do_option(self):
-        self.exit_menu()
+            self.exit_all_menus()
 
     def cursor_down(self):
         menu_length_calc = 0
@@ -414,6 +405,7 @@ class InventoryMenu2(NewMenu2):
         self.reset_cursor()
         self.gc_input.menu_manager.deactivate_menu(self.name)
 
+
 class KeyInventoryMenu2(NewMenu2):
     NAME = "key_inventory_menu_2"
 
@@ -430,11 +422,11 @@ class KeyInventoryMenu2(NewMenu2):
         self.gd_input.overlay_list[self.overlay].display_overlay()
 
         my_font = pygame.font.Font(self.gc_input.font, 10)
-        item = my_font.render("<  KEY ITEMS  >", 1, (0, 0, 0))
+        item = my_font.render("<  KEY ITEMS  >", True, (0, 0, 0))
         self.screen.blit(item, (self.x, self.y))
 
         for option in range(self.size):
-            item = my_font.render(self.menu_item_list[option], 1, (0, 0, 0))
+            item = my_font.render(self.menu_item_list[option], True, (0, 0, 0))
             self.screen.blit(item, (self.x, self.y + self.y_spacing + (option * self.menu_spread)))
 
         self.display_cursor()
@@ -459,22 +451,22 @@ class KeyInventoryMenu2(NewMenu2):
             self.gc_input.inventory.reset_bag_slot()
             self.exit_menu()
 
-    def do_not_do_option(self):
-        self.gc_input.inventory.reset_bag_slot()
-        self.exit_menu()
-
     def cursor_left(self):
         self.reset_cursor()
         self.update_menu_items_list()
         self.gc_input.inventory.bag_slot_left()
-        print("left")
 
     def cursor_right(self):
         self.reset_cursor()
         self.update_menu_items_list()
         self.gc_input.inventory.bag_slot_right()
-        
-        
+
+    def exit_menu(self):
+        self.gc_input.inventory.reset_bag_slot()
+        self.reset_cursor()
+        self.gc_input.menu_manager.deactivate_menu(self.name)
+
+
 class ToDoListMenu2(NewMenu2):
     NAME = "to_do_list_menu_2"
 
@@ -490,12 +482,12 @@ class ToDoListMenu2(NewMenu2):
         self.gd_input.overlay_list[self.overlay].display_overlay()
         for option in range(self.size):
             my_font = pygame.font.Font(self.gc_input.font, 10)
-            item = my_font.render(self.menu_item_list[option], 1, (0, 0, 0))
+            item = my_font.render(self.menu_item_list[option], True, (0, 0, 0))
             self.screen.blit(item, (self.x, self.y + (option*self.menu_spread)))
         self.display_cursor()
 
     def do_option(self):
-        self.exit_menu()
+        self.exit_all_menus()
 
     def choose_option(self):
         self.do_option()
@@ -514,20 +506,21 @@ class ProfileMenu2(NewMenu2):
 
     def display_menu(self):
         self.gd_input.overlay_list[self.overlay].display_overlay()
-        self.screen.blit(self.gd_input.player["Player"].spritesheet.get_image(0, 0),( self.x + 27, self.y + 30))
+        self.screen.blit(self.gd_input.player["Player"].spritesheet.get_image(0, 0), (self.x + 27, self.y + 30))
 
         my_font = pygame.font.Font(self.gc_input.font, 10)
-        item = my_font.render("Name: Shuma", 1, (0, 0, 0))
+        item = my_font.render("Name: Shuma", True, (0, 0, 0))
         self.gc_input.screen.blit(item, (self.x +125, self.y + 40))
 
-        item2 = my_font.render("Reputation: ", 1, (0, 0, 0))
+        item2 = my_font.render("Reputation: ", True, (0, 0, 0))
         self.gc_input.screen.blit(item2, (self.x + 125, self.y + 60))
 
     def do_option(self):
-        self.exit_menu()
+        self.exit_all_menus()
 
     def choose_option(self):
         self.do_option()
+
 
 class MapMenu(NewMenu2):
     NAME = "map_menu"
@@ -539,16 +532,16 @@ class MapMenu(NewMenu2):
         self.x = self.gd_input.overlay_list[self.overlay].x + self.offset_x
         self.y = self.gd_input.overlay_list[self.overlay].y + self.offset_y
         self.menu_type = "base"
-        print(self.name)
 
     def display_menu(self):
         self.gd_input.overlay_list[self.overlay].display_overlay()
 
     def do_option(self):
-        self.exit_menu()
+        self.exit_all_menus()
 
     def choose_option(self):
         self.do_option()
+
 
 # Additional Type Menus
 class UseMenu2(NewMenu2):
@@ -577,11 +570,8 @@ class UseMenu2(NewMenu2):
         elif menu_selection == "Toss":
             self.gd_input.menu_list["yes_no_menu_2"].set_menu()
 
-
         elif menu_selection == "Exit":
-            self.exit_menu()
-            self.gd_input.menu_list[self.gc_input.menu_manager.menu_stack[0]].do_not_do_option()
-
+            self.exit_all_menus()
 
     def do_option(self):
         menu_selection = self.gd_input.menu_list[self.name].get_current_menu_item()
@@ -593,10 +583,6 @@ class UseMenu2(NewMenu2):
         elif menu_selection == "Toss":
             self.exit_menu()
             self.gd_input.menu_list[self.gc_input.menu_manager.menu_stack[0]].do_option(menu_selection)
-
-    def do_not_do_option(self):
-        self.exit_menu()
-        self.gd_input.menu_list[self.gc_input.menu_manager.menu_stack[0]].do_not_do_option()
 
 
 class YesNoMenu2(NewMenu2):
@@ -624,8 +610,7 @@ class YesNoMenu2(NewMenu2):
 
         elif menu_selection == "No":
             self.exit_menu()
-            self.gd_input.menu_list[self.gc_input.menu_manager.menu_stack[0]].do_not_do_option()
-
+            self.gd_input.menu_list[self.gc_input.menu_manager.menu_stack[0]].exit_all_menus()
 
 
 # Character Interaction Menus
@@ -658,14 +643,14 @@ class ConversationOptionsMenu2(NewMenu2):
 
         # Display speakers name
         my_font = pygame.font.Font(self.gc_input.font, 10)
-        item = my_font.render(self.gd_input.character_list[self.talking_to].name + ":", 1, (0, 0, 0))
+        item = my_font.render(self.gd_input.character_list[self.talking_to].name + ":", True, (0, 0, 0))
         self.gc_input.screen.blit(item, (self.x, self.y))
 
         # Display Dialogue Options
         text_line = 1
         for option in range(self.size):
             my_font = pygame.font.Font(self.gc_input.font, 10)
-            item = my_font.render(self.menu_item_list[option], 1, (0, 0, 0))
+            item = my_font.render(self.menu_item_list[option], True, (0, 0, 0))
             self.screen.blit(item, (self.x, self.y + self.y_spacing * text_line))
             text_line += 1
         self.display_cursor()
@@ -677,23 +662,13 @@ class ConversationOptionsMenu2(NewMenu2):
     def do_option(self):
         menu_selection = self.gd_input.menu_list[self.name].get_current_menu_item()
         if menu_selection == "Talk":
-            self.exit_menu()
             self.gd_input.menu_list["character_dialogue_menu_2"].set_menu(self.talking_to, self.gd_input.character_list[self.talking_to].phrase)
-            self.gd_input.menu_list[self.name].unset_talking_to()
 
         elif menu_selection == "Give Gift":
             self.gd_input.menu_list["gift_menu_2"].set_menu()
 
         elif menu_selection == "Exit":
-            self.gd_input.character_list[self.talking_to].set_state("idle")
-            self.gd_input.menu_list[self.name].unset_talking_to()
-            self.gd_input.character_list[self.gd_input.player["Player"].check_adj_tile(self.gd_input.player["Player"].get_direct(self.gd_input.player["Player"].facing)).object_filling].set_state("idle")
-            self.exit_menu()
-
-    def do_not_do_option(self):
-        self.gd_input.character_list[self.talking_to].set_state("idle")
-        self.gd_input.menu_list[self.name].set_talking_to(None)
-        self.exit_menu()
+            self.exit_all_menus()
 
     def set_menu(self, person_talking_to):
         self.update_menu_items_list()
@@ -702,14 +677,112 @@ class ConversationOptionsMenu2(NewMenu2):
         self.set_talking_to(person_talking_to)
 
     def give_item(self, item):
-        self.exit_menu()
         self.gc_input.inventory.unget_item(item, 1)
         self.gc_input.update_game_dialogue("You gave " + self.talking_to + " 1 " + item)
         self.gd_input.menu_list["character_dialogue_menu_2"].set_menu(self.talking_to, self.gd_input.character_list[self.talking_to].phrase_thanks)
-        self.set_talking_to(None)
+
+    def exit_menu(self):
+        self.gd_input.character_list[self.talking_to].set_state("idle")
+        self.unset_talking_to()
+        self.reset_cursor()
+        self.gc_input.menu_manager.deactivate_menu(self.name)
 
 
-class CharacterDialogue2(object):
+class CharacterDialogue2(NewMenu2):
+    NAME = "character_dialogue_menu_2"
+
+    def __init__(self, gc_input, gd_input, menu_item_list):
+        super().__init__(gc_input, gd_input, menu_item_list)
+        gd_input.add_overlay("dialogue_text_box_2", TextBox2(gc_input, gd_input, "dialogue_text_box_2", 250, 550, Spritesheet("assets/menu_images/text_box.png", 500, 150)))
+        self.overlay = "dialogue_text_box_2"
+        self.offset_x = 150
+        self.offset_y = 25
+        self.x = self.gd_input.overlay_list[self.overlay].x + self.offset_x
+        self.y = self.gd_input.overlay_list[self.overlay].y + self.offset_y
+        self.menu_item_list = "Something strange is going on around here, have you heard about the children disapearing? Their parents couldn't even remember their names..."
+        self.current_phrase = []
+        self.speaking_queue = []
+        self.menu_photo = Spritesheet("assets/NPC_sprites/faces/DonnaFace.png", 150, 150).get_image(0, 0)
+        self.menu_go = True
+        self.y_spacing = 25
+
+        self.set_current_phrase()
+        self.talking_to = None
+        self.menu_type = "base"
+
+    def update_menu_items_list(self, phrases):
+        self.menu_item_list = phrases
+
+    def set_current_phrase(self):
+        self.current_phrase = textwrap.wrap(self.menu_item_list, width=30)
+
+    def set_speaking_queue(self):
+        phrase_counter = 0
+        self.speaking_queue = []
+
+        if len(self.current_phrase) > 2:
+            for line in range(3):
+                self.speaking_queue.append(self.current_phrase[0])
+                self.current_phrase.pop(0)
+
+        elif (len(self.current_phrase) <= 2) and (len(self.current_phrase) > 0):
+            for line in range(len(self.current_phrase)):
+                self.speaking_queue.append(self.current_phrase[0])
+                self.current_phrase.pop(0)
+
+        elif len(self.current_phrase) == 0:
+            self.exit_all_menus()
+
+    @property
+    def size(self):
+        return len(self.menu_item_list)
+
+    def display_menu(self):
+        # prints the dialgue text box
+        self.gd_input.overlay_list[self.overlay].display_overlay()
+
+        # Display characters name
+        my_font = pygame.font.Font(self.gc_input.font, 10)
+        item = my_font.render(self.gd_input.character_list[self.talking_to].name + ":", True, (0, 0, 0))
+        self.gc_input.screen.blit(item, (self.x,  self.y))
+
+        # Displays characters dialogue
+        text_line = 1
+        for line in self.speaking_queue:
+            my_font = pygame.font.Font(self.gc_input.font, 10)
+            item = my_font.render(line, True, (0, 0, 0))
+            self.gc_input.screen.blit(item, (self.x,  self.y + self.y_spacing * text_line))
+            text_line += 1
+
+        # Displays characters photo
+        self.gc_input.screen.blit(self.gd_input.character_list[self.talking_to].face_image, (self.gd_input.overlay_list[self.overlay].x, self.gd_input.overlay_list[self.overlay].y+2))
+
+    def exit_menu(self):
+        self.gc_input.set_speaker(None)
+        self.gc_input.menu_manager.deactivate_menu(self.name)
+
+    def set_menu(self, talking_to, phrase):
+        self.talking_to = talking_to
+        self.update_menu_items_list(phrase)
+        self.set_current_phrase()
+        self.set_speaking_queue()
+        self.gc_input.menu_manager.add_menu_to_stack(self.name)
+        self.gc_input.set_keyboard_manager(InMenu.ID)
+
+    def cursor_down(self):
+        pass
+
+    def cursor_up(self):
+        pass
+
+    def choose_option(self):
+        self.do_option()
+
+    def do_option(self):
+        self.set_speaking_queue()
+
+
+class CharacterDialogue3(object):
     NAME = "character_dialogue_menu_2"
 
     def __init__(self, gc_input, gd_input):
@@ -757,7 +830,7 @@ class CharacterDialogue2(object):
                 self.current_phrase.pop(0)
 
         elif len(self.current_phrase) == 0:
-            self.exit_menu()
+            self.do_not_do_option()
 
     @property
     def size(self):
@@ -769,14 +842,14 @@ class CharacterDialogue2(object):
 
         # Display characters name
         my_font = pygame.font.Font(self.gc_input.font, 10)
-        item = my_font.render(self.gd_input.character_list[self.talking_to].name + ":", 1, (0, 0, 0))
+        item = my_font.render(self.gd_input.character_list[self.talking_to].name + ":", True, (0, 0, 0))
         self.gc_input.screen.blit(item, (self.x,  self.y))
 
         # Displays characters dialogue
         text_line = 1
         for line in self.speaking_queue:
             my_font = pygame.font.Font(self.gc_input.font, 10)
-            item = my_font.render(line, 1, (0, 0, 0))
+            item = my_font.render(line, True, (0, 0, 0))
             self.gc_input.screen.blit(item, (self.x,  self.y + self.y_spacing * text_line))
             text_line += 1
 
@@ -784,7 +857,6 @@ class CharacterDialogue2(object):
         self.gc_input.screen.blit(self.gd_input.character_list[self.talking_to].face_image, (self.gd_input.overlay_list[self.overlay].x, self.gd_input.overlay_list[self.overlay].y+2))
 
     def exit_menu(self):
-        self.gd_input.character_list[self.talking_to].set_state("idle")
         self.gc_input.set_speaker(None)
         self.gc_input.menu_manager.deactivate_menu(self.name)
         self.gc_input.set_keyboard_manager(InGame.ID)
@@ -815,6 +887,11 @@ class CharacterDialogue2(object):
     def do_option(self):
         self.set_speaking_queue()
 
+    def do_not_do_option(self):
+        self.exit_menu()
+        if len(self.gc_input.menu_manager.menu_stack) > 0:
+            self.gd_input.menu_list[self.gc_input.menu_manager.menu_stack[0]].exit_all_menus()
+
 
 class GiftingMenu2(NewMenu2):
     NAME = "gift_menu_2"
@@ -828,16 +905,30 @@ class GiftingMenu2(NewMenu2):
         self.x = self.gd_input.overlay_list[self.overlay].x + self.offset_x
         self.y = self.gd_input.overlay_list[self.overlay].y + self.offset_y
         self.menu_type = "base"
+        self.currently_displayed_items = None
+        self.list_shifts = 0
 
     def update_menu_items_list(self):
         self.menu_item_list = sorted(self.gc_input.inventory.current_items)
+        print(self.menu_item_list)
+        self.menu_item_list.append("Exit")
+        self.update_currently_displayed()
         # TODO: Add exit to menu
+
+    def update_currently_displayed(self):
+        self.currently_displayed_items = []
+        if self.size <= self.max_length:
+            for item in range(self.size):
+                self.currently_displayed_items.append(self.menu_item_list[item + self.list_shifts])
+        else:
+            for item in range(self.max_length):
+                self.currently_displayed_items.append(self.menu_item_list[item + self.list_shifts])
 
     def display_menu(self):
         self.gd_input.overlay_list[self.overlay].display_overlay()
 
         my_font = pygame.font.Font(self.gc_input.font, 10)
-        item = my_font.render("     ITEMS     ", 1, (0, 0, 0))
+        item = my_font.render("     ITEMS     ", True, (0, 0, 0))
         self.screen.blit(item, (self.x, self.y))
 
         menu_length_calc = 0
@@ -847,73 +938,91 @@ class GiftingMenu2(NewMenu2):
             menu_length_calc = self.size
 
         for option in range(menu_length_calc):
-            item = my_font.render(self.menu_item_list[option], 1, (0, 0, 0))
-            self.screen.blit(item, (self.x, self.y + self.y_spacing + (option * self.menu_spread)))
+            if self.currently_displayed_items[option] == "Exit":
+                item = my_font.render(self.currently_displayed_items[option], True, (0, 0, 0))
+                self.screen.blit(item, (self.x, self.y + self.y_spacing + (option * self.menu_spread)))
 
-            spacing = 0
-            if len(str(self.gd_input.item_list[self.menu_item_list[option]].quantity)) == 3:
-                spacing = 110
-            elif len(str(self.gd_input.item_list[self.menu_item_list[option]].quantity)) == 2:
-                spacing = 120
             else:
-                spacing = 130
+                item = my_font.render(self.currently_displayed_items[option], True, (0, 0, 0))
+                self.screen.blit(item, (self.x, self.y + self.y_spacing + (option * self.menu_spread)))
 
-            item = my_font.render("x" + str(self.gd_input.item_list[self.menu_item_list[option]].quantity), 1, (0, 0, 0))
-            self.screen.blit(item, (self.x + spacing, self.y + self.y_spacing + (option * self.menu_spread)))
+                spacing = 0
+                if len(str(self.gd_input.item_list[self.currently_displayed_items[option]].quantity)) == 3:
+                    spacing = 110
+                elif len(str(self.gd_input.item_list[self.currently_displayed_items[option]].quantity)) == 2:
+                    spacing = 120
+                else:
+                    spacing = 130
+
+                item = my_font.render("x" + str(self.gd_input.item_list[self.currently_displayed_items[option]].quantity), True, (0, 0, 0))
+                self.screen.blit(item, (self.x + spacing, self.y + self.y_spacing + (option * self.menu_spread)))
+
         self.display_cursor()
 
     def choose_option(self):
-        self.gd_input.menu_list["yes_no_menu_2"].set_menu()
+        chosen_item = self.get_current_menu_item()
+        if chosen_item == "Exit":
+            self.exit_all_menus()
+        else:
+            self.gd_input.menu_list["yes_no_menu_2"].set_menu()
 
     def do_option(self):
         chosen_item = self.get_current_menu_item()
         self.exit_menu()
         self.gd_input.menu_list[self.gc_input.menu_manager.menu_stack[0]].give_item(chosen_item)
 
-    def do_not_do_option(self):
-        self.exit_menu()
-        self.gd_input.menu_list[self.gc_input.menu_manager.menu_stack[0]].do_not_do_option()
-
     def cursor_down(self):
+        print(self.cursor_at)
+        print(self.list_shifts)
+        print(self.size)
+
         menu_length_calc = 0
         if self.size >= self.max_length:
             menu_length_calc = self.max_length
         elif self.size < self.max_length:
             menu_length_calc = self.size
 
-        if self.size > self.max_length and self.cursor_at == self.max_length - 1 and self.size > 1:
-            self.menu_item_list.append(self.menu_item_list.pop(0))
+        if self.size > 1:
+            if (self.cursor_at + self.list_shifts) < self.size -1:
+                if self.size > self.max_length:
+                    if self.cursor_at == self.max_length - 1:
+                        self.list_shifts += 1
+                        self.update_currently_displayed()
+                    elif self.cursor_at < self.max_length - 1:
+                        self.cursor_at += 1
+                    else:
+                        pass
 
-        elif self.cursor_at == menu_length_calc - 1:
-            pass
+                elif self.max_length >= self.size > self.cursor_at:
+                    self.cursor_at += 1
 
-        elif self.size > 1:
-            self.cursor_at += 1
-
-        else:
-            pass
+        print(self.cursor_at)
+        print(self.list_shifts)
 
     def cursor_up(self):
+        print(self.cursor_at)
+        print(self.list_shifts)
+
         menu_length_calc = 0
         if self.size >= self.max_length:
             menu_length_calc = self.max_length
         elif self.size < self.max_length:
             menu_length_calc = self.size
 
-        if self.cursor_at == 0 and self.size > 1:
-            self.menu_item_list.insert(0, self.menu_item_list.pop(self.max_length - 1))
-
-        elif self.size > 1:
-            self.cursor_at -= 1
-
-        else:
-            pass
-
-    def exit_menu(self):
-        self.reset_cursor()
-        self.gc_input.menu_manager.deactivate_menu(self.name)
+        if (self.cursor_at + self.list_shifts) > 0:
+            if self.cursor_at == 0 and self.list_shifts > 0:
+                self.list_shifts -= 1
+                self.update_currently_displayed()
+            elif self.cursor_at > 0:
+                self.cursor_at -= 1
+            else:
+                pass
         
-        
+    def get_current_menu_item(self):
+        menu_selection = self.currently_displayed_items[self.cursor_at]
+        return menu_selection
+
+
 class ShopKeeperInteractMenu2(NewMenu2):
     NAME = "shopkeeper_interact_menu_2"
 
@@ -928,7 +1037,6 @@ class ShopKeeperInteractMenu2(NewMenu2):
         self.x = self.gd_input.overlay_list[self.overlay].x + self.offset_x
         self.y = self.gd_input.overlay_list[self.overlay].y + self.offset_y
         self.menu_type = "base"
-        print(self.name)
 
     def set_talking_to(self, talking_to):
         self.talking_to = talking_to
@@ -943,12 +1051,12 @@ class ShopKeeperInteractMenu2(NewMenu2):
         self.gd_input.overlay_list[self.overlay].display_overlay()
         for option in range(self.size):
             my_font = pygame.font.Font(self.gc_input.font, 10)
-            item = my_font.render(self.menu_item_list[option], 1, (0, 0, 0))
+            item = my_font.render(self.menu_item_list[option], True, (0, 0, 0))
             self.screen.blit(item, (self.x, self.y + (option*self.menu_spread)))
         self.display_cursor()
 
         my_font = pygame.font.Font(self.gc_input.font, 10)
-        item = my_font.render(self.gd_input.character_list[self.talking_to].name + ":", 1, (0, 0, 0))
+        item = my_font.render(self.gd_input.character_list[self.talking_to].name + ":", True, (0, 0, 0))
         self.gc_input.screen.blit(item, (self.gd_input.overlay_list[self.overlay].x + 150, self.gd_input.overlay_list[self.overlay].y + 20))
 
         # Displays characters photo
@@ -962,16 +1070,22 @@ class ShopKeeperInteractMenu2(NewMenu2):
 
         if menu_selection == "Buy":
             self.gd_input.menu_list["buying_menu_2"].set_menu(self.talking_to)
-            self.exit_menu()
 
         elif menu_selection == "Sell":
             self.gd_input.menu_list["selling_menu_2"].set_menu(self.talking_to)
-            self.exit_menu()
 
         elif menu_selection == "Exit":
             self.gd_input.character_list[self.talking_to].set_state("idle")
             self.exit_menu()
 
+    def unset_talking_to(self):
+        self.talking_to = None
+
+    def exit_menu(self):
+        self.gd_input.character_list[self.talking_to].set_state("idle")
+        self.unset_talking_to()
+        self.reset_cursor()
+        self.gc_input.menu_manager.deactivate_menu(self.name)
 
 
 class BuyingMenu2(NewMenu2):
@@ -990,19 +1104,19 @@ class BuyingMenu2(NewMenu2):
         self.gd_input.overlay_list[self.overlay].display_overlay()
 
         my_font = pygame.font.Font(self.gc_input.font, 10)
-        item = my_font.render("$    SHOP    $", 1, (0, 0, 0))
+        item = my_font.render("$    SHOP    $", True, (0, 0, 0))
         self.screen.blit(item, (self.x, self.y))
 
         for option in range(self.size-1):
             my_font = pygame.font.Font(self.gc_input.font, 10)
-            item = my_font.render(self.menu_item_list[option][0], 1, (0, 0, 0))
+            item = my_font.render(self.menu_item_list[option][0], True, (0, 0, 0))
             self.screen.blit(item, (self.x, self.y + 20 + (option * self.menu_spread)))
 
-            item = my_font.render("$" + str(self.menu_item_list[option][1]), 1, (0, 0, 0))
+            item = my_font.render("$" + str(self.menu_item_list[option][1]), True, (0, 0, 0))
             self.screen.blit(item, (self.x + 140 - (10 * len(str(self.menu_item_list[option][1]))), self.y +20 + (option * self.menu_spread)))
 
         my_font = pygame.font.Font(self.gc_input.font, 10)
-        item = my_font.render(self.menu_item_list[self.size-1][0], 1, (0, 0, 0))
+        item = my_font.render(self.menu_item_list[self.size-1][0], True, (0, 0, 0))
         self.screen.blit(item, (self.x, self.y + 20 + ((self.size-1) * self.menu_spread)))
 
         self.display_cursor()
@@ -1012,24 +1126,20 @@ class BuyingMenu2(NewMenu2):
 
     def do_option(self):
         if self.try_buy_item():
-            self.gd_input.character_list[self.talking_to].set_state("idle")
-            self.talking_to = None
-            self.exit_menu()
+            self.exit_all_menus()
         else:
-            pass
+            self.exit_all_menus()
 
     def display_cursor(self):
         my_font = pygame.font.Font(self.gc_input.font, 10)
-        item = my_font.render("-", 1, (0, 0, 0))
+        item = my_font.render("-", True, (0, 0, 0))
         self.screen.blit(item, (self.x - 15, (self.y + 2 + 20) + (self.cursor_at * self.menu_spread)))
 
     def try_buy_item(self):
         success = False
         menu_selection = self.gd_input.menu_list[self.name].get_current_menu_item()
         if menu_selection[0] == "Exit":
-            self.gd_input.character_list[self.talking_to].set_state("idle")
-            self.talking_to = None
-            self.exit_menu()
+            self.exit_all_menus()
 
         elif self.gc_input.your_coins >= menu_selection[1]:
             try_buy = self.gc_input.try_use_coins(menu_selection[1])
@@ -1039,11 +1149,9 @@ class BuyingMenu2(NewMenu2):
                 print("You bought it!")
                 success = True
             else:
-                print("failed to buy the item")
                 success = False
                 self.gc_input.update_game_dialogue("You can't afford 1 " + menu_selection[0])
         else:
-            print("you're poor")
             success = False
             self.gc_input.update_game_dialogue("You can't afford 1 " + menu_selection[0])
         return success
@@ -1057,6 +1165,14 @@ class BuyingMenu2(NewMenu2):
     def update_menu_items_list(self):
         self.menu_item_list = self.gd_input.character_list[self.talking_to].items_list.copy()
         self.menu_item_list.append(("Exit", "-"))
+
+    def unset_talking_to(self):
+        self.talking_to = None
+
+    def exit_menu(self):
+        self.unset_talking_to()
+        self.reset_cursor()
+        self.gc_input.menu_manager.deactivate_menu(self.name)
 
 
 class SellingMenu2(NewMenu2):
@@ -1090,7 +1206,7 @@ class SellingMenu2(NewMenu2):
         self.gd_input.overlay_list[self.overlay].display_overlay()
 
         my_font = pygame.font.Font(self.gc_input.font, 10)
-        item = my_font.render("     ITEMS     ", 1, (0, 0, 0))
+        item = my_font.render("     ITEMS     ", True, (0, 0, 0))
         self.screen.blit(item, (self.x, self.y))
 
         menu_length_calc = 0
@@ -1100,7 +1216,7 @@ class SellingMenu2(NewMenu2):
             menu_length_calc = self.size
 
         for option in range(menu_length_calc):
-            item = my_font.render(self.menu_item_list[option], 1, (0, 0, 0))
+            item = my_font.render(self.menu_item_list[option], True, (0, 0, 0))
             self.screen.blit(item, (self.x, self.y + self.y_spacing + (option * self.menu_spread)))
 
             spacing = 0
@@ -1111,7 +1227,7 @@ class SellingMenu2(NewMenu2):
             else:
                 spacing = 130
 
-            cost = my_font.render("$" + str(self.gd_input.item_list[self.menu_item_list[option]].sell_price), 1, (0, 0, 0))
+            cost = my_font.render("$" + str(self.gd_input.item_list[self.menu_item_list[option]].sell_price), True, (0, 0, 0))
             self.screen.blit(cost, (self.x + spacing, self.y + self.y_spacing + (option * self.menu_spread)))
         self.display_cursor()
 
@@ -1121,13 +1237,7 @@ class SellingMenu2(NewMenu2):
     def do_option(self):
         current_item = self.get_current_menu_item()
         self.process_item_selection(current_item)
-        self.gd_input.character_list[self.talking_to].set_state("idle")
-        self.talking_to = None
-        self.exit_menu()
-
-    def do_not_do_option(self):
-        self.exit_menu()
-        self.gd_input.menu_list[self.gc_input.menu_manager.menu_stack[0]].do_not_do_option()
+        self.exit_all_menus()
 
     def cursor_down(self):
         menu_length_calc = 0
@@ -1163,3 +1273,12 @@ class SellingMenu2(NewMenu2):
         print("You sold 1 " + str(item))
         self.gc_input.inventory.unget_item(item, 1)
         self.gc_input.get_coins(self.gd_input.item_list[item].sell_price)
+        self.gc_input.update_game_dialogue("You sold 1 " + item + " for $" + str(self.gd_input.item_list[item].sell_price))
+
+    def unset_talking_to(self):
+        self.talking_to = None
+
+    def exit_menu(self):
+        self.unset_talking_to()
+        self.reset_cursor()
+        self.gc_input.menu_manager.deactivate_menu(self.name)

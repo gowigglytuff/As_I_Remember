@@ -135,7 +135,7 @@ def load_menus2(GameController, GameData):
 
     GameData.add_menu(ConversationOptionsMenu2.NAME, ConversationOptionsMenu2(GameController, GameData, ["Talk", "Give Gift"]))
 
-    GameData.add_menu(CharacterDialogue2.NAME, CharacterDialogue2(GameController, GameData))
+    GameData.add_menu(CharacterDialogue2.NAME, CharacterDialogue2(GameController, GameData, []))
 
     GameData.add_menu(GiftingMenu2.NAME, GiftingMenu2(GameController, GameData, GameController.inventory.current_items))
 
@@ -177,16 +177,19 @@ def load_items(GameController, GameData):
     GameController.inventory.get_item("Fork", 91)
     GameController.inventory.get_item("Pen", 91)
     GameController.inventory.get_item("Cup", 91)
-    GameController.inventory.get_item("Bottle", 91)
-    GameController.inventory.get_item("Coin", 91)
-    GameController.inventory.get_item("Paper", 91)
-    GameController.inventory.get_item("Item1", 2)
-    GameController.inventory.get_item("Item2", 1)
-    GameController.inventory.get_item("Item3", 1)
-    GameController.inventory.get_item("Item4", 1)
-    GameController.inventory.get_item("Item5", 1)
-    GameController.inventory.get_item("Item6", 1)
-    GameController.inventory.get_item("Item7", 1)
+    # GameController.inventory.get_item("Bottle", 91)
+    # GameController.inventory.get_item("Coin", 91)
+    # GameController.inventory.get_item("Paper", 91)
+    # GameController.inventory.get_item("Item1", 2)
+    # GameController.inventory.get_item("Item2", 1)
+    # GameController.inventory.get_item("Item3", 1)
+    # GameController.inventory.get_item("Item4", 1)
+    # GameController.inventory.get_item("Item5", 1)
+    # GameController.inventory.get_item("Item6", 1)
+    # GameController.inventory.get_item("Item7", 1)
+    # GameController.inventory.get_item("Book 1", 1)
+    # GameController.inventory.get_item("Book 2", 1)
+    # GameController.inventory.get_item("Book 3", 1)
 
     #GameController.inventory.get_item("Item6", 1)
 

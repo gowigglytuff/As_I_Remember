@@ -240,7 +240,7 @@ class InMenu(KeyboardManager):
         pass
 
     def key_control(self):
-        self.GameData.menu_list[self.GameController.menu_manager.menu_stack[0]].exit_menu()
+        self.GameData.menu_list[self.GameController.menu_manager.menu_stack[0]].exit_all_menus()
 
     def key_shift(self):
         pass
