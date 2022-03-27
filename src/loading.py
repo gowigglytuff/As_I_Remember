@@ -26,7 +26,7 @@ def init_game(gd_input, gc_input):
     load_keyboard_managers(gc_input, gd_input)
 
     # load all the different menus
-    load_menus(gc_input, gd_input)
+    # load_menus(gc_input, gd_input)
     load_menus2(gc_input, gd_input)
 
     # load the full list of items that are available in the game
@@ -114,32 +114,37 @@ def load_menus(GameController, GameData):
     GameData.add_overlay("top_bar", Overlay(GameController, GameData, "top_bar", 100, 100, Spritesheet("assets/menu_images/top_bar.png", 700, 100)))
 
 def load_menus2(GameController, GameData):
-    GameData.add_overlay("text_box_2", TextBox2(GameController, GameData, "text_box_2", 250, 550, Spritesheet("assets/menu_images/text_box.png", 500, 150)))
-    GameData.add_menu("game_action_dialogue_menu_2", GameActionDialogue2(GameController, GameData))
-    GameData.add_menu("stats_menu2", StaticMenu2(GameController, GameData))
-    GameData.add_menu("start_menu_2", StartMenu2(GameController, GameData, "start_menu_2", ["Chore List", "Map", "Bag", "Outfits", "Profile", "Save", "Options", "Vibes"]))
-    GameData.add_menu("inventory_menu_2", InventoryMenu2(GameController, GameData, "inventory_menu_2", GameController.inventory.current_items))
-    GameData.add_menu("to_do_list_menu_2", ToDoListMenu2(GameController, GameData, "to_do_list_menu_2", ["say hi to your mom", "kiss your cat", "eat a pear", "say hi to your mom", "kiss your cat", "eat a pear", "say hi to your mom", "kiss your cat", "eat a pear", "say hi to your mom", "kiss your cat", "eat a pear"]))
+    # GameData.add_overlay("text_box_2", TextBox2(GameController, GameData, "text_box_2", 250, 550, Spritesheet("assets/menu_images/text_box.png", 500, 150)))
+    GameData.add_menu(GameActionDialogue2.NAME, GameActionDialogue2(GameController, GameData))
+    GameData.add_menu("stats_menu_2", StaticMenu2(GameController, GameData))
 
-    GameData.add_menu("key_inventory_menu_2", KeyInventoryMenu2(GameController, GameData, "key_inventory_menu_2", GameController.inventory.current_key_items))
+    GameData.add_menu(StartMenu2.NAME, StartMenu2(GameController, GameData, ["Chore List", "Map", "Bag", "Outfits", "Profile", "Save", "Options", "Vibes"]))
+    GameData.add_menu(InventoryMenu2.NAME, InventoryMenu2(GameController, GameData, GameController.inventory.current_items))
+    GameData.add_menu(ToDoListMenu2.NAME, ToDoListMenu2(GameController, GameData, ["say hi to your mom", "kiss your cat", "eat a pear", "say hi to your mom", "kiss your cat", "eat a pear", "say hi to your mom", "kiss your cat", "eat a pear", "say hi to your mom", "kiss your cat", "eat a pear"]))
+
+    GameData.add_menu(KeyInventoryMenu2.NAME, KeyInventoryMenu2(GameController, GameData, GameController.inventory.current_key_items))
 
     # the menu that pops up when a player selects an item from the inventory or key inventory
-    GameData.add_menu("use_menu_2", UseMenu2(GameController, GameData, "use_menu_2", ["Use", "Toss"]))
+    GameData.add_menu(UseMenu2.NAME, UseMenu2(GameController, GameData, ["Use", "Toss"]))
 
-    GameData.add_menu("yes_no_menu_2", YesNoMenu2(GameController, GameData, "yes_no_menu_2", ["Yes", "No"]))
+    GameData.add_menu(YesNoMenu2.NAME, YesNoMenu2(GameController, GameData, ["Yes", "No"]))
 
-    GameData.add_menu("profile_menu_2", ProfileMenu2(GameController, GameData, "profile_menu_2", []))
+    GameData.add_menu(ProfileMenu2.NAME, ProfileMenu2(GameController, GameData, []))
 
-    GameData.add_menu("conversation_options_menu_2", ConversationOptionsMenu2(GameController, GameData, "conversation_options_menu_2", ["Talk", "Give Gift"]))
+    GameData.add_menu(MapMenu.NAME, MapMenu(GameController, GameData, []))
 
-    GameData.add_menu("character_dialogue_menu_2", CharacterDialogue2(GameController, GameData))
+    GameData.add_menu(ConversationOptionsMenu2.NAME, ConversationOptionsMenu2(GameController, GameData, ["Talk", "Give Gift"]))
 
-    GameData.add_menu("gift_menu_2", GiftingMenu2(GameController, GameData, "gift_menu_2", GameController.inventory.current_items))
+    GameData.add_menu(CharacterDialogue2.NAME, CharacterDialogue2(GameController, GameData))
+
+    GameData.add_menu(GiftingMenu2.NAME, GiftingMenu2(GameController, GameData, GameController.inventory.current_items))
 
     # the menu that pops up when you talk to an NPC and have to decide how to interact with them
-    GameData.add_menu("shopkeeper_interact_menu_2", ShopKeeperInteractMenu2(GameController, GameData, "shopkeeper_interact_menu_2", ["Buy", "Sell"]))
+    GameData.add_menu(ShopKeeperInteractMenu2.NAME, ShopKeeperInteractMenu2(GameController, GameData, ["Buy", "Sell"]))
 
-    GameData.add_menu("buying_menu_2", BuyingMenu2(GameController, GameData, "buying_menu_2", []))
+    GameData.add_menu(BuyingMenu2.NAME, BuyingMenu2(GameController, GameData, []))
+
+    GameData.add_menu(SellingMenu2.NAME, SellingMenu2(GameController, GameData, GameController.inventory.current_items))
 
 def load_items(GameController, GameData):
     # adds all the items that exist in the game to the storage in GameData

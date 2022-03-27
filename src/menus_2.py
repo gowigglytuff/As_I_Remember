@@ -10,7 +10,7 @@ class SubMenuManager(object):
     def __init__(self, gd_input, gc_input):
         self.gd_input = gd_input
         self.gc_input = gc_input
-        self.static_menus = ["stats_menu2", "game_action_dialogue_menu_2"]
+        self.static_menus = ["stats_menu_2", "game_action_dialogue_menu_2"]
         self.active_menu = []
         self.menu_stack = []
         self.visible_menus = []
@@ -34,6 +34,7 @@ class SubMenuManager(object):
         if len(self.menu_stack) == 0:
             self.gc_input.set_keyboard_manager(InGame.ID)
 
+
 class Overlay2(object):
     def __init__(self, gc_input, gd_input, name, x, y, image):
         self.gc_input = gc_input
@@ -46,6 +47,7 @@ class Overlay2(object):
 
     def display_overlay(self):
         self.screen.blit(self.image, (self.x, self.y))
+
 
 class TextBox2(Overlay2):
     def __init__(self, gc_input, gd_input, name, x, y, image):
@@ -67,7 +69,10 @@ class TextBox2(Overlay2):
 
 # Static Menus
 
+
 class GameActionDialogue2(object):
+    NAME = "game_action_dialogue_menu_2"
+
     def __init__(self, gc_input, gd_input):
         self.gc_input = gc_input
         self.gd_input = gd_input
@@ -103,18 +108,19 @@ class GameActionDialogue2(object):
             item = my_font.render(self.menu_item_list[option], 1, (0, 0, 0))
             self.screen.blit(item, (self.x, self.y + (option*self.menu_spread)))
 
+
 class StaticMenu2(object):
     def __init__(self, gc_input, gd_input):
         self.gc_input = gc_input
         self.gd_input = gd_input
         self.screen = self.gc_input.screen
-        gd_input.add_overlay("stats_overlay2", Overlay2(gc_input, gd_input, "stats_overlay2", 800, 50, Spritesheet("assets/menu_images/use_menu.png", 100, 100)))
+        gd_input.add_overlay("stats_overlay2", Overlay2(gc_input, gd_input, "stats_overlay2", 880, 20, Spritesheet("assets/menu_images/use_menu.png", 100, 100)))
         self.overlay = "stats_overlay2"
         self.offset_x = 10
         self.offset_y = 20
         self.x = self.gd_input.overlay_list[self.overlay].x + self.offset_x
         self.y = self.gd_input.overlay_list[self.overlay].y + self.offset_y
-        self.name = "stats_menu2"
+        self.name = "stats_menu_2"
         self.menu_item_list = [("Coins: ", str(gc_input.your_coins)), ("Seeds:", str(gc_input.your_seeds)), ("Love: ", "100")]
         self.menu_spread = 25
         self.cursor_at = 0
@@ -136,11 +142,16 @@ class StaticMenu2(object):
             my_font = pygame.font.Font(self.gc_input.font, 10)
             item = my_font.render(self.menu_item_list[quantitity][1], 1, (0, 0, 0))
             self.screen.blit(item, (self.x + 80 - (10 * len(self.menu_item_list[quantitity][1])), self.y + (quantitity * self.menu_spread)))
-            
-            
+
+    def update_menu_items_list(self):
+        self.menu_item_list = [("Coins: ", str(self.gc_input.your_coins)), ("Seeds:", str(self.gc_input.your_seeds)), ("Love: ", "100")]
+
+
 # Base Menus            
 class NewMenu2(object):
-    def __init__(self, gc_input, gd_input, name, menu_item_list):
+    NAME = None
+
+    def __init__(self, gc_input, gd_input, menu_item_list):
         self.gc_input = gc_input
         self.gd_input = gd_input
         self.screen = self.gc_input.screen
@@ -149,12 +160,12 @@ class NewMenu2(object):
         self.y = None
         self.offset_x = 30
         self.offset_y = 20
-        self.name = name
+        self.name = None
         self.menu_item_list = menu_item_list
         self.menu_spread = 25
         self.cursor_at = 0
         self.y_spacing = 0
-
+        self.name = self.NAME
         self.menu_type = "base"
 
 
@@ -193,7 +204,6 @@ class NewMenu2(object):
         return menu_selection
 
     # each menu needs its own
-
     def set_menu(self):
         self.update_menu_items_list()
         self.gc_input.set_keyboard_manager(InMenu.ID)
@@ -203,7 +213,6 @@ class NewMenu2(object):
         self.reset_cursor()
         self.gc_input.menu_manager.deactivate_menu(self.name)
 
-
     @property
     def size(self):
         return len(self.menu_item_list)
@@ -212,7 +221,7 @@ class NewMenu2(object):
         self.gd_input.overlay_list[self.overlay].display_overlay()
         for option in range(self.size):
             my_font = pygame.font.Font(self.gc_input.font, 10)
-            item = my_font.render(self.menu_item_list[option], 1, (0, 0, 0))
+            item = my_font.render(self.menu_item_list[option], True, (0, 0, 0))
             self.screen.blit(item, (self.x, self.y + (option*self.menu_spread)))
         self.display_cursor()
 
@@ -224,11 +233,16 @@ class NewMenu2(object):
 
     def try_to_exit(self):
         pass
-    
-        
+
+    def do_not_do_option(self):
+        for menu in self.gc_input.menu_manager.menu_stack:
+            self.gd_input.menu_list[menu].exit_menu()
+
 class StartMenu2(NewMenu2):
-    def __init__(self, gc_input, gd_input, name, menu_item_list):
-        super().__init__(gc_input, gd_input, name, menu_item_list)
+    NAME = "start_menu_2"
+
+    def __init__(self, gc_input, gd_input, menu_item_list):
+        super().__init__(gc_input, gd_input, menu_item_list)
         self.menu_item_list.append("Exit")
         self.menu_type = "base"
         gd_input.add_overlay("start_menu_2", Overlay2(gc_input, gd_input, "start_menu_2", 700, 200, Spritesheet("assets/menu_images/start_menu.png", 150, 400)))
@@ -241,16 +255,24 @@ class StartMenu2(NewMenu2):
         menu_selection = self.get_current_menu_item()
 
         if menu_selection == "Bag":
+            self.exit_menu()
             self.gd_input.menu_list["inventory_menu_2"].set_menu()
 
         elif menu_selection == "Key Items":
+            self.exit_menu()
             self.gd_input.menu_list["key_inventory_menu"].set_menu()
 
         elif menu_selection == "Chore List":
+            self.exit_menu()
             self.gd_input.menu_list["to_do_list_menu_2"].set_menu()
 
         elif menu_selection == "Profile":
+            self.exit_menu()
             self.gd_input.menu_list["profile_menu_2"].set_menu()
+
+        elif menu_selection == "Map":
+            self.exit_menu()
+            self.gd_input.menu_list[MapMenu.NAME].set_menu()
 
         elif menu_selection == "Exit":
             self.exit_menu()
@@ -266,7 +288,6 @@ class StartMenu2(NewMenu2):
 
         else:
             self.exit_menu()
-        self.exit_menu()
 
     def choose_option(self):
         self.do_option()
@@ -274,8 +295,10 @@ class StartMenu2(NewMenu2):
 
 # Menus' from Start Menu
 class InventoryMenu2(NewMenu2):
-    def __init__(self, gc_input, gd_input, name, menu_item_list):
-        super().__init__(gc_input, gd_input, name, menu_item_list)
+    NAME = "inventory_menu_2"
+
+    def __init__(self, gc_input, gd_input, menu_item_list):
+        super().__init__(gc_input, gd_input, menu_item_list)
         self.y_spacing = 20
         self.max_length = 14
         gd_input.add_overlay("inventory_menu_2", Overlay2(gc_input, gd_input, "inventory_menu_2", 700, 200, Spritesheet("assets/menu_images/inventory_menu.png", 200, 400)))
@@ -339,7 +362,6 @@ class InventoryMenu2(NewMenu2):
             self.exit_menu()
 
     def do_not_do_option(self):
-        self.gc_input.inventory.reset_bag_slot()
         self.exit_menu()
 
     def cursor_down(self):
@@ -387,10 +409,16 @@ class InventoryMenu2(NewMenu2):
         self.update_menu_items_list()
         self.gc_input.inventory.bag_slot_right()
 
+    def exit_menu(self):
+        self.gc_input.inventory.reset_bag_slot()
+        self.reset_cursor()
+        self.gc_input.menu_manager.deactivate_menu(self.name)
 
 class KeyInventoryMenu2(NewMenu2):
-    def __init__(self, gc_input, gd_input, name, menu_item_list):
-        super().__init__(gc_input, gd_input, name, menu_item_list)
+    NAME = "key_inventory_menu_2"
+
+    def __init__(self, gc_input, gd_input, menu_item_list):
+        super().__init__(gc_input, gd_input, menu_item_list)
         self.y_spacing = 20
         gd_input.add_overlay("key_inventory_menu_2", Overlay2(gc_input, gd_input, "key_inventory_menu_2", 700, 200, Spritesheet("assets/menu_images/inventory_menu.png", 200, 400)))
         self.overlay = "key_inventory_menu_2"
@@ -448,8 +476,10 @@ class KeyInventoryMenu2(NewMenu2):
         
         
 class ToDoListMenu2(NewMenu2):
-    def __init__(self, gc_input, gd_input, name, menu_item_list):
-        super().__init__(gc_input, gd_input, name, menu_item_list)
+    NAME = "to_do_list_menu_2"
+
+    def __init__(self, gc_input, gd_input, menu_item_list):
+        super().__init__(gc_input, gd_input, menu_item_list)
         gd_input.add_overlay("to_do_list_menu_overlay_2", Overlay2(gc_input, gd_input, "to_do_list_menu_overlay_2", 350, 200, Spritesheet("assets/misc_sprites/to_do_list.png", 300, 400)))
         self.overlay = "to_do_list_menu_overlay_2"
         self.x = self.gd_input.overlay_list[self.overlay].x + self.offset_x
@@ -472,8 +502,10 @@ class ToDoListMenu2(NewMenu2):
 
         
 class ProfileMenu2(NewMenu2):
-    def __init__(self, gc_input, gd_input, name, menu_item_list):
-        super().__init__(gc_input, gd_input, name, menu_item_list)
+    NAME = "profile_menu_2"
+
+    def __init__(self, gc_input, gd_input, menu_item_list):
+        super().__init__(gc_input, gd_input, menu_item_list)
         gd_input.add_overlay("profile_menu_overlay_2", Overlay2(gc_input, gd_input, "profile_menu_overlay_2", 350, 300, Spritesheet("assets/misc_sprites/ID.png", 300, 200)))
         self.overlay = "profile_menu_overlay_2"
         self.x = self.gd_input.overlay_list[self.overlay].x + self.offset_x
@@ -497,11 +529,33 @@ class ProfileMenu2(NewMenu2):
     def choose_option(self):
         self.do_option()
 
+class MapMenu(NewMenu2):
+    NAME = "map_menu"
+
+    def __init__(self, gc_input, gd_input, menu_item_list):
+        super().__init__(gc_input, gd_input, menu_item_list)
+        gd_input.add_overlay((self.NAME + "_overlay"), Overlay2(gc_input, gd_input, (self.NAME + "_overlay"), 200, 200, Spritesheet("assets/menu_images/hornby_map.png", 331, 241)))
+        self.overlay = (self.NAME + "_overlay")
+        self.x = self.gd_input.overlay_list[self.overlay].x + self.offset_x
+        self.y = self.gd_input.overlay_list[self.overlay].y + self.offset_y
+        self.menu_type = "base"
+        print(self.name)
+
+    def display_menu(self):
+        self.gd_input.overlay_list[self.overlay].display_overlay()
+
+    def do_option(self):
+        self.exit_menu()
+
+    def choose_option(self):
+        self.do_option()
 
 # Additional Type Menus
 class UseMenu2(NewMenu2):
-    def __init__(self, gc_input, gd_input, name, menu_item_list):
-        super().__init__(gc_input, gd_input, name, menu_item_list)
+    NAME = "use_menu_2"
+
+    def __init__(self, gc_input, gd_input, menu_item_list):
+        super().__init__(gc_input, gd_input, menu_item_list)
         self.menu_item_list.append("Exit")
         gd_input.add_overlay("use_menu_2", Overlay2(gc_input, gd_input, "use_menu_2", 590, 200, Spritesheet("assets/menu_images/use_menu.png", 100, 100)))
         self.overlay = "use_menu_2"
@@ -546,8 +600,10 @@ class UseMenu2(NewMenu2):
 
 
 class YesNoMenu2(NewMenu2):
-    def __init__(self, gc_input, gd_input, name, menu_item_list):
-        super().__init__(gc_input, gd_input, name, menu_item_list)
+    NAME = "yes_no_menu_2"
+
+    def __init__(self, gc_input, gd_input, menu_item_list):
+        super().__init__(gc_input, gd_input, menu_item_list)
         gd_input.add_overlay("yes_no_menu_2", Overlay2(gc_input, gd_input, "yes_no_menu_2", 490, 200, Spritesheet("assets/menu_images/yes_no_menu.png", 90, 76)))
         self.overlay = "yes_no_menu_2"
         self.x = self.gd_input.overlay_list[self.overlay].x + self.offset_x
@@ -571,10 +627,13 @@ class YesNoMenu2(NewMenu2):
             self.gd_input.menu_list[self.gc_input.menu_manager.menu_stack[0]].do_not_do_option()
 
 
+
 # Character Interaction Menus
 class ConversationOptionsMenu2(NewMenu2):
-    def __init__(self, gc_input, gd_input, name, menu_item_list):
-        super().__init__(gc_input, gd_input, name, menu_item_list)
+    NAME = "conversation_options_menu_2"
+
+    def __init__(self, gc_input, gd_input, menu_item_list):
+        super().__init__(gc_input, gd_input, menu_item_list)
         gd_input.add_overlay("conversation_options_text_box", TextBox2(gc_input, gd_input, "conversation_options_text_box", 250, 550, Spritesheet("assets/menu_images/text_box.png", 500, 150)))
         self.overlay = "conversation_options_text_box"
         self.talking_to = None
@@ -622,9 +681,7 @@ class ConversationOptionsMenu2(NewMenu2):
             self.gd_input.menu_list["character_dialogue_menu_2"].set_menu(self.talking_to, self.gd_input.character_list[self.talking_to].phrase)
             self.gd_input.menu_list[self.name].unset_talking_to()
 
-
         elif menu_selection == "Give Gift":
-
             self.gd_input.menu_list["gift_menu_2"].set_menu()
 
         elif menu_selection == "Exit":
@@ -644,7 +701,6 @@ class ConversationOptionsMenu2(NewMenu2):
         self.gc_input.menu_manager.add_menu_to_stack(self.name)
         self.set_talking_to(person_talking_to)
 
-
     def give_item(self, item):
         self.exit_menu()
         self.gc_input.inventory.unget_item(item, 1)
@@ -654,6 +710,8 @@ class ConversationOptionsMenu2(NewMenu2):
 
 
 class CharacterDialogue2(object):
+    NAME = "character_dialogue_menu_2"
+
     def __init__(self, gc_input, gd_input):
         self.gc_input = gc_input
         self.gd_input = gd_input
@@ -758,10 +816,11 @@ class CharacterDialogue2(object):
         self.set_speaking_queue()
 
 
-
 class GiftingMenu2(NewMenu2):
-    def __init__(self, gc_input, gd_input, name, menu_item_list):
-        super().__init__(gc_input, gd_input, name, menu_item_list)
+    NAME = "gift_menu_2"
+
+    def __init__(self, gc_input, gd_input, menu_item_list):
+        super().__init__(gc_input, gd_input, menu_item_list)
         self.y_spacing = 20
         self.max_length = 14
         gd_input.add_overlay("gifting_menu_overlay", Overlay2(gc_input, gd_input, "gifting_menu_overlay", 700, 200, Spritesheet("assets/menu_images/inventory_menu.png", 200, 400)))
@@ -815,7 +874,6 @@ class GiftingMenu2(NewMenu2):
         self.exit_menu()
         self.gd_input.menu_list[self.gc_input.menu_manager.menu_stack[0]].do_not_do_option()
 
-
     def cursor_down(self):
         menu_length_calc = 0
         if self.size >= self.max_length:
@@ -857,8 +915,10 @@ class GiftingMenu2(NewMenu2):
         
         
 class ShopKeeperInteractMenu2(NewMenu2):
-    def __init__(self, gc_input, gd_input, name, menu_item_list):
-        super().__init__(gc_input, gd_input, name, menu_item_list)
+    NAME = "shopkeeper_interact_menu_2"
+
+    def __init__(self, gc_input, gd_input, menu_item_list):
+        super().__init__(gc_input, gd_input, menu_item_list)
         self.talking_to = None
         self.menu_item_list.append("Exit")
         self.offset_y = 50
@@ -868,6 +928,7 @@ class ShopKeeperInteractMenu2(NewMenu2):
         self.x = self.gd_input.overlay_list[self.overlay].x + self.offset_x
         self.y = self.gd_input.overlay_list[self.overlay].y + self.offset_y
         self.menu_type = "base"
+        print(self.name)
 
     def set_talking_to(self, talking_to):
         self.talking_to = talking_to
@@ -888,11 +949,10 @@ class ShopKeeperInteractMenu2(NewMenu2):
 
         my_font = pygame.font.Font(self.gc_input.font, 10)
         item = my_font.render(self.gd_input.character_list[self.talking_to].name + ":", 1, (0, 0, 0))
-        self.gc_input.screen.blit(item, (self.gd_input.overlay_list["text_box"].x + 150, self.gd_input.overlay_list["text_box"].y + 20))
+        self.gc_input.screen.blit(item, (self.gd_input.overlay_list[self.overlay].x + 150, self.gd_input.overlay_list[self.overlay].y + 20))
 
         # Displays characters photo
         self.gc_input.screen.blit(self.gd_input.character_list[self.talking_to].face_image, (self.gd_input.overlay_list[self.overlay].x,  self.gd_input.overlay_list[self.overlay].y+2))
-
 
     def choose_option(self):
         self.do_option()
@@ -905,21 +965,20 @@ class ShopKeeperInteractMenu2(NewMenu2):
             self.exit_menu()
 
         elif menu_selection == "Sell":
-            self.gd_input.menu_list["inventory_select_menu"].set_menu()
+            self.gd_input.menu_list["selling_menu_2"].set_menu(self.talking_to)
             self.exit_menu()
 
         elif menu_selection == "Exit":
             self.gd_input.character_list[self.talking_to].set_state("idle")
             self.exit_menu()
 
-    def process_item_selection(self, item):
-        print("You sold 1 " + str(item))
-        self.gc_input.inventory.unget_item(item, 1)
-        self.gc_input.get_coins(self.gd_input.item_list[item].sell_price)
-        
+
+
 class BuyingMenu2(NewMenu2):
-    def __init__(self, gc_input, gd_input, name, menu_item_list):
-        super().__init__(gc_input, gd_input, name, menu_item_list)
+    NAME = "buying_menu_2"
+
+    def __init__(self, gc_input, gd_input, menu_item_list):
+        super().__init__(gc_input, gd_input, menu_item_list)
         gd_input.add_overlay("buying_menu_overlay", Overlay2(gc_input, gd_input, "buying_menu_overlay", 700, 200, Spritesheet("assets/menu_images/inventory_menu.png", 200, 400)))
         self.overlay = "buying_menu_overlay"
         self.x = self.gd_input.overlay_list[self.overlay].x + self.offset_x
@@ -927,14 +986,12 @@ class BuyingMenu2(NewMenu2):
         self.menu_type = "base"
         self.talking_to = None
 
-
     def display_menu(self):
         self.gd_input.overlay_list[self.overlay].display_overlay()
 
         my_font = pygame.font.Font(self.gc_input.font, 10)
         item = my_font.render("$    SHOP    $", 1, (0, 0, 0))
         self.screen.blit(item, (self.x, self.y))
-
 
         for option in range(self.size-1):
             my_font = pygame.font.Font(self.gc_input.font, 10)
@@ -997,8 +1054,112 @@ class BuyingMenu2(NewMenu2):
         self.gc_input.set_keyboard_manager(InMenu.ID)
         self.gc_input.menu_manager.add_menu_to_stack(self.name)
 
+    def update_menu_items_list(self):
+        self.menu_item_list = self.gd_input.character_list[self.talking_to].items_list.copy()
+        self.menu_item_list.append(("Exit", "-"))
 
+
+class SellingMenu2(NewMenu2):
+    NAME = "selling_menu_2"
+
+    def __init__(self, gc_input, gd_input, menu_item_list):
+        super().__init__(gc_input, gd_input, menu_item_list)
+        self.talking_to = None
+        self.y_spacing = 20
+        self.max_length = 14
+        gd_input.add_overlay("selling_menu_overlay", Overlay2(gc_input, gd_input, "selling_menu_overlay", 700, 200, Spritesheet("assets/menu_images/inventory_menu.png", 200, 400)))
+        self.overlay = "selling_menu_overlay"
+        self.x = self.gd_input.overlay_list[self.overlay].x + self.offset_x
+        self.y = self.gd_input.overlay_list[self.overlay].y + self.offset_y
+        self.menu_type = "base"
+
+    def set_talking_to(self, talking_to):
+        self.talking_to = talking_to
+
+    def set_menu(self, person_talking_to):
+        self.update_menu_items_list()
+        self.gc_input.set_keyboard_manager(InMenu.ID)
+        self.gc_input.menu_manager.add_menu_to_stack(self.name)
+        self.set_talking_to(person_talking_to)
 
     def update_menu_items_list(self):
-        self.menu_item_list = (self.gd_input.character_list[self.talking_to].items_list).copy()
-        self.menu_item_list.append(("Exit", "-"))
+        self.menu_item_list = sorted(self.gc_input.inventory.current_items)
+        # TODO: Add exit to menu
+
+    def display_menu(self):
+        self.gd_input.overlay_list[self.overlay].display_overlay()
+
+        my_font = pygame.font.Font(self.gc_input.font, 10)
+        item = my_font.render("     ITEMS     ", 1, (0, 0, 0))
+        self.screen.blit(item, (self.x, self.y))
+
+        menu_length_calc = 0
+        if self.size >= self.max_length:
+            menu_length_calc = self.max_length
+        elif self.size < self.max_length:
+            menu_length_calc = self.size
+
+        for option in range(menu_length_calc):
+            item = my_font.render(self.menu_item_list[option], 1, (0, 0, 0))
+            self.screen.blit(item, (self.x, self.y + self.y_spacing + (option * self.menu_spread)))
+
+            spacing = 0
+            if len(str(self.gd_input.item_list[self.menu_item_list[option]].sell_price)) == 3:
+                spacing = 110
+            elif len(str(self.gd_input.item_list[self.menu_item_list[option]].sell_price)) == 2:
+                spacing = 120
+            else:
+                spacing = 130
+
+            cost = my_font.render("$" + str(self.gd_input.item_list[self.menu_item_list[option]].sell_price), 1, (0, 0, 0))
+            self.screen.blit(cost, (self.x + spacing, self.y + self.y_spacing + (option * self.menu_spread)))
+        self.display_cursor()
+
+    def choose_option(self):
+        self.gd_input.menu_list["yes_no_menu_2"].set_menu()
+
+    def do_option(self):
+        current_item = self.get_current_menu_item()
+        self.process_item_selection(current_item)
+        self.gd_input.character_list[self.talking_to].set_state("idle")
+        self.talking_to = None
+        self.exit_menu()
+
+    def do_not_do_option(self):
+        self.exit_menu()
+        self.gd_input.menu_list[self.gc_input.menu_manager.menu_stack[0]].do_not_do_option()
+
+    def cursor_down(self):
+        menu_length_calc = 0
+        if self.size >= self.max_length:
+            menu_length_calc = self.max_length
+        elif self.size < self.max_length:
+            menu_length_calc = self.size
+
+        if self.size > self.max_length and self.cursor_at == self.max_length - 1 and self.size > 1:
+            self.menu_item_list.append(self.menu_item_list.pop(0))
+
+        elif self.cursor_at == menu_length_calc - 1:
+            pass
+
+        elif self.size > 1:
+            self.cursor_at += 1
+
+        else:
+            pass
+
+    def cursor_up(self):
+
+        if self.cursor_at == 0 and self.size > 1:
+            self.menu_item_list.insert(0, self.menu_item_list.pop(self.max_length - 1))
+
+        elif self.size > 1:
+            self.cursor_at -= 1
+
+        else:
+            pass
+
+    def process_item_selection(self, item):
+        print("You sold 1 " + str(item))
+        self.gc_input.inventory.unget_item(item, 1)
+        self.gc_input.get_coins(self.gd_input.item_list[item].sell_price)

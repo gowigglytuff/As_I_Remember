@@ -584,6 +584,7 @@ class ShopKeeper(NPC):
             self.npc_face_player()
             self.gd_input.menu_list["shopkeeper_interact_menu_2"].set_menu(self.name)
             self.set_state("selling")
+            self.gc_input.update_game_dialogue("You talked to " + self.name)
         else:
             pass
 
