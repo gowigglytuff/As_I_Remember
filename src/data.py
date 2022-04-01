@@ -2,6 +2,7 @@ from random import choice
 
 import pygame
 
+
 from keyboards import KeyboardManager
 from spritesheet import *
 from Phrases import*
@@ -83,9 +84,8 @@ class GameData(object):
 
 
 class GameController(object):
-    def __init__(self, GameData, MenuManager):
+    def __init__(self, GameData):
         self.GameData = GameData
-        self.MenuManager = MenuManager
         self.inventory = None
         self.menu_manager = None
         self.screen = pygame.display.set_mode(GameData.settings["resolution"])
@@ -169,7 +169,7 @@ class GameController(object):
         return success
 
     def update_game_dialogue(self, phrase):
-        self.GameData.menu_list["game_action_dialogue_menu_2"].show_dialogue(phrase)
+        self.GameData.menu_list[GameActionDialogue.NAME].show_dialogue(phrase)
 
 class Updater(object):
     def __init__(self, GameData, GameController):
@@ -178,7 +178,7 @@ class Updater(object):
 
 
     def run_updates(self):
-        self.GameData.menu_list["stats_menu_2"].update_menu_items_list()
+        self.GameData.menu_list[StatsMenu.NAME].update_menu_items_list()
 
     def check_for_goals(self):
         pass
@@ -202,13 +202,13 @@ class Goallist(object):
 
     def add_goals(self):
         if self.goal_1 == None:
-            self.goal_1 = Goal("goal 1", ("You saved the game!" in self.GameData.menu_list["game_action_dialogue_menu_2"].menu_item_list), "TimeSeed", "incomplete")
+            self.goal_1 = Goal("goal 1", ("You saved the game!" in self.GameData.menu_list[GameActionDialogue.NAME].menu_item_list), "Time Seed", "incomplete")
         if self.goal_2 == None:
-            self.goal_2 = Goal("goal 2", self.GameController.current_speaker == "Donna", "Item2", "incomplete")
+            self.goal_2 = Goal("goal 2", self.GameController.current_speaker == "Donna", "Book 1", "incomplete")
 
     def update_goals(self):
         if self.goal_1.status != "complete":
-            self.goal_1.requirement = ("You saved the game!" in self.GameData.menu_list["game_action_dialogue_menu_2"].menu_item_list)
+            self.goal_1.requirement = ("You saved the game!" in self.GameData.menu_list[GameActionDialogue.NAME].menu_item_list)
         if self.goal_2.status != "complete":
             self.goal_2.requirement = self.GameController.current_speaker == "Donna"
 
@@ -288,26 +288,12 @@ class Picaso(object):
         for drawable in drawable_list:
             drawable[0].draw(self.GameController.screen)
 
-        # for item in self.GameController.MenuManager.static_menus:
-        #     self.GameData.menu_list[item].display_menu()
-        #
-        # for item in self.GameController.MenuManager.active:
-        #     self.GameData.menu_list[item].display_menu()
-
-
-
-
         for item in self.GameController.menu_manager.static_menus:
             self.GameData.menu_list[item].display_menu()
 
         for item in self.GameController.menu_manager.visible_menus:
             self.GameData.menu_list[item].display_menu()
 
-
-
-        # blits any overlays that are always active and ons tghat are associated with currently active menus
-        # for overlay in self.GameController.current_overlay_list:
-        #     self.GameData.overlay_list[overlay].display_overlay()
 
         if self.GameController.current_speaker != None:
             self.GameData.overlay_list["text_box"].display_overlay()

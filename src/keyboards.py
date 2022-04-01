@@ -165,7 +165,7 @@ class InGame(KeyboardManager):
     def key_control(self):
         # self.GameData.menu_list["start_menu"].set_menu()
         print("here we go")
-        self.GameData.menu_list["start_menu_2"].set_menu()
+        self.GameData.menu_list["start_menu"].set_menu()
 
 
     def key_shift(self):
@@ -174,42 +174,6 @@ class InGame(KeyboardManager):
 
     def key_caps(self):
         self.GameData.menu_list["character_dialogue_menu"].set_menu()
-
-
-
-class InRegularMenu(KeyboardManager):
-    ID = "IRM_Keyer"
-
-    def __init__(self, GameController, GameData):
-        self.GameController = GameController
-        self.GameData = GameData
-
-
-    def direction_key_released(self, direction):
-        self.direction = direction
-        if self.direction == Direction.DOWN:
-            self.GameData.menu_list[self.GameController.current_menu].cursor_down()
-        if self.direction == Direction.UP:
-            self.GameData.menu_list[self.GameController.current_menu].cursor_up()
-        if self.direction == Direction.LEFT:
-            self.GameData.menu_list[self.GameController.current_menu].cursor_left()
-        if self.direction == Direction.RIGHT:
-            self.GameData.menu_list[self.GameController.current_menu].cursor_right()
-
-    def direction_key_pressed(self, direction):
-        pass
-
-    def key_return(self):
-        self.GameData.menu_list[self.GameController.current_menu].choose_option()
-
-    def key_space(self):
-        pass
-
-    def key_control(self):
-        self.GameData.menu_list[self.GameController.current_menu].try_to_exit()
-
-    def key_shift(self):
-        pass
 
 class InMenu(KeyboardManager):
     ID = "IM_Keyer"

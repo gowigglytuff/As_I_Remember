@@ -5,6 +5,7 @@ from spritesheet import *
 from random import choice
 from keyboards import *
 import textwrap
+from inventory import *
 
 
 class Feature(object):
@@ -33,6 +34,7 @@ class Feature(object):
 
 
 class Player(Feature):
+    NAME = "Player"
     def __init__(self, x, y, gc_input, gd_input):
         super().__init__(x, y, gc_input, gd_input)
         self.x = 24
@@ -558,6 +560,7 @@ class GenericNPC(NPC):
     def get_interacted_with(self):
         if self.state == "idle":
             self.npc_face_player()
+            # TODO: Fix this to not be a string
             self.gd_input.menu_list["conversation_options_menu_2"].set_menu(self.name)
             self.set_state("talking")
             self.gc_input.update_game_dialogue("You talked to " + self.name)
@@ -582,6 +585,7 @@ class ShopKeeper(NPC):
     def get_interacted_with(self):
         if self.state == "idle":
             self.npc_face_player()
+            # TODO: Fix this to not be a string
             self.gd_input.menu_list["shopkeeper_interact_menu_2"].set_menu(self.name)
             self.set_state("selling")
             self.gc_input.update_game_dialogue("You talked to " + self.name)
@@ -595,7 +599,7 @@ class ShopKeeperTamma(ShopKeeper):
 
     def __init__(self, x, y, gc_input, gd_input, spritesheet, name, room, phrase, walk_pattern, start_facing, face_image):
         super().__init__(x, y, gc_input, gd_input, spritesheet, name, room, phrase, walk_pattern, start_facing, face_image)
-        self.items_list = [("Cheese", 2), ("Item1", 2), ("Stick", 1)]
+        self.items_list = [(Cheese.NAME, 2), (Toy.NAME, 2), (Stick.NAME, 1)]
 
 
 class ShopKeeperCheryl(ShopKeeper):
@@ -604,7 +608,7 @@ class ShopKeeperCheryl(ShopKeeper):
 
     def __init__(self, x, y, gc_input, gd_input, spritesheet, name, room, phrase, walk_pattern, start_facing, face_image):
         super().__init__(x, y, gc_input, gd_input, spritesheet, name, room, phrase, walk_pattern, start_facing, face_image)
-        self.items_list = [("Book 1", 5), ("Book 2", 7), ("Book 3", 10)]
+        self.items_list = [(Book1.NAME, 5), (Book2.NAME, 7), (Book3.NAME, 10)]
 
 
 

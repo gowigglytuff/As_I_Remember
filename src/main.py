@@ -12,9 +12,8 @@ from inventory import *
 from menus import *
 from menus_2 import *
 
-mm = MenuManager()
 gd = GameData()
-gc = GameController(gd, mm)
+gc = GameController(gd)
 smm = SubMenuManager(gd, gc)
 gc.set_menu_manager(smm)
 em = EventsManager(gd, gc)

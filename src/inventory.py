@@ -1,6 +1,8 @@
 import pygame
 from data import GameData, GameController
 
+
+
 class Inventory(object):
     def __init__(self, GameController: GameController, GameData: GameData):
         self.GameController = GameController
@@ -33,12 +35,24 @@ class Inventory(object):
 
 
     def bag_slot_left(self):
-        self.GameData.menu_list[self.bag_slots[self.current_bag_slot]].exit_menu()
-        if self.current_bag_slot > 0:
-            self.current_bag_slot -=1
-        else:
-            self.current_bag_slot = (len(self.bag_slots)-1)
+        print(self.GameData.menu_list[self.bag_slots[self.current_bag_slot]])
+        print(self.current_bag_slot)
 
+        self.GameData.menu_list[self.bag_slots[self.current_bag_slot]].exit_menu()
+        # if self.current_bag_slot > 0:
+        #     self.current_bag_slot -=1
+        # else:
+        #     self.current_bag_slot = (len(self.bag_slots)-1)
+
+        if self.current_bag_slot == 0:
+            self.current_bag_slot = 1
+            print("moving 1")
+        elif self.current_bag_slot == 1:
+            self.current_bag_slot = 0
+            print("moving 2")
+
+        print(self.GameData.menu_list[self.bag_slots[self.current_bag_slot]])
+        print(self.current_bag_slot)
         self.GameData.menu_list[self.bag_slots[self.current_bag_slot]].set_menu()
 
     def reset_bag_slot(self):
@@ -83,23 +97,6 @@ class Inventory(object):
         self.GameController.inventory.current_items = sorted(self.GameController.inventory.current_items)
 
 
-class Item(object):
-    def __init__(self, name, GameData, GameController, sell_price):
-        self.GameController = GameController
-        self.GameData = GameData
-        self.name = name
-        self.quantity = 0
-        self.sell_price = sell_price
-        pass
-
-    def use_item(self):
-        print("You used the " + self.name)
-        self.GameController.inventory.use_up_item(self.name, 1)
-        self.GameController.update_game_dialogue("You used 1 " + str(self.name))
-
-        if self.name == "Cheese":
-            self.GameController.get_coins(10)
-
 class KeyItem(object):
     def __init__(self, name, GameData, GameController):
         self.GameController = GameController
@@ -110,3 +107,146 @@ class KeyItem(object):
 
     def use_key_item(self):
         print("You used the " + self.name)
+
+
+class Item(object):
+    '''
+    :type gc_input: GameController
+    :type gd_input: GameData
+    :return: None
+    '''
+    NAME = None
+    def __init__(self, gd_input, gc_input):
+        self.gc_input = gc_input
+        self.gd_input = gd_input
+        self.name = self.NAME
+        self.quantity = 0
+        self.sell_price = 0
+        pass
+
+    def use_item(self):
+        if self.check_if_can_use_item():
+            print("You used the " + self.name)
+            self.gc_input.inventory.use_up_item(self.name, 1)
+            self.gc_input.update_game_dialogue("You used 1 " + str(self.name))
+            self.item_use()
+        else:
+            self.fail_to_use_item()
+
+    def item_use(self):
+        pass
+
+    def check_if_can_use_item(self):
+        result = True
+        return result
+
+    def fail_to_use_item(self):
+        self.gc_input.update_game_dialogue("You can't use that now")
+
+
+class Cheese(Item):
+    NAME = "Cheese"
+
+    def __init__(self, gd_input, gc_input):
+        super().__init__(gd_input, gc_input)
+        self.sell_price = 5
+
+    def item_use(self):
+        self.gc_input.get_coins(10)
+
+    def check_if_can_use_item(self):
+        result = True
+        if self.gd_input.player[Player.NAME].x % 2 == 0:
+            result = False
+
+        return result
+
+    def fail_to_use_item(self):
+        self.gc_input.update_game_dialogue("You can't use it on odd tiles")
+
+class Bread(Item):
+    NAME = "Bread"
+    def __init__(self, gd_input, gc_input):
+        super().__init__(gd_input, gc_input)
+        self.sell_price = 5
+
+    def item_use(self):
+        self.gc_input.update_game_dialogue("Your hunger went away!")
+
+class TimeSeed(Item):
+    NAME = "Time Seed"
+    USETYPE = "Single"
+
+    def __init__(self, gd_input, gc_input):
+        super().__init__(gd_input, gc_input)
+        self.sell_price = 100
+
+    def item_use(self):
+        self.gc_input.update_game_dialogue("The wind hummed joyously!")
+
+
+class Book1(Item):
+    NAME = "Book 1"
+    USETYPE = "Reusable"
+
+    def __init__(self, gd_input, gc_input):
+        super().__init__(gd_input, gc_input)
+        self.sell_price = 10
+
+    def item_use(self):
+        self.gc_input.update_game_dialogue("You read " + self.NAME)
+
+class Book2(Item):
+    NAME = "Book 2"
+    USETYPE = "Reusable"
+
+    def __init__(self, gd_input, gc_input):
+        super().__init__(gd_input, gc_input)
+        self.sell_price = 10
+
+    def item_use(self):
+        self.gc_input.update_game_dialogue("You read " + self.NAME)
+
+class Book3(Item):
+    NAME = "Book 3"
+    USETYPE = "Reusable"
+
+    def __init__(self, gd_input, gc_input):
+        super().__init__(gd_input, gc_input)
+        self.sell_price = 10
+
+    def item_use(self):
+        self.gc_input.update_game_dialogue("You read " + self.NAME)
+
+class Mask(Item):
+    NAME = "Mask"
+    USETYPE = "Reusable"
+
+    def __init__(self, gd_input, gc_input):
+        super().__init__(gd_input, gc_input)
+        self.sell_price = 10
+
+    def item_use(self):
+        self.gc_input.update_game_dialogue("You went incognito")
+
+class Stick(Item):
+    NAME = "Stick"
+    USETYPE = "Reusable"
+
+    def __init__(self, gd_input, gc_input):
+        super().__init__(gd_input, gc_input)
+        self.sell_price = 10
+
+    def item_use(self):
+        self.gc_input.update_game_dialogue("You poked with the stick")
+
+class Toy(Item):
+    NAME = "Toy"
+    USETYPE = "Reusable"
+
+    def __init__(self, gd_input, gc_input):
+        super().__init__(gd_input, gc_input)
+        self.sell_price = 10
+
+    def item_use(self):
+        self.gc_input.update_game_dialogue("You played with the " + self.NAME)
