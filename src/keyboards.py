@@ -2,6 +2,8 @@ from abc import ABC, abstractmethod
 from enum import Enum
 
 import pygame
+from menus import *
+
 
 class Direction(Enum):
     LEFT = 1
@@ -165,15 +167,14 @@ class InGame(KeyboardManager):
     def key_control(self):
         # self.GameData.menu_list["start_menu"].set_menu()
         print("here we go")
-        self.GameData.menu_list["start_menu"].set_menu()
+        self.GameData.menu_list[StartMenu.NAME].set_menu()
 
 
     def key_shift(self):
-        self.GameData.menu_list["inventory_select_menu"].set_menu()
-
+        pass
 
     def key_caps(self):
-        self.GameData.menu_list["character_dialogue_menu"].set_menu()
+        pass
 
 class InMenu(KeyboardManager):
     ID = "IM_Keyer"

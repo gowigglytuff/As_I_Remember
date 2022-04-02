@@ -2,7 +2,6 @@ from random import randint
 
 import pygame
 from data import *
-from keyboards import InGame
 
 from loading import *
 from features import *
@@ -10,18 +9,17 @@ from mapClasses import *
 from keyboards import *
 from inventory import *
 from menus import *
-from menus_2 import *
 
 gd = GameData()
 gc = GameController(gd)
-smm = SubMenuManager(gd, gc)
-gc.set_menu_manager(smm)
+mm = MenuManager(gd, gc)
+gc.set_menu_manager(mm)
 em = EventsManager(gd, gc)
 Picaso = Picaso(gd, gc)
-inv = Inventory(gc, gd)
+inv = Inventory(gd, gc)
 gc.set_inventory(inv)
 up = Updater(gd, gc)
-gl = Goallist(gd, gc)
+gm = GoalManager(gd, gc)
 
 
 def main():
@@ -76,8 +74,7 @@ def run_game_loop():
                 if not gd.player["Player"].check_if_walking():
                     gd.player["Player"].try_walk(gc.current_keyboard_manager.current_direction_key)
 
-        gl.add_goals()
-        gl.check_goal_1()
+        gm.check_goals()
         up.run_updates()
         Picaso.big_draw()
         pygame.display.update()

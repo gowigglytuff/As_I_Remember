@@ -1,15 +1,10 @@
 
 
-import pygame
 from data import *
 from features import *
-from main import gl
-from mapClasses import *
 from room_page import *
-from TileMap import *
-from keyboards import *
-from random import randrange
 from inventory import *
+from goals import *
 
 def init_game(gd_input, gc_input):
     '''
@@ -35,6 +30,8 @@ def init_game(gd_input, gc_input):
     # load the full list of key items that are available in the game
     load_key_items(gc_input, gd_input)
 
+    load_goals(gc_input, gd_input)
+
     # Load the Tileset
     FT = TileSet("assets/room_maps/csv_tiles/Full_Tileset_Adjusted.png", 32, 32,40, 40)
     BT = TileSet("assets/room_maps/csv_tiles/Big_Tileset.png", 32, 32, 40, 10)
@@ -48,6 +45,8 @@ def init_game(gd_input, gc_input):
 
     # run functions that initiate all rooms
     init_all_rooms(gc_input, gd_input)
+
+
 
 def load_keyboard_managers(GameController, GameData):
     # load all keyboard managers
@@ -90,6 +89,11 @@ def load_menus2(GameController, GameData):
     GameData.add_menu(BuyingMenu.NAME, BuyingMenu(GameController, GameData, []))
 
     GameData.add_menu(SellingMenu.NAME, SellingMenu(GameController, GameData, GameController.inventory.current_items))
+
+def load_goals(gc_input, gd_input):
+    gd_input.add_goal(Goal1.NAME, Goal1( gd_input, gc_input))
+    gd_input.add_goal(Goal2.NAME, Goal2(gd_input, gc_input))
+
 
 def load_items(GameController, GameData):
     # adds all the items that exist in the game to the storage in GameData

@@ -105,19 +105,19 @@ class Room(object):
         self.add_room_props()
         # add position manager to it's room and make it tell the tile array what it's filled with
         self.gd_input.add_positioner(self.name, Position_Manager(self.name, self.gc_input, self.gd_input))
-        self.gd_input.positioner[self.name].fill_tiles(self.name)
-        self.gd_input.positioner[self.name].fill_doors(self.name)
+        self.gd_input.positioner_list[self.name].fill_tiles(self.name)
+        self.gd_input.positioner_list[self.name].fill_doors(self.name)
         # activate the timers for animation and actions for the NPCs (make this apply to all that are in room)
         for character in self.gd_input.room_list[self.name].character_list:
             self.gd_input.character_list[character].activate_timers()
 
         #TODO: make this uses the plots csv instead of the rooms
         if self.obstacle_map is not None:
-            self.gd_input.positioner[self.name].fill_obstacles(self.obstacle_map, self.name)
+            self.gd_input.positioner_list[self.name].fill_obstacles(self.obstacle_map, self.name)
 
 
         if self.terrain_map is not None:
-            self.gd_input.positioner[self.name].fill_terrain(self.terrain_map, self.name)
+            self.gd_input.positioner_list[self.name].fill_terrain(self.terrain_map, self.name)
 
 
 class Room1(Room):

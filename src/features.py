@@ -1,10 +1,8 @@
 import random
 
-import pygame
 from spritesheet import *
-from random import choice
+from menus import *
 from keyboards import *
-import textwrap
 from inventory import *
 
 
@@ -73,7 +71,7 @@ class Player(Feature):
     def try_door(self, direction):
         self.direction = direction
         the_tile = self.check_adj_tile(self.direction).object_filling
-        self.gd_input.positioner[self.gc_input.current_room].through_door(
+        self.gd_input.positioner_list[self.gc_input.current_room].through_door(
             self.gd_input.room_list[self.gc_input.current_room].door_list[the_tile])
         self.set_state("idle")
 
@@ -82,10 +80,10 @@ class Player(Feature):
         self.turn_player(direction)
 
         # checks mapClasses - position_manager to see if the player is acing a wall or another object
-        can_move_player = self.gd_input.positioner[self.gc_input.current_room].check_adj_square_full(self.gd_input.player["Player"], direction)
+        can_move_player = self.gd_input.positioner_list[self.gc_input.current_room].check_adj_square_full(self.gd_input.player["Player"], direction)
 
         # Check if player is going to enter a door
-        is_door = self.gd_input.positioner[self.gc_input.current_room].check_door(self.gd_input.player["Player"], direction)
+        is_door = self.gd_input.positioner_list[self.gc_input.current_room].check_door(self.gd_input.player["Player"], direction)
         if is_door:
             self.gd_input.player["Player"].try_door(direction)
 
@@ -110,7 +108,7 @@ class Player(Feature):
     def walk_player(self, direction):
         self.state = direction
 
-        self.gd_input.positioner[self.gc_input.current_room].empty_tile(self)
+        self.gd_input.positioner_list[self.gc_input.current_room].empty_tile(self)
         if direction is Direction.LEFT:
             self.x -= 1
         elif direction is Direction.RIGHT:
@@ -119,7 +117,7 @@ class Player(Feature):
             self.y -= 1
         elif direction is Direction.DOWN:
             self.y += 1
-        self.gd_input.positioner[self.gc_input.current_room].fill_tile(self)
+        self.gd_input.positioner_list[self.gc_input.current_room].fill_tile(self)
 
     def walk_cycle(self):
         if self.state == Direction.LEFT:
@@ -352,34 +350,34 @@ class NPC(Feature):
 
     def try_npc_walk_direction(self, direction):
         self.facing = direction
-        can_walk = self.gd_input.positioner[self.room].can_move_NPC(self)
+        can_walk = self.gd_input.positioner_list[self.room].can_move_NPC(self)
         if can_walk:
             self.npc_walk_direction(self.facing)
 
     def npc_walk_direction(self, direction):
         if direction == Direction.LEFT:
             self.set_state("walk_left")
-            self.gd_input.positioner[self.gc_input.current_room].empty_tile(self)
+            self.gd_input.positioner_list[self.gc_input.current_room].empty_tile(self)
             self.x -= 1
-            self.gd_input.positioner[self.gc_input.current_room].fill_tile(self)
+            self.gd_input.positioner_list[self.gc_input.current_room].fill_tile(self)
 
         if direction == Direction.RIGHT:
             self.set_state("walk_right")
-            self.gd_input.positioner[self.gc_input.current_room].empty_tile(self)
+            self.gd_input.positioner_list[self.gc_input.current_room].empty_tile(self)
             self.x += 1
-            self.gd_input.positioner[self.gc_input.current_room].fill_tile(self)
+            self.gd_input.positioner_list[self.gc_input.current_room].fill_tile(self)
 
         if direction == Direction.UP:
             self.set_state("walk_back")
-            self.gd_input.positioner[self.gc_input.current_room].empty_tile(self)
+            self.gd_input.positioner_list[self.gc_input.current_room].empty_tile(self)
             self.y -= 1
-            self.gd_input.positioner[self.gc_input.current_room].fill_tile(self)
+            self.gd_input.positioner_list[self.gc_input.current_room].fill_tile(self)
 
         if direction == Direction.DOWN:
             self.set_state("walk_front")
-            self.gd_input.positioner[self.gc_input.current_room].empty_tile(self)
+            self.gd_input.positioner_list[self.gc_input.current_room].empty_tile(self)
             self.y += 1
-            self.gd_input.positioner[self.gc_input.current_room].fill_tile(self)
+            self.gd_input.positioner_list[self.gc_input.current_room].fill_tile(self)
 
     def walk_cycle(self):
         if self.state == "walk_left":
@@ -561,7 +559,7 @@ class GenericNPC(NPC):
         if self.state == "idle":
             self.npc_face_player()
             # TODO: Fix this to not be a string
-            self.gd_input.menu_list["conversation_options_menu_2"].set_menu(self.name)
+            self.gd_input.menu_list[ConversationOptionsMenu.NAME].set_menu(self.name)
             self.set_state("talking")
             self.gc_input.update_game_dialogue("You talked to " + self.name)
         else:
@@ -586,7 +584,7 @@ class ShopKeeper(NPC):
         if self.state == "idle":
             self.npc_face_player()
             # TODO: Fix this to not be a string
-            self.gd_input.menu_list["shopkeeper_interact_menu_2"].set_menu(self.name)
+            self.gd_input.menu_list[ShopKeeperInteractMenu.NAME].set_menu(self.name)
             self.set_state("selling")
             self.gc_input.update_game_dialogue("You talked to " + self.name)
         else:

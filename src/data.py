@@ -8,7 +8,7 @@ from spritesheet import *
 from Phrases import*
 from TileMap import *
 from menus import *
-from menus_2 import *
+from inventory import *
 
 class Game(object):
     def __init__(self, state, tick):
@@ -27,15 +27,16 @@ class GameData(object):
         self.room_list = {}
         self.prop_list = {}
         self.decoration_list = {}
-        self.door = {}
+        self.door_list = {}
         self.menu_list = {}
         self.overlay_list = {}
         self.character_list = {}
         self.player = {}
-        self.positioner = {}
+        self.positioner_list = {}
         self.item_list = {}
         self.key_item_list = {}
         self.tiles_img_dict = {}
+        self.goal_list = {}
 
     def get_all_drawables(self):
         return list(self.character_list.values()) + list(self.player.values()) + list(self.prop_list.values())
@@ -53,7 +54,7 @@ class GameData(object):
         self.room_list[room_name] = room_object
 
     def add_door(self, door_name, door_object):
-        self.door[door_name] = door_object
+        self.door_list[door_name] = door_object
 
     # Decorations are images that have no substance in the game and thus cannot be interacted with in any way
     def add_decoration(self, decoration_name, decoration_object):
@@ -61,7 +62,7 @@ class GameData(object):
 
     # Each room has a positioner which manages how objects are positioned in the room
     def add_positioner(self, positioner_name, positioner_object):
-        self.positioner[positioner_name] = positioner_object
+        self.positioner_list[positioner_name] = positioner_object
 
     # Adds props to the game, props are items that can be moved
     def add_prop(self, prop_name, prop_object):
@@ -82,38 +83,36 @@ class GameData(object):
     def add_tile_dict(self, tiles_dict):
         self.tiles_img_dict = tiles_dict
 
+    def add_goal(self, goal_name, goal_object):
+        self.goal_list[goal_name] = goal_object
+
 
 class GameController(object):
     def __init__(self, GameData):
         self.GameData = GameData
         self.inventory = None
-        self.menu_manager = None
+        self.menu_manager = None # type: MenuManager
         self.screen = pygame.display.set_mode(GameData.settings["resolution"])
         self.clock = pygame.time.Clock()
         self._FPS = GameData.settings["FPS"]
         self.font = "assets/fonts/PressStart.ttf"
         self.current_room = "Ringside"
         self.camera = [-24, -79]
-        self.current_overlay_list = ["top_bar"]
         self.current_menu = None # type: Menu
-        self.current_text_box = None # type: Overlay
-        self.current_speaker = None
         self.keyboard_manager_list = {}
         self.current_keyboard_manager = None # type: KeyboardManager
         self.current_key_pressed = None
-        self.your_coins = 9
-        self.your_seeds = 30
+        self.your_coins = 127
+        self.your_seeds = 24
+        self.day_of_summer = 12
+        self.time_of_day = 3
 
 
     def add_keyboard_manager(self, keyboard_manager_name, keyboard_manager_object):
         self.keyboard_manager_list[keyboard_manager_name] = keyboard_manager_object
 
-    def set_keyboard_manager(self, active_manager, menu=None, origin=None):
+    def set_keyboard_manager(self, active_manager):
         self.current_keyboard_manager = self.keyboard_manager_list[active_manager]
-        if menu is not None:
-            self.MenuManager.activate_menu(menu)
-        if origin is not None:
-            self.GameData.menu_list[menu].set_origin(origin)
 
     def set_current_menu(self, active_menu):
         self.current_menu = active_menu
@@ -121,23 +120,11 @@ class GameController(object):
     def set_room(self, active_room):
         self.current_room = active_room
 
-    def add_current_overlay(self, overlay_name):
-        self.current_overlay_list.append(overlay_name)
-
-    def remove_current_overlay(self, overlay_name):
-        self.current_overlay_list.remove(overlay_name)
-
     def set_inventory(self, inv):
         self.inventory = inv
 
     def set_menu_manager(self, mm):
         self.menu_manager = mm
-
-    def set_text_box(self, active_text_box):
-        self.current_text_box = active_text_box
-
-    def set_speaker(self, active_speaker):
-        self.current_speaker = active_speaker
 
     def tick(self):
         self.clock.tick(self._FPS)
@@ -180,56 +167,6 @@ class Updater(object):
     def run_updates(self):
         self.GameData.menu_list[StatsMenu.NAME].update_menu_items_list()
 
-    def check_for_goals(self):
-        pass
-        #TODO: make this run through a list of goals and see if any are completed
-
-class Goal(object):
-    def __init__(self, name, requirement, reward, status):
-        self.requirement = requirement
-        self.reward = reward
-        self.name = name
-        self.status = status
-
-# TODO: Fix this whole mess
-class Goallist(object):
-    def __init__(self, GameData, GameController):
-        self.GameData = GameData
-        self.GameController = GameController
-        self.goal1_complete = False
-        self.goal_1 = None
-        self.goal_2 = None
-
-    def add_goals(self):
-        if self.goal_1 == None:
-            self.goal_1 = Goal("goal 1", ("You saved the game!" in self.GameData.menu_list[GameActionDialogue.NAME].menu_item_list), "Time Seed", "incomplete")
-        if self.goal_2 == None:
-            self.goal_2 = Goal("goal 2", self.GameController.current_speaker == "Donna", "Book 1", "incomplete")
-
-    def update_goals(self):
-        if self.goal_1.status != "complete":
-            self.goal_1.requirement = ("You saved the game!" in self.GameData.menu_list[GameActionDialogue.NAME].menu_item_list)
-        if self.goal_2.status != "complete":
-            self.goal_2.requirement = self.GameController.current_speaker == "Donna"
-
-
-    def check_goal(self, goal_to_check):
-        if goal_to_check.status == "incomplete":
-            self.update_goals()
-            if goal_to_check.requirement:
-                self.GameController.update_game_dialogue(str(goal_to_check.name) + " done, have a " + goal_to_check.reward + "!")
-                self.GameController.inventory.get_item(goal_to_check.reward, 1)
-                goal_to_check.status = "complete"
-                print(goal_to_check.status)
-                return True
-            else:
-                return False
-        else:
-            pass
-
-    def check_goal_1(self):
-        self.check_goal(self.goal_1)
-        self.check_goal(self.goal_2)
 
 class EventsManager(object):
     def __init__(self, GameData, GameController):
@@ -293,11 +230,6 @@ class Picaso(object):
 
         for item in self.GameController.menu_manager.visible_menus:
             self.GameData.menu_list[item].display_menu()
-
-
-        if self.GameController.current_speaker != None:
-            self.GameData.overlay_list["text_box"].display_overlay()
-            self.GameData.overlay_list["text_box"].display_phrase(self.GameController.current_speaker)
 
 
 class Camera(object):
