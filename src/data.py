@@ -1,14 +1,8 @@
-from random import choice
-
 import pygame
 
-
-from keyboards import KeyboardManager
-from spritesheet import *
-from Phrases import*
-from TileMap import *
-from menus import *
 from inventory import *
+from menus import *
+
 
 class Game(object):
     def __init__(self, state, tick):

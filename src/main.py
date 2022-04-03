@@ -1,13 +1,8 @@
-from random import randint
-
-import pygame
+from Phrases import Phrase
 from data import *
-
-from loading import *
-from features import *
-from mapClasses import *
-from keyboards import *
 from inventory import *
+from keyboards import *
+from loading import *
 from menus import *
 
 gd = GameData()

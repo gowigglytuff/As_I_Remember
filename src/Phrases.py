@@ -1,5 +1,7 @@
-import pygame
 import time
+
+import pygame
+
 
 class TimedDrawing(object):
     pass

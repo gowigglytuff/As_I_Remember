@@ -1,8 +1,9 @@
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 from enum import Enum
 
 import pygame
-from menus import *
+
+# from menus import *
 
 
 class Direction(Enum):
@@ -18,8 +19,6 @@ class Facing(Enum):
     FRONT = 4
     BACK = 3
 
-
-# TODO add other keyboards
 class KeyboardManager():
     @property
     @abstractmethod
@@ -165,10 +164,10 @@ class InGame(KeyboardManager):
 
 
     def key_control(self):
-        # self.GameData.menu_list["start_menu"].set_menu()
-        print("here we go")
-        self.GameData.menu_list[StartMenu.NAME].set_menu()
 
+        if self.GameData.player["Player"].state == "idle":
+            self.current_direction_key = None
+            self.GameData.menu_list["start_menu"].set_menu()
 
     def key_shift(self):
         pass

@@ -1,5 +1,7 @@
-import pygame, csv, os
-from spritesheet import Spritesheet
+import csv
+import os
+import pygame
+
 
 class Tilling(object):
     def __init__ (self, image, x, y):

@@ -1,10 +1,5 @@
-from random import randrange
+import csv, os
 
-import pygame, csv, os
-
-from TileMap import TileMap
-from features import GenericNPC, Spritesheet
-from prop_page import GenericProp, Tree, Decoration
 from keyboards import Direction, Facing
 
 class Plot(object):
@@ -51,7 +46,7 @@ class Tile(object):
 
 
 class Door(object):
-    def __init__(self, room_from, room_to, x, y, exit_x, exit_y, name):
+    def __init__(self, room_from, room_to, x, y, exit_x, exit_y, name, entrance):
         self.room_from = room_from
         self.room_to = room_to
         self.x = x
@@ -59,6 +54,7 @@ class Door(object):
         self.exit_x = exit_x
         self.exit_y = exit_y
         self.name = name
+        self.entrance = entrance
 
 class BG(object):
     def __init__(self, x, y, name, img_file_name_list, GameController, GameData):
@@ -174,27 +170,29 @@ class Position_Manager(object):
                         tile.full = True
 
     def through_door(self, door):
-        self.empty_tile(self.GameData.player["Player"])
-        x_change = self.GameData.player["Player"].x - door.exit_x
-        y_change = self.GameData.player["Player"].y - door.exit_y
-        # if self.GameData.player["Player"].facing == Direction.DOWN:
-        #     self.GameData.player["Player"].turn_player(Direction.DOWN)
-        self.GameData.player["Player"].x = door.exit_x
-        self.GameData.player["Player"].y = door.exit_y
-        self.GameController.camera[0] += x_change
-        self.GameController.camera[1] += y_change
-        self.GameController.set_room(door.room_to)
-        self.empty_tiles(door.room_to)
-        #TODO: Make all maps in CSV Style?
-        if self.GameData.room_list[door.room_to].map_style == "csv":
-            for plot in self.GameData.room_list[door.room_to].plot_list:
-                self.fill_obstacles(self.GameData.room_list[door.room_to].plot_list[plot].terrain_csv_file, door.room_to)
-        self.fill_tiles(door.room_to)
-        self.fill_doors(door.room_to)
-        self.fill_tile(self.GameData.player["Player"])
-        self.GameController.current_keyboard_manager.current_direction_key = None
-        self.GameData.player["Player"].set_state("idle")
-
+        if self.GameData.player["Player"].facing in door.entrance:
+            self.empty_tile(self.GameData.player["Player"])
+            x_change = self.GameData.player["Player"].x - door.exit_x
+            y_change = self.GameData.player["Player"].y - door.exit_y
+            # if self.GameData.player["Player"].facing == Direction.DOWN:
+            #     self.GameData.player["Player"].turn_player(Direction.DOWN)
+            self.GameData.player["Player"].x = door.exit_x
+            self.GameData.player["Player"].y = door.exit_y
+            self.GameController.camera[0] += x_change
+            self.GameController.camera[1] += y_change
+            self.GameController.set_room(door.room_to)
+            self.empty_tiles(door.room_to)
+            #TODO: Make all maps in CSV Style?
+            if self.GameData.room_list[door.room_to].map_style == "csv":
+                for plot in self.GameData.room_list[door.room_to].plot_list:
+                    self.fill_obstacles(self.GameData.room_list[door.room_to].plot_list[plot].terrain_csv_file, door.room_to)
+            self.fill_tiles(door.room_to)
+            self.fill_doors(door.room_to)
+            self.fill_tile(self.GameData.player["Player"])
+            self.GameController.current_keyboard_manager.current_direction_key = None
+            self.GameData.player["Player"].set_state("idle")
+        else:
+            pass
 
     def empty_tiles(self, fillable_room):
         #FIXME: dum dum

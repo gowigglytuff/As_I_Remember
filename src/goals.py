@@ -1,4 +1,6 @@
 from inventory import *
+from menus import *
+from items import *
 
 
 class GoalManager(object):

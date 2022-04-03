@@ -1,10 +1,9 @@
-
-
-from data import *
-from features import *
 from room_page import *
-from inventory import *
 from goals import *
+from goals import *
+from room_page import *
+from key_items import *
+
 
 def init_game(gd_input, gc_input):
     '''
@@ -83,6 +82,8 @@ def load_menus2(GameController, GameData):
 
     GameData.add_menu(GiftingMenu.NAME, GiftingMenu(GameController, GameData, GameController.inventory.current_items))
 
+    GameData.add_menu(ShopkeeperDialogue.NAME, ShopkeeperDialogue(GameController, GameData, []))
+
     # the menu that pops up when you talk to an NPC and have to decide how to interact with them
     GameData.add_menu(ShopKeeperInteractMenu.NAME, ShopKeeperInteractMenu(GameController, GameData, ["Buy", "Sell"]))
 
@@ -118,22 +119,27 @@ def load_items(GameController, GameData):
 
 def load_key_items(GameController, GameData):
     # adds all the key items that exist in the game to the storage in GameData
-    GameData.add_key_item("Hammer", KeyItem("Hammer", GameData, GameController))
-    GameData.add_key_item("Shovel", KeyItem("Shovel", GameData, GameController))
-    GameData.add_key_item("Clippers", KeyItem("Clippers", GameData, GameController))
-    GameData.add_key_item("Gameboy", KeyItem("Gameboy", GameData, GameController))
-    GameData.add_key_item("Radio", KeyItem("Radio", GameData, GameController))
-    GameData.add_key_item("Net", KeyItem("Net", GameData, GameController))
-    GameData.add_key_item("Time Seed", KeyItem("Time Seed", GameData, GameController))
+    GameData.add_key_item(Shovel.NAME, Shovel(GameData, GameController))
+    GameData.add_key_item(Hammer.NAME, Hammer(GameData, GameController))
+    GameData.add_key_item(SeedPouch.NAME, SeedPouch(GameData, GameController))
+
+    # GameData.add_key_item("Hammer", KeyItem("Hammer", GameData, GameController))
+    # GameData.add_key_item("Clippers", KeyItem("Clippers", GameData, GameController))
+    # GameData.add_key_item("Gameboy", KeyItem("Gameboy", GameData, GameController))
+    # GameData.add_key_item("Radio", KeyItem("Radio", GameData, GameController))
+    # GameData.add_key_item("Net", KeyItem("Net", GameData, GameController))
+
 
     # adds the key item to your key item inventory - for testing purposes
-    GameController.inventory.get_key_item("Hammer")
-    GameController.inventory.get_key_item("Shovel")
-    GameController.inventory.get_key_item("Clippers")
-    GameController.inventory.get_key_item("Gameboy")
-    GameController.inventory.get_key_item("Radio")
-    GameController.inventory.get_key_item("Net")
-    GameController.inventory.get_key_item("Time Seed")
+    GameController.inventory.get_key_item(Hammer.NAME)
+    GameController.inventory.get_key_item(Shovel.NAME)
+    GameController.inventory.get_key_item(SeedPouch.NAME)
+
+    # GameController.inventory.get_key_item("Clippers")
+    # GameController.inventory.get_key_item("Gameboy")
+    # GameController.inventory.get_key_item("Radio")
+    # GameController.inventory.get_key_item("Net")
+
 
 
 """
@@ -162,29 +168,6 @@ initiate the rooms following this process:
 """
 
 def init_all_rooms(gc_input, gd_input):
-    # room #1
-    gd_input.add_room("room1", Room1(gc_input, gd_input))
-    gd_input.room_list["room1"].activate_room()
-
-    # room #2
-    gd_input.add_room("room2", Room2(gc_input, gd_input))
-    gd_input.room_list["room2"].activate_room()
-
-    # room 3
-    gd_input.add_room("room3", Room3(gc_input, gd_input))
-    gd_input.room_list["room3"].activate_room()
-
-    # add room #4
-    gd_input.add_room("room4", Room4(gc_input, gd_input))
-    gd_input.room_list["room4"].activate_room()
-
-    # add room Coop
-    gd_input.add_room("Coop", Room5(gc_input, gd_input))
-    gd_input.room_list["Coop"].activate_room()
-
-    # add room #6
-    gd_input.add_room("room6", Room6(gc_input, gd_input))
-    gd_input.room_list["room6"].activate_room()
 
     gd_input.add_room("Ringside", Ringside(gc_input, gd_input))
     gd_input.room_list["Ringside"].activate_room()

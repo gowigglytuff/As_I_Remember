@@ -1,9 +1,10 @@
-import random
+import pygame
 
+from inventory import *
+from items import *
+from keyboards import *
 from spritesheet import *
 from menus import *
-from keyboards import *
-from inventory import *
 
 
 class Feature(object):
@@ -13,8 +14,8 @@ class Feature(object):
         self.imagex = None
         self.imagey = None
         self.name = None
-        self.width = None
-        self.height = None
+        self.img_width = None
+        self.img_height = None
         self.cur_img = 0
         self.spritesheet = None
         try:
@@ -71,11 +72,9 @@ class Player(Feature):
     def try_door(self, direction):
         self.direction = direction
         the_tile = self.check_adj_tile(self.direction).object_filling
-        self.gd_input.positioner_list[self.gc_input.current_room].through_door(
-            self.gd_input.room_list[self.gc_input.current_room].door_list[the_tile])
+        self.gd_input.positioner_list[self.gc_input.current_room].through_door(self.gd_input.room_list[self.gc_input.current_room].door_list[the_tile])
         self.set_state("idle")
 
-    #TODO: Fix this so that it doesn't screw up when you go through a door
     def try_walk(self, direction):
         self.turn_player(direction)
 
@@ -287,7 +286,7 @@ class NPC(Feature):
     TURNING_RIGHT = "turning_right"
     TURNING_BACK = "turning_back"
     IDLE = "idle"
-
+    AVAILABLE_STATES = [WALK_BACK, WALK_RIGHT, WALK_BACK, WALK_FRONT, TURNING_BACK, TURNING_RIGHT, TURNING_FRONT, TURNING_LEFT, IDLE]
     NPC_TIMER_ID = 10
 
     def __init__(self, x, y, gc_input, gd_input, spritesheet, name, room, phrase, walk_pattern, start_facing, face_image):
@@ -319,6 +318,8 @@ class NPC(Feature):
         self.get_step()
         self.phrase_thanks = "Hey, thanks!"
         NPC.NPC_TIMER_ID += 2
+        assert self.state in self.AVAILABLE_STATES
+
 
     def turn_npc(self, direction):
         self.facing = direction
@@ -331,6 +332,7 @@ class NPC(Feature):
         elif direction is Direction.DOWN:
             self.set_image(0, 0)
         self.set_state("idle")
+        return True
 
     def npc_face_player(self):
         if self.gd_input.player["Player"].facing == Direction.UP:
@@ -349,10 +351,13 @@ class NPC(Feature):
             pass
 
     def try_npc_walk_direction(self, direction):
+        success = False
         self.facing = direction
         can_walk = self.gd_input.positioner_list[self.room].can_move_NPC(self)
         if can_walk:
             self.npc_walk_direction(self.facing)
+            success = True
+        return success
 
     def npc_walk_direction(self, direction):
         if direction == Direction.LEFT:
@@ -504,35 +509,37 @@ class NPC(Feature):
 
     def do_activity(self):
         if self.state == "idle":
-            if self.current_step_number == len(self.step) -1:
-                self.current_step_number = 0
-            elif self.current_step_number < len(self.step) -1:
-                self.current_step_number += 1
             result = self.step[self.current_step_number]
-
+            success = False
             if result == "rest":
                 pass
+                success = True
 
             elif result in ["walk_left", "walk_right", "walk_front", "walk_back"]:
                 if result == "walk_left":
-                    self.try_npc_walk_direction(Direction.LEFT)
+                    success = self.try_npc_walk_direction(Direction.LEFT)
                 elif result == "walk_right":
-                    self.try_npc_walk_direction(Direction.RIGHT)
+                    success = self.try_npc_walk_direction(Direction.RIGHT)
                 elif result == "walk_front":
-                    self.try_npc_walk_direction(Direction.DOWN)
+                    success = self.try_npc_walk_direction(Direction.DOWN)
                 elif result == "walk_back":
-                    self.try_npc_walk_direction(Direction.UP)
+                    success = self.try_npc_walk_direction(Direction.UP)
 
             elif result in ["turning_front", "turning_back", "turning_left", "turning_right"]:
                 if result == "turning_front":
-                    self.turn_npc(Direction.DOWN)
+                    success = self.turn_npc(Direction.DOWN)
                 elif result == "turning_back":
-                    self.turn_npc(Direction.UP)
+                    success = self.turn_npc(Direction.UP)
                 elif result == "turning_left":
-                    self.turn_npc(Direction.LEFT)
+                    success = self.turn_npc(Direction.LEFT)
                 elif result == "turning_right":
-                    self.turn_npc(Direction.RIGHT)
+                    success = self.turn_npc(Direction.RIGHT)
 
+            if success:
+                if self.current_step_number == len(self.step) -1:
+                    self.current_step_number = 0
+                elif self.current_step_number < len(self.step) -1:
+                    self.current_step_number += 1
 
 class GenericNPC(NPC):
     WALK_LEFT = "walk_left"
@@ -575,6 +582,8 @@ class ShopKeeper(NPC):
 
     def __init__(self, x, y, gc_input, gd_input, spritesheet, name, room, phrase, walk_pattern, start_facing, face_image):
         super().__init__(x, y, gc_input, gd_input, spritesheet, name, room, phrase, walk_pattern, start_facing, face_image)
+        self.intro = "Hi, welcome to the shop! What can I help you with?"
+
 
     def activate_timers(self):
         pygame.time.set_timer(self.initiate, 1000)
@@ -584,7 +593,7 @@ class ShopKeeper(NPC):
         if self.state == "idle":
             self.npc_face_player()
             # TODO: Fix this to not be a string
-            self.gd_input.menu_list[ShopKeeperInteractMenu.NAME].set_menu(self.name)
+            self.gd_input.menu_list[ShopkeeperDialogue.NAME].set_menu(self.name, self.intro)
             self.set_state("selling")
             self.gc_input.update_game_dialogue("You talked to " + self.name)
         else:
@@ -598,7 +607,7 @@ class ShopKeeperTamma(ShopKeeper):
     def __init__(self, x, y, gc_input, gd_input, spritesheet, name, room, phrase, walk_pattern, start_facing, face_image):
         super().__init__(x, y, gc_input, gd_input, spritesheet, name, room, phrase, walk_pattern, start_facing, face_image)
         self.items_list = [(Cheese.NAME, 2), (Toy.NAME, 2), (Stick.NAME, 1)]
-
+        self.intro = "Hi, welcome to the Hornby Creative! What can I help you with?"
 
 class ShopKeeperCheryl(ShopKeeper):
     IDLE = "idle"
@@ -607,7 +616,7 @@ class ShopKeeperCheryl(ShopKeeper):
     def __init__(self, x, y, gc_input, gd_input, spritesheet, name, room, phrase, walk_pattern, start_facing, face_image):
         super().__init__(x, y, gc_input, gd_input, spritesheet, name, room, phrase, walk_pattern, start_facing, face_image)
         self.items_list = [(Book1.NAME, 5), (Book2.NAME, 7), (Book3.NAME, 10)]
-
+        self.intro = "Hi, welcome to the the Book store! What can I help you with?"
 
 
 

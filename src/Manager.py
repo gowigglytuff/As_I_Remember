@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-import pygame
+
 
 class Manager(ABC):
     @property

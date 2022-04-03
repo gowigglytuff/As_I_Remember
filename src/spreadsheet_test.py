@@ -1,5 +1,3 @@
-import os
-
 #TODO work out spreadsheet incorporation
 def main():
 
@@ -25,8 +23,6 @@ def main():
 
 
 def load_spreadsheet(file_name, sheet_name):
-    from openpyxl import Workbook
-
     from openpyxl import load_workbook
 
     workbook = load_workbook(filename=file_name)

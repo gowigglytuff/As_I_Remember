@@ -1,8 +1,7 @@
 import textwrap
 
-import keyboards
 from keyboards import *
-from spritesheet import Spritesheet
+from spritesheet import *
 
 
 class MenuManager(object):
@@ -31,7 +30,8 @@ class MenuManager(object):
             self.visible_menus.remove(menu_to_deactivate)
 
         if len(self.menu_stack) == 0:
-            self.gc_input.set_keyboard_manager(keyboards.InGame.ID)
+            self.gc_input.set_keyboard_manager(
+                InGame.ID)
 
 
 class Overlay(object):
@@ -206,7 +206,7 @@ class MenuTemporary(object):
     # each menu needs its own
     def set_menu(self):
         self.update_menu_items_list()
-        self.gc_input.set_keyboard_manager(keyboards.InMenu.ID)
+        self.gc_input.set_keyboard_manager(InMenu.ID)
         self.gc_input.menu_manager.add_menu_to_stack(self.name)
 
     def exit_menu(self):
@@ -642,7 +642,7 @@ class UseMenu(MenuTemporary):
 
     def set_menu(self):
         self.update_menu_items_list()
-        self.gc_input.set_keyboard_manager(keyboards.InMenu.ID)
+        self.gc_input.set_keyboard_manager(InMenu.ID)
         self.gc_input.menu_manager.add_menu_to_stack(self.name)
 
     def choose_option(self):
@@ -683,7 +683,7 @@ class YesNoMenu(MenuTemporary):
 
     def set_menu(self):
         self.update_menu_items_list()
-        self.gc_input.set_keyboard_manager(keyboards.InMenu.ID)
+        self.gc_input.set_keyboard_manager(InMenu.ID)
         self.gc_input.menu_manager.add_menu_to_stack(self.name)
 
     def choose_option(self):
@@ -757,7 +757,7 @@ class ConversationOptionsMenu(MenuTemporary):
 
     def set_menu(self, person_talking_to):
         self.update_menu_items_list()
-        self.gc_input.set_keyboard_manager(keyboards.InMenu.ID)
+        self.gc_input.set_keyboard_manager(InMenu.ID)
 
         self.gc_input.menu_manager.add_menu_to_stack(self.name)
         self.set_talking_to(person_talking_to)
@@ -853,7 +853,7 @@ class CharacterDialogue(MenuTemporary):
         self.set_current_phrase()
         self.set_speaking_queue()
         self.gc_input.menu_manager.add_menu_to_stack(self.name)
-        self.gc_input.set_keyboard_manager(keyboards.InMenu.ID)
+        self.gc_input.set_keyboard_manager(InMenu.ID)
 
     def cursor_down(self):
         pass
@@ -979,6 +979,55 @@ class GiftingMenu(MenuTemporary):
         self.list_shifts = 0
 
 
+class ShopkeeperDialogue(CharacterDialogue):
+    NAME = "shopkeeper_dialogue"
+    OVERLAYNAME = "shopkeeper_dialogue_text_box"
+
+    def __init__(self, gc_input, gd_input, menu_item_list):
+        super().__init__(gc_input, gd_input, menu_item_list)
+
+    def set_speaking_queue(self):
+        phrase_counter = 0
+        self.speaking_queue = []
+
+        if len(self.current_phrase) > 2:
+            for line in range(3):
+                self.speaking_queue.append(self.current_phrase[0])
+                self.current_phrase.pop(0)
+
+        elif (len(self.current_phrase) <= 2) and (len(self.current_phrase) > 0):
+            for line in range(len(self.current_phrase)):
+                self.speaking_queue.append(self.current_phrase[0])
+                self.current_phrase.pop(0)
+
+        elif len(self.current_phrase) == 0:
+            self.gd_input.menu_list[ShopKeeperInteractMenu.NAME].set_menu(self.talking_to)
+
+
+    def exit_menu(self):
+        self.gc_input.menu_manager.deactivate_menu(self.name)
+
+    def set_menu(self, talking_to, phrase):
+        self.talking_to = talking_to
+        self.update_menu_items_list(phrase)
+        self.set_current_phrase()
+        self.set_speaking_queue()
+        self.gc_input.menu_manager.add_menu_to_stack(self.name)
+        self.gc_input.set_keyboard_manager(InMenu.ID)
+
+    def cursor_down(self):
+        pass
+
+    def cursor_up(self):
+        pass
+
+    def choose_option(self):
+        self.do_option()
+
+    def do_option(self):
+        self.set_speaking_queue()
+
+
 class ShopKeeperInteractMenu(MenuTemporary):
     NAME = "shopkeeper_interact_menu"
     OVERLAYNAME = "shopkeeper_interact_menu_text_box"
@@ -987,12 +1036,13 @@ class ShopKeeperInteractMenu(MenuTemporary):
         super().__init__(gc_input, gd_input, menu_item_list)
         self.talking_to = None
         self.menu_item_list.append("Exit")
-        self.offset_y = 50
         self.offset_x = 150
+        self.offset_y = 25
         gd_input.add_overlay(self.OVERLAYNAME, TextBox(gc_input, gd_input, self.OVERLAYNAME, 250, 525, Spritesheet("assets/menu_images/text_box.png", 500, 150)))
         self.overlay = self.OVERLAYNAME
         self.x = self.gd_input.overlay_list[self.overlay].x + self.offset_x
         self.y = self.gd_input.overlay_list[self.overlay].y + self.offset_y
+        self.y_spacing = 25
         self.menu_type = "base"
 
     def set_talking_to(self, talking_to):
@@ -1000,21 +1050,28 @@ class ShopKeeperInteractMenu(MenuTemporary):
 
     def set_menu(self, person_talking_to):
         self.update_menu_items_list()
-        self.gc_input.set_keyboard_manager(keyboards.InMenu.ID)
+        self.gc_input.set_keyboard_manager(InMenu.ID)
         self.gc_input.menu_manager.add_menu_to_stack(self.name)
         self.set_talking_to(person_talking_to)
 
     def display_menu(self):
+        # Display Overlay
         self.gd_input.overlay_list[self.overlay].display_overlay()
+
+        # Display speakers name
+        my_font = pygame.font.Font(self.gc_input.font, 10)
+        item = my_font.render(self.gd_input.character_list[self.talking_to].name + ":", True, (0, 0, 0))
+        self.gc_input.screen.blit(item, (self.x, self.y))
+
+        # Display Dialogue Options
+        text_line = 1
         for option in range(self.size):
             my_font = pygame.font.Font(self.gc_input.font, 10)
             item = my_font.render(self.menu_item_list[option], True, (0, 0, 0))
-            self.screen.blit(item, (self.x, self.y + (option*self.menu_spread)))
+            self.screen.blit(item, (self.x, self.y + self.y_spacing * text_line))
+            text_line += 1
         self.display_cursor()
-
-        my_font = pygame.font.Font(self.gc_input.font, 10)
-        item = my_font.render(self.gd_input.character_list[self.talking_to].name + ":", True, (0, 0, 0))
-        self.gc_input.screen.blit(item, (self.gd_input.overlay_list[self.overlay].x + 150, self.gd_input.overlay_list[self.overlay].y + 20))
+        text_line = 1
 
         # Displays characters photo
         self.gc_input.screen.blit(self.gd_input.character_list[self.talking_to].face_image, (self.gd_input.overlay_list[self.overlay].x,  self.gd_input.overlay_list[self.overlay].y+2))
@@ -1116,7 +1173,7 @@ class BuyingMenu(MenuTemporary):
     def set_menu(self, person_talking_to):
         self.talking_to = person_talking_to
         self.update_menu_items_list()
-        self.gc_input.set_keyboard_manager(keyboards.InMenu.ID)
+        self.gc_input.set_keyboard_manager(InMenu.ID)
         self.gc_input.menu_manager.add_menu_to_stack(self.name)
 
     def update_menu_items_list(self):
@@ -1152,7 +1209,7 @@ class SellingMenu(MenuTemporary):
 
     def set_menu(self, person_talking_to):
         self.update_menu_items_list()
-        self.gc_input.set_keyboard_manager(keyboards.InMenu.ID)
+        self.gc_input.set_keyboard_manager(InMenu.ID)
         self.gc_input.menu_manager.add_menu_to_stack(self.name)
         self.set_talking_to(person_talking_to)
 
