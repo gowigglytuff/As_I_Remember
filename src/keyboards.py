@@ -162,7 +162,6 @@ class InGame(KeyboardManager):
     def key_space(self):
         self.GameData.player["Player"].perform_diagnostic()
 
-
     def key_control(self):
 
         if self.GameData.player["Player"].state == "idle":

@@ -48,7 +48,7 @@ class Cheese(Item):
 
     def check_if_can_use_item(self):
         result = True
-        if self.gd_input.player[Player.NAME].x % 2 == 0:
+        if self.gd_input.player["Player"].x % 2 == 0:
             result = False
 
         return result
@@ -143,3 +143,36 @@ class Toy(Item):
 
     def item_use(self):
         self.gc_input.update_game_dialogue("You played with the " + self.NAME)
+
+class FossilA(Item):
+    NAME = "Fossil A"
+    USETYPE = "Single"
+
+    def __init__(self, gd_input, gc_input):
+        super().__init__(gd_input, gc_input)
+        self.sell_price = 100
+
+    def item_use(self):
+        self.gc_input.update_game_dialogue("It's an interesting fossil!")
+
+class FossilB(Item):
+    NAME = "Fossil B"
+    USETYPE = "Single"
+
+    def __init__(self, gd_input, gc_input):
+        super().__init__(gd_input, gc_input)
+        self.sell_price = 200
+
+    def item_use(self):
+        self.gc_input.update_game_dialogue("It's an interesting fossil!")
+
+class FossilC(Item):
+    NAME = "Fossil C"
+    USETYPE = "Single"
+
+    def __init__(self, gd_input, gc_input):
+        super().__init__(gd_input, gc_input)
+        self.sell_price = 500
+
+    def item_use(self):
+        self.gc_input.update_game_dialogue("It's an interesting fossil!")

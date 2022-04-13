@@ -32,6 +32,7 @@ class Shovel(KeyItem):
         super().__init__(gd_input, gc_input)
 
     def item_use(self):
+        # TODO: Give this a use
         facing_tile = self.gd_input.player["Player"].check_adj_tile(self.gd_input.player["Player"].get_direct(self.gd_input.player["Player"].facing))
         object_filling = facing_tile.object_filling
         filling_type = facing_tile.filling_type
@@ -55,7 +56,7 @@ class Shovel(KeyItem):
             return result
 
     def fail_to_use_item(self):
-        self.gc_input.update_game_dialogue("You can't use that now!")
+        self.gc_input.update_game_dialogue("You can't use that now...")
 
 
 class Hammer(KeyItem):
@@ -99,7 +100,7 @@ class Hammer(KeyItem):
         return result
 
     def fail_to_use_item(self):
-        self.gc_input.update_game_dialogue("You can't use that now!")
+        self.gc_input.update_game_dialogue("You can't use that now...")
 
 
 class SeedPouch(KeyItem):
@@ -109,11 +110,232 @@ class SeedPouch(KeyItem):
         super().__init__(gd_input, gc_input)
 
     def item_use(self):
-        self.gc_input.get_coins(10)
+        # TODO: Give this a use
+        self.gc_input.update_game_dialogue("You keep your Time Seeds in there!")
 
     def check_if_can_use_item(self):
         result = True
         return result
 
     def fail_to_use_item(self):
-        self.gc_input.update_game_dialogue("You can't use that now!")
+        self.gc_input.update_game_dialogue("You can't use that now...")
+
+
+class HitchingThumb(KeyItem):
+    NAME = "Hitching Thumb"
+
+    def __init__(self, gd_input, gc_input):
+        super().__init__(gd_input, gc_input)
+
+    def item_use(self):
+        # TODO: Give this a use
+        self.gc_input.update_game_dialogue("You keep your Time Seeds in there...")
+
+    def check_if_can_use_item(self):
+        # TODO: Make it check if it's near a road
+        result = False
+        return result
+
+    def fail_to_use_item(self):
+        self.gc_input.update_game_dialogue("You can only use that near a road!")
+
+
+class WaterBottle(KeyItem):
+    NAME = "Water Bottle"
+
+    def __init__(self, gd_input, gc_input):
+        super().__init__(gd_input, gc_input)
+
+    def item_use(self):
+        # TODO: Give this a use
+        self.gc_input.update_game_dialogue("You took a refreshing drink of water!")
+
+    def check_if_can_use_item(self):
+        result = True
+        return result
+
+    def fail_to_use_item(self):
+        self.gc_input.update_game_dialogue("It's empty!")
+
+
+class GymPass(KeyItem):
+    NAME = "Gym Pass"
+
+    def __init__(self, gd_input, gc_input):
+        super().__init__(gd_input, gc_input)
+
+    def item_use(self):
+        # TODO: Give this a use
+        self.gc_input.update_game_dialogue("You can use this to go to the gym")
+
+    def check_if_can_use_item(self):
+        result = True
+        return result
+
+    def fail_to_use_item(self):
+        self.gc_input.update_game_dialogue("You're not at the gym...")
+
+
+class BirdCall(KeyItem):
+    NAME = "Bird Call"
+
+    def __init__(self, gd_input, gc_input):
+        super().__init__(gd_input, gc_input)
+
+    def item_use(self):
+        # TODO: Give this a use
+        self.gc_input.update_game_dialogue("It made a sound like a bird!")
+
+    def check_if_can_use_item(self):
+        result = True
+        return result
+
+    def fail_to_use_item(self):
+        self.gc_input.update_game_dialogue("It made a wheezing sound...")
+
+
+class Cellphone(KeyItem):
+    NAME = "Cellphone"
+
+    def __init__(self, gd_input, gc_input):
+        super().__init__(gd_input, gc_input)
+
+    def item_use(self):
+        # TODO: Give this a use
+        self.gc_input.update_game_dialogue("You called Grandma!")
+
+    def check_if_can_use_item(self):
+        # TODO: Make it so that this can only be used on a few tiles in the whole game and drop hints about it
+        result = False
+        return result
+
+    def fail_to_use_item(self):
+        self.gc_input.update_game_dialogue("There isn't any signal here...")
+
+
+class Gameboy(KeyItem):
+    NAME = "Gameboy"
+
+    def __init__(self, gd_input, gc_input):
+        super().__init__(gd_input, gc_input)
+
+    def item_use(self):
+        # TODO: Give this a use
+        self.gc_input.update_game_dialogue("You played your favourite game!")
+
+    def check_if_can_use_item(self):
+        # TODO: Make it so that this lets you play/practise all the mini games you've encountered thus far
+        result = True
+        return result
+
+    def fail_to_use_item(self):
+        self.gc_input.update_game_dialogue("It's out of batteries...")
+
+
+class Net(KeyItem):
+    NAME = "Net"
+
+    def __init__(self, gd_input, gc_input):
+        super().__init__(gd_input, gc_input)
+
+    def item_use(self):
+        # TODO: Give this a use
+        self.gc_input.update_game_dialogue("You swung the net!")
+
+    def check_if_can_use_item(self):
+        result = True
+        return result
+
+    def fail_to_use_item(self):
+        self.gc_input.update_game_dialogue("It's not the time to use that now...")
+
+
+class Radio(KeyItem):
+    NAME = "Radio"
+
+    def __init__(self, gd_input, gc_input):
+        super().__init__(gd_input, gc_input)
+
+    def item_use(self):
+        # TODO: Give this a use
+        self.gc_input.update_game_dialogue("Its playing CHFR!")
+
+    def check_if_can_use_item(self):
+        result = True
+        return result
+
+    def fail_to_use_item(self):
+        self.gc_input.update_game_dialogue("It's just making white noise")
+
+
+class Lighter(KeyItem):
+    NAME = "Lighter"
+
+    def __init__(self, gd_input, gc_input):
+        super().__init__(gd_input, gc_input)
+
+    def item_use(self):
+        # TODO: Give this a use
+        self.gc_input.update_game_dialogue("It made a pretty flame!")
+
+    def check_if_can_use_item(self):
+        result = False
+        return result
+
+    def fail_to_use_item(self):
+        self.gc_input.update_game_dialogue("We should not be playing with fire...")
+
+
+class Boomerang(KeyItem):
+    NAME = "Boomerang"
+
+    def __init__(self, gd_input, gc_input):
+        super().__init__(gd_input, gc_input)
+
+    def item_use(self):
+        # TODO: Give this a use
+        self.gc_input.update_game_dialogue("You threw the boomerang!")
+
+    def check_if_can_use_item(self):
+        result = False
+        return result
+
+    def fail_to_use_item(self):
+        self.gc_input.update_game_dialogue("It's not the time to use that now...")
+
+
+class CoopNumber(KeyItem):
+    NAME = "Co-op Number"
+
+    def __init__(self, gd_input, gc_input):
+        super().__init__(gd_input, gc_input)
+        self.current_number = 1859
+
+    def item_use(self):
+        # TODO: Give this a use
+        self.gc_input.update_game_dialogue("It's your Co-op number: " + str(self.current_number))
+
+    def check_if_can_use_item(self):
+        result = True
+        return result
+
+    def fail_to_use_item(self):
+        self.gc_input.update_game_dialogue("Lets use that later...")
+
+
+class Compass(KeyItem):
+    NAME = "Compass"
+
+    def __init__(self, gd_input, gc_input):
+        super().__init__(gd_input, gc_input)
+
+    def item_use(self):
+        self.gc_input.update_game_dialogue("Your current Latitude is: " + str(self.gd_input.player["Player"].x))
+        self.gc_input.update_game_dialogue("Your current Longitude is: " + str(self.gd_input.player["Player"].y))
+
+    def check_if_can_use_item(self):
+        result = True
+        return result
+
+    def fail_to_use_item(self):
+        self.gc_input.update_game_dialogue("Lets use that later...")

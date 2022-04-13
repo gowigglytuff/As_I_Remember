@@ -31,6 +31,7 @@ class GameData(object):
         self.key_item_list = {}
         self.tiles_img_dict = {}
         self.goal_list = {}
+        self.outfit_list = {}
 
     def get_all_drawables(self):
         return list(self.character_list.values()) + list(self.player.values()) + list(self.prop_list.values())
@@ -79,6 +80,9 @@ class GameData(object):
 
     def add_goal(self, goal_name, goal_object):
         self.goal_list[goal_name] = goal_object
+
+    def add_outfit(self, outfit_name, outfit_object):
+        self.outfit_list[outfit_name] = outfit_object
 
 
 class GameController(object):

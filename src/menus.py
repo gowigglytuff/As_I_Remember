@@ -152,7 +152,7 @@ class StatsMenu(object):
 class MenuTemporary(object):
     NAME = None
 
-    def __init__(self, gc_input, gd_input, menu_item_list):
+    def __init__(self, gc_input, gd_input):
         self.gc_input = gc_input
         self.gd_input = gd_input
         self.screen = self.gc_input.screen
@@ -162,7 +162,7 @@ class MenuTemporary(object):
         self.offset_x = 30
         self.offset_y = 20
         self.name = None
-        self.menu_item_list = menu_item_list
+        self.menu_item_list = []
         self.menu_spread = 25
         self.cursor_at = 0
         self.y_spacing = 0
@@ -245,8 +245,9 @@ class StartMenu(MenuTemporary):
     NAME = "start_menu"
     OVERLAYNAME = "start_menu"
 
-    def __init__(self, gc_input, gd_input, menu_item_list):
-        super().__init__(gc_input, gd_input, menu_item_list)
+    def __init__(self, gc_input, gd_input):
+        super().__init__(gc_input, gd_input)
+        self.menu_item_list = ["Bag", "Outfits", "Map", "Chore List", "Profile", "Save", "Options", "Vibes"]
         self.menu_item_list.append("Exit")
         self.menu_type = "base"
         gd_input.add_overlay(self.OVERLAYNAME, Overlay(gc_input, gd_input, self.OVERLAYNAME, 700, 200, Spritesheet("assets/menu_images/start_menu.png", 150, 400)))
@@ -277,9 +278,7 @@ class StartMenu(MenuTemporary):
             self.exit_all_menus()
 
         elif menu_selection == "Outfits":
-            # TODO: Add outfit selection
-            self.gc_input.update_game_dialogue("You have no other outfits")
-            self.exit_menu()
+            self.gd_input.menu_list["outfits_menu"].set_menu()
 
         elif menu_selection == "Save":
             self.gc_input.update_game_dialogue("You saved the game!")
@@ -297,8 +296,9 @@ class InventoryMenu(MenuTemporary):
     NAME = "inventory_menu"
     OVERLAYNAME = "inventory_menu_overlay"
 
-    def __init__(self, gc_input, gd_input, menu_item_list):
-        super().__init__(gc_input, gd_input, menu_item_list)
+    def __init__(self, gc_input, gd_input):
+        super().__init__(gc_input, gd_input)
+        self.menu_item_list = self.gc_input.inventory.current_items
         self.y_spacing = 20
         self.max_length = 14
         gd_input.add_overlay(self.OVERLAYNAME, Overlay(gc_input, gd_input, self.OVERLAYNAME, 700, 200, Spritesheet("assets/menu_images/inventory_menu.png", 200, 400)))
@@ -308,6 +308,7 @@ class InventoryMenu(MenuTemporary):
         self.menu_type = "base"
         self.currently_displayed_items = None
         self.list_shifts = 0
+
 
     def display_menu(self):
         self.gd_input.overlay_list[self.overlay].display_overlay()
@@ -358,9 +359,9 @@ class InventoryMenu(MenuTemporary):
             self.gd_input.item_list[self.get_current_menu_item()].use_item()
             self.exit_all_menus()
 
-        # TODO: Make this actually toss
         elif menu_selection == "Toss":
             self.gc_input.update_game_dialogue("You tossed 1 " + str(self.get_current_menu_item()))
+            self.gc_input.inventory.unget_item(self.get_current_menu_item(), 1)
             self.exit_all_menus()
 
         elif menu_selection == "Exit":
@@ -432,8 +433,9 @@ class KeyInventoryMenu(MenuTemporary):
     NAME = "key_inventory_menu"
     OVERLAYNAME = "key_inventory_menu_overlay"
 
-    def __init__(self, gc_input, gd_input, menu_item_list):
-        super().__init__(gc_input, gd_input, menu_item_list)
+    def __init__(self, gc_input, gd_input):
+        super().__init__(gc_input, gd_input)
+        self.menu_item_list = self.gc_input.inventory.current_key_items
         self.y_spacing = 20
         gd_input.add_overlay(self.OVERLAYNAME, Overlay(gc_input, gd_input, self.OVERLAYNAME, 700, 200, Spritesheet("assets/menu_images/inventory_menu.png", 200, 400)))
         self.overlay = self.OVERLAYNAME
@@ -479,7 +481,8 @@ class KeyInventoryMenu(MenuTemporary):
             self.exit_all_menus()
 
         elif menu_selection == "Toss":
-            self.gc_input.update_game_dialogue("You tossed 1 " + str(self.get_current_menu_item()))
+            self.gc_input.update_game_dialogue("You cannot toss a Key Item")
+            self.gc_input.update_game_dialogue("Then why is it an option..?")
             self.exit_all_menus()
 
         elif menu_selection == "Exit":
@@ -551,8 +554,9 @@ class ToDoListMenu(MenuTemporary):
     NAME = "to_do_list_menu"
     OVERLAYNAME = "to_do_list_menu_overlay"
 
-    def __init__(self, gc_input, gd_input, menu_item_list):
-        super().__init__(gc_input, gd_input, menu_item_list)
+    def __init__(self, gc_input, gd_input):
+        super().__init__(gc_input, gd_input)
+        self.menu_item_list = ["say hi to your mom", "kiss your cat", "eat a pear", "say hi to your mom", "kiss your cat", "eat a pear", "say hi to your mom", "kiss your cat", "eat a pear", "say hi to your mom", "kiss your cat", "eat a pear"]
         gd_input.add_overlay(self.OVERLAYNAME, Overlay(gc_input, gd_input, self.OVERLAYNAME, 350, 200, Spritesheet("assets/misc_sprites/to_do_list.png", 300, 400)))
         self.overlay = self.OVERLAYNAME
         self.x = self.gd_input.overlay_list[self.overlay].x + self.offset_x
@@ -578,8 +582,8 @@ class ProfileMenu(MenuTemporary):
     NAME = "profile_menu_2"
     OVERLAYNAME = "profile_menu_overlay"
 
-    def __init__(self, gc_input, gd_input, menu_item_list):
-        super().__init__(gc_input, gd_input, menu_item_list)
+    def __init__(self, gc_input, gd_input):
+        super().__init__(gc_input, gd_input)
         gd_input.add_overlay(self.OVERLAYNAME, Overlay(gc_input, gd_input, self.OVERLAYNAME, 350, 300, Spritesheet("assets/misc_sprites/ID.png", 300, 200)))
         self.overlay = self.OVERLAYNAME
         self.x = self.gd_input.overlay_list[self.overlay].x + self.offset_x
@@ -608,8 +612,8 @@ class MapMenu(MenuTemporary):
     NAME = "map_menu"
     OVERLAYNAME = "map_menu_overlay"
 
-    def __init__(self, gc_input, gd_input, menu_item_list):
-        super().__init__(gc_input, gd_input, menu_item_list)
+    def __init__(self, gc_input, gd_input):
+        super().__init__(gc_input, gd_input)
         gd_input.add_overlay(self.OVERLAYNAME, Overlay(gc_input, gd_input, self.OVERLAYNAME, 250, 200, Spritesheet("assets/menu_images/hornby_map.png", 500, 400)))
         self.overlay = self.OVERLAYNAME
         self.x = self.gd_input.overlay_list[self.overlay].x + self.offset_x
@@ -631,8 +635,9 @@ class UseMenu(MenuTemporary):
     NAME = "use_menu"
     OVERLAYNAME = "use_menu"
 
-    def __init__(self, gc_input, gd_input, menu_item_list):
-        super().__init__(gc_input, gd_input, menu_item_list)
+    def __init__(self, gc_input, gd_input):
+        super().__init__(gc_input, gd_input)
+        self.menu_item_list = ["Use", "Toss"]
         self.menu_item_list.append("Exit")
         gd_input.add_overlay(self.OVERLAYNAME, Overlay(gc_input, gd_input, self.OVERLAYNAME, 590, 200, Spritesheet("assets/menu_images/use_menu.png", 100, 100)))
         self.overlay = self.OVERLAYNAME
@@ -673,8 +678,9 @@ class YesNoMenu(MenuTemporary):
     NAME = "yes_no_menu"
     OVERLAYNAME = "yes_no_menu"
 
-    def __init__(self, gc_input, gd_input, menu_item_list):
-        super().__init__(gc_input, gd_input, menu_item_list)
+    def __init__(self, gc_input, gd_input):
+        super().__init__(gc_input, gd_input)
+        self.menu_item_list = ["Yes", "No"]
         gd_input.add_overlay(self.OVERLAYNAME, Overlay(gc_input, gd_input, self.OVERLAYNAME, 490, 200, Spritesheet("assets/menu_images/yes_no_menu.png", 90, 76)))
         self.overlay = self.OVERLAYNAME
         self.x = self.gd_input.overlay_list[self.overlay].x + self.offset_x
@@ -703,8 +709,9 @@ class ConversationOptionsMenu(MenuTemporary):
     NAME = "conversation_options_menu_2"
     OVERLAYNAME = "conversation_options_text_box"
 
-    def __init__(self, gc_input, gd_input, menu_item_list):
-        super().__init__(gc_input, gd_input, menu_item_list)
+    def __init__(self, gc_input, gd_input):
+        super().__init__(gc_input, gd_input)
+        self.menu_item_list = ["Talk", "Give Gift"]
         gd_input.add_overlay(self.OVERLAYNAME, TextBox(gc_input, gd_input, self.OVERLAYNAME, 250, 525, Spritesheet("assets/menu_images/text_box.png", 500, 150)))
         self.overlay = self.OVERLAYNAME
         self.talking_to = None
@@ -778,8 +785,8 @@ class CharacterDialogue(MenuTemporary):
     NAME = "character_dialogue"
     OVERLAYNAME = "dialogue_text_box"
 
-    def __init__(self, gc_input, gd_input, menu_item_list):
-        super().__init__(gc_input, gd_input, menu_item_list)
+    def __init__(self, gc_input, gd_input):
+        super().__init__(gc_input, gd_input)
         gd_input.add_overlay(self.OVERLAYNAME, TextBox(gc_input, gd_input, self.OVERLAYNAME, 250, 525, Spritesheet("assets/menu_images/text_box.png", 500, 150)))
         self.overlay = self.OVERLAYNAME
         self.offset_x = 150
@@ -871,10 +878,11 @@ class CharacterDialogue(MenuTemporary):
 class GiftingMenu(MenuTemporary):
     NAME = "gift_menu_2"
 
-    def __init__(self, gc_input, gd_input, menu_item_list):
-        super().__init__(gc_input, gd_input, menu_item_list)
+    def __init__(self, gc_input, gd_input):
+        super().__init__(gc_input, gd_input)
         self.y_spacing = 20
         self.max_length = 14
+        self.menu_item_list = gc_input.inventory.current_items
         gd_input.add_overlay("gifting_menu_overlay", Overlay(gc_input, gd_input, "gifting_menu_overlay", 700, 200, Spritesheet("assets/menu_images/inventory_menu.png", 200, 400)))
         self.overlay = "gifting_menu_overlay"
         self.x = self.gd_input.overlay_list[self.overlay].x + self.offset_x
@@ -983,8 +991,8 @@ class ShopkeeperDialogue(CharacterDialogue):
     NAME = "shopkeeper_dialogue"
     OVERLAYNAME = "shopkeeper_dialogue_text_box"
 
-    def __init__(self, gc_input, gd_input, menu_item_list):
-        super().__init__(gc_input, gd_input, menu_item_list)
+    def __init__(self, gc_input, gd_input):
+        super().__init__(gc_input, gd_input)
 
     def set_speaking_queue(self):
         phrase_counter = 0
@@ -1032,8 +1040,9 @@ class ShopKeeperInteractMenu(MenuTemporary):
     NAME = "shopkeeper_interact_menu"
     OVERLAYNAME = "shopkeeper_interact_menu_text_box"
 
-    def __init__(self, gc_input, gd_input, menu_item_list):
-        super().__init__(gc_input, gd_input, menu_item_list)
+    def __init__(self, gc_input, gd_input):
+        super().__init__(gc_input, gd_input)
+        self.menu_item_list = ["Buy", "Sell"]
         self.talking_to = None
         self.menu_item_list.append("Exit")
         self.offset_x = 150
@@ -1106,8 +1115,8 @@ class BuyingMenu(MenuTemporary):
     NAME = "buying_menu"
     OVERLAYNAME = "buying_menu_overlay"
 
-    def __init__(self, gc_input, gd_input, menu_item_list):
-        super().__init__(gc_input, gd_input, menu_item_list)
+    def __init__(self, gc_input, gd_input):
+        super().__init__(gc_input, gd_input)
         gd_input.add_overlay(self.OVERLAYNAME, Overlay(gc_input, gd_input, self.OVERLAYNAME, 700, 200, Spritesheet("assets/menu_images/inventory_menu.png", 200, 400)))
         self.overlay = self.OVERLAYNAME
         self.x = self.gd_input.overlay_list[self.overlay].x + self.offset_x
@@ -1193,8 +1202,9 @@ class SellingMenu(MenuTemporary):
     NAME = "selling_menu_2"
     OVERLAYNAME = "selling_menu_overlay"
 
-    def __init__(self, gc_input, gd_input, menu_item_list):
-        super().__init__(gc_input, gd_input, menu_item_list)
+    def __init__(self, gc_input, gd_input):
+        super().__init__(gc_input, gd_input)
+        self.menu_item_list = gc_input.inventory.current_items
         self.talking_to = None
         self.y_spacing = 20
         self.max_length = 14
@@ -1296,3 +1306,121 @@ class SellingMenu(MenuTemporary):
         self.unset_talking_to()
         self.reset_cursor()
         self.gc_input.menu_manager.deactivate_menu(self.name)
+
+
+class OutfitsMenu(MenuTemporary):
+    NAME = "outfits_menu"
+    OVERLAYNAME = "outfits_menu_overlay"
+
+    def __init__(self, gc_input, gd_input):
+        super().__init__(gc_input, gd_input)
+        gd_input.add_overlay(self.OVERLAYNAME, Overlay(gc_input, gd_input, self.OVERLAYNAME, 350, 300, Spritesheet("assets/menu_images/testing_menu2.png", 300, 100)))
+        self.overlay = self.OVERLAYNAME
+        self.offset_x = 150
+        self.offset_y = 25
+        self.x = self.gd_input.overlay_list[self.overlay].x + self.offset_x
+        self.y = self.gd_input.overlay_list[self.overlay].y + self.offset_y
+        self.menu_item_list = []
+        self.menu_type = "base"
+        self.all_outfits = []
+        self.current_outfits =[]
+        self.display_size = 3
+        self.currently_selected_outfit = None
+        self.current_outfit_number = 0
+        self.currently_wearing = "Normal Outfit"
+
+    def get_outfits(self):
+        for image in self.gd_input.outfit_list:
+            self.all_outfits.append(self.gd_input.outfit_list[image].name)
+        self.currently_selected_outfit = self.currently_wearing
+        self.current_outfit_number = self.all_outfits.index(self.currently_selected_outfit)
+        self.get_current_outfits(self.current_outfit_number)
+
+    def get_current_outfits(self, current_outfit_number):
+        self.current_outfit_number = current_outfit_number
+        self.current_outfits.clear()
+        if self.current_outfit_number == 0:
+            left_outfit = self.all_outfits[len(self.all_outfits)-1]
+            center_outfit = self.all_outfits[self.current_outfit_number]
+            right_outfit = self.all_outfits[self.current_outfit_number + 1]
+
+        elif self.current_outfit_number == len(self.all_outfits)-1:
+            left_outfit = self.all_outfits[self.current_outfit_number - 1]
+            center_outfit = self.all_outfits[self.current_outfit_number]
+            right_outfit = self.all_outfits[0]
+
+        else:
+            left_outfit = self.all_outfits[self.current_outfit_number - 1]
+            center_outfit = self.all_outfits[self.current_outfit_number]
+            right_outfit = self.all_outfits[self.current_outfit_number + 1]
+
+        self.current_outfits.append(left_outfit)
+        self.current_outfits.append(center_outfit)
+        self.current_outfits.append(right_outfit)
+        self.currently_selected_outfit = center_outfit
+
+    @property
+    def size(self):
+        return len(self.menu_item_list)
+
+    def display_menu(self):
+        # prints the dialgue text box
+        self.gd_input.overlay_list[self.overlay].display_overlay()
+
+        # Display outfit title
+        my_font = pygame.font.Font(self.gc_input.font, 10)
+        item = my_font.render("Outfits", True, (0, 0, 0))
+        self.gc_input.screen.blit(item, (self.x-35,  self.y-15))
+
+        my_font = pygame.font.Font(self.gc_input.font, 8)
+        item = my_font.render("<                                >", True, (0, 0, 0))
+        self.gc_input.screen.blit(item, (self.x - 135, self.y + 25))
+
+        my_font = pygame.font.Font(self.gc_input.font, 8)
+        item = my_font.render("^", True, (0, 0, 0))
+        self.gc_input.screen.blit(item, (self.x - 3 , self.y + 58))
+
+        step = 0
+        for image in self.current_outfits:
+            self.gc_input.screen.blit(self.gd_input.outfit_list[image].display_pic, ((self.x - 100) + step * 85, self.y + 10))
+            step += 1
+            if step == 4:
+                step = 0
+
+    def exit_menu(self):
+        self.gc_input.menu_manager.deactivate_menu(self.name)
+
+    def set_menu(self):
+        self.update_menu_items_list()
+        self.gc_input.set_keyboard_manager(InMenu.ID)
+        self.gc_input.menu_manager.add_menu_to_stack(self.name)
+        self.get_outfits()
+
+
+    def cursor_down(self):
+        pass
+
+    def cursor_up(self):
+        pass
+
+    def cursor_left(self):
+        if self.current_outfit_number == 0:
+            self.current_outfit_number = len(self.all_outfits) -1
+        else:
+            self.current_outfit_number -= 1
+        self.get_current_outfits(self.current_outfit_number)
+
+    def cursor_right(self):
+        if self.current_outfit_number == len(self.all_outfits) -1:
+            self.current_outfit_number = 0
+        else:
+            self.current_outfit_number += 1
+        self.get_current_outfits(self.current_outfit_number)
+
+    def choose_option(self):
+        self.do_option()
+
+    def do_option(self):
+        self.currently_wearing = self.currently_selected_outfit
+        self.gd_input.outfit_list[self.currently_selected_outfit].wear_outfit()
+        self.exit_all_menus()

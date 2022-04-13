@@ -26,6 +26,8 @@ def init_game(gd_input, gc_input):
     # load the full list of items that are available in the game
     load_items(gc_input, gd_input)
 
+    load_outfits(gc_input, gd_input)
+
     # load the full list of key items that are available in the game
     load_key_items(gc_input, gd_input)
 
@@ -61,40 +63,47 @@ def load_menus2(GameController, GameData):
     GameData.add_menu(GameActionDialogue.NAME, GameActionDialogue(GameController, GameData))
     GameData.add_menu(StatsMenu.NAME, StatsMenu(GameController, GameData))
 
-    GameData.add_menu(StartMenu.NAME, StartMenu(GameController, GameData, ["Chore List", "Map", "Bag", "Outfits", "Profile", "Save", "Options", "Vibes"]))
-    GameData.add_menu(InventoryMenu.NAME, InventoryMenu(GameController, GameData, GameController.inventory.current_items))
-    GameData.add_menu(ToDoListMenu.NAME, ToDoListMenu(GameController, GameData, ["say hi to your mom", "kiss your cat", "eat a pear", "say hi to your mom", "kiss your cat", "eat a pear", "say hi to your mom", "kiss your cat", "eat a pear", "say hi to your mom", "kiss your cat", "eat a pear"]))
+    GameData.add_menu(StartMenu.NAME, StartMenu(GameController, GameData))
+    GameData.add_menu(InventoryMenu.NAME, InventoryMenu(GameController, GameData))
+    GameData.add_menu(ToDoListMenu.NAME, ToDoListMenu(GameController, GameData))
 
-    GameData.add_menu(KeyInventoryMenu.NAME, KeyInventoryMenu(GameController, GameData, GameController.inventory.current_key_items))
+    GameData.add_menu(KeyInventoryMenu.NAME, KeyInventoryMenu(GameController, GameData))
 
     # the menu that pops up when a player selects an item from the inventory or key inventory
-    GameData.add_menu(UseMenu.NAME, UseMenu(GameController, GameData, ["Use", "Toss"]))
+    GameData.add_menu(UseMenu.NAME, UseMenu(GameController, GameData))
 
-    GameData.add_menu(YesNoMenu.NAME, YesNoMenu(GameController, GameData, ["Yes", "No"]))
+    GameData.add_menu(YesNoMenu.NAME, YesNoMenu(GameController, GameData))
 
-    GameData.add_menu(ProfileMenu.NAME, ProfileMenu(GameController, GameData, []))
+    GameData.add_menu(ProfileMenu.NAME, ProfileMenu(GameController, GameData))
 
-    GameData.add_menu(MapMenu.NAME, MapMenu(GameController, GameData, []))
+    GameData.add_menu(MapMenu.NAME, MapMenu(GameController, GameData))
 
-    GameData.add_menu(ConversationOptionsMenu.NAME, ConversationOptionsMenu(GameController, GameData, ["Talk", "Give Gift"]))
+    GameData.add_menu(ConversationOptionsMenu.NAME, ConversationOptionsMenu(GameController, GameData))
 
-    GameData.add_menu(CharacterDialogue.NAME, CharacterDialogue(GameController, GameData, []))
+    GameData.add_menu(CharacterDialogue.NAME, CharacterDialogue(GameController, GameData))
 
-    GameData.add_menu(GiftingMenu.NAME, GiftingMenu(GameController, GameData, GameController.inventory.current_items))
+    GameData.add_menu(GiftingMenu.NAME, GiftingMenu(GameController, GameData))
 
-    GameData.add_menu(ShopkeeperDialogue.NAME, ShopkeeperDialogue(GameController, GameData, []))
+    GameData.add_menu(ShopkeeperDialogue.NAME, ShopkeeperDialogue(GameController, GameData))
 
     # the menu that pops up when you talk to an NPC and have to decide how to interact with them
-    GameData.add_menu(ShopKeeperInteractMenu.NAME, ShopKeeperInteractMenu(GameController, GameData, ["Buy", "Sell"]))
+    GameData.add_menu(ShopKeeperInteractMenu.NAME, ShopKeeperInteractMenu(GameController, GameData))
 
-    GameData.add_menu(BuyingMenu.NAME, BuyingMenu(GameController, GameData, []))
+    GameData.add_menu(BuyingMenu.NAME, BuyingMenu(GameController, GameData))
 
-    GameData.add_menu(SellingMenu.NAME, SellingMenu(GameController, GameData, GameController.inventory.current_items))
+    GameData.add_menu(SellingMenu.NAME, SellingMenu(GameController, GameData))
+
+    GameData.add_menu(OutfitsMenu.NAME, OutfitsMenu(GameController, GameData))
 
 def load_goals(gc_input, gd_input):
     gd_input.add_goal(Goal1.NAME, Goal1( gd_input, gc_input))
     gd_input.add_goal(Goal2.NAME, Goal2(gd_input, gc_input))
 
+def load_outfits(GameController, GameData):
+    GameData.add_outfit(CowboyOutfit.NAME, CowboyOutfit(GameData, GameController))
+    GameData.add_outfit(NormalOutfit.NAME, NormalOutfit(GameData, GameController))
+    GameData.add_outfit(FrogOutfit.NAME, FrogOutfit(GameData, GameController))
+    GameData.add_outfit(ShumaOutfit.NAME, ShumaOutfit(GameData, GameController))
 
 def load_items(GameController, GameData):
     # adds all the items that exist in the game to the storage in GameData
@@ -107,14 +116,15 @@ def load_items(GameController, GameData):
     GameData.add_item(Book1.NAME, Book1(GameData, GameController))
     GameData.add_item(Book2.NAME, Book2(GameData, GameController))
     GameData.add_item(Book3.NAME, Book3(GameData, GameController))
+    GameData.add_item(FossilA.NAME, FossilA(GameData, GameController))
+    GameData.add_item(FossilB.NAME, FossilB(GameData, GameController))
+    GameData.add_item(FossilC.NAME, FossilC(GameData, GameController))
 
 
+    # TODO: Make this only the items you start with
     # adds the number of items to your inventory - temporary - for testing purposes
     for item in GameData.item_list:
         GameController.inventory.get_item(GameData.item_list[item].name, 2)
-
-    # GameController.inventory.get_item(Cheese.NAME, 2)
-    # GameController.inventory.get_item(Bread.NAME, 2)
 
 
 def load_key_items(GameController, GameData):
@@ -122,24 +132,37 @@ def load_key_items(GameController, GameData):
     GameData.add_key_item(Shovel.NAME, Shovel(GameData, GameController))
     GameData.add_key_item(Hammer.NAME, Hammer(GameData, GameController))
     GameData.add_key_item(SeedPouch.NAME, SeedPouch(GameData, GameController))
+    GameData.add_key_item(HitchingThumb.NAME, HitchingThumb(GameData, GameController))
+    GameData.add_key_item(WaterBottle.NAME, WaterBottle(GameData, GameController))
+    GameData.add_key_item(GymPass.NAME, GymPass(GameData, GameController))
+    GameData.add_key_item(BirdCall.NAME, BirdCall(GameData, GameController))
+    GameData.add_key_item(Cellphone.NAME, Cellphone(GameData, GameController))
+    GameData.add_key_item(Net.NAME, Net(GameData, GameController))
+    GameData.add_key_item(Radio.NAME, Radio(GameData, GameController))
+    GameData.add_key_item(Lighter.NAME, Lighter(GameData, GameController))
+    GameData.add_key_item(Gameboy.NAME, Gameboy(GameData, GameController))
+    GameData.add_key_item(Boomerang.NAME, Boomerang(GameData, GameController))
+    GameData.add_key_item(CoopNumber.NAME, CoopNumber(GameData, GameController))
+    GameData.add_key_item(Compass.NAME, Compass(GameData, GameController))
 
-    # GameData.add_key_item("Hammer", KeyItem("Hammer", GameData, GameController))
-    # GameData.add_key_item("Clippers", KeyItem("Clippers", GameData, GameController))
-    # GameData.add_key_item("Gameboy", KeyItem("Gameboy", GameData, GameController))
-    # GameData.add_key_item("Radio", KeyItem("Radio", GameData, GameController))
-    # GameData.add_key_item("Net", KeyItem("Net", GameData, GameController))
 
-
+    # TODO: Make it so you get all these throughout the game
     # adds the key item to your key item inventory - for testing purposes
     GameController.inventory.get_key_item(Hammer.NAME)
     GameController.inventory.get_key_item(Shovel.NAME)
     GameController.inventory.get_key_item(SeedPouch.NAME)
-
-    # GameController.inventory.get_key_item("Clippers")
-    # GameController.inventory.get_key_item("Gameboy")
-    # GameController.inventory.get_key_item("Radio")
-    # GameController.inventory.get_key_item("Net")
-
+    GameController.inventory.get_key_item(HitchingThumb.NAME)
+    GameController.inventory.get_key_item(WaterBottle.NAME)
+    GameController.inventory.get_key_item(GymPass.NAME)
+    GameController.inventory.get_key_item(BirdCall.NAME)
+    GameController.inventory.get_key_item(Cellphone.NAME)
+    GameController.inventory.get_key_item(Net.NAME)
+    GameController.inventory.get_key_item(Radio.NAME)
+    GameController.inventory.get_key_item(Lighter.NAME)
+    GameController.inventory.get_key_item(Gameboy.NAME)
+    GameController.inventory.get_key_item(Boomerang.NAME)
+    GameController.inventory.get_key_item(CoopNumber.NAME)
+    GameController.inventory.get_key_item(Compass.NAME)
 
 
 """

@@ -1,3 +1,6 @@
+from spritesheet import Spritesheet
+
+
 class Inventory(object):
     def __init__(self, gd_input, gc_input):
         self.gc_input = gc_input
@@ -54,10 +57,14 @@ class Inventory(object):
             self.gd_input.item_list[item_name].quantity += quantity_acquired
 
     def unget_item(self, item_name: str, quantity_used: int):
-        if item_name in self.current_items:
+        if (item_name in self.current_items) and (quantity_used <= self.gd_input.item_list[item_name].quantity):
             self.gd_input.item_list[item_name].quantity -= quantity_used
+
+        elif (item_name in self.current_items) and (quantity_used > self.gd_input.item_list[item_name].quantity):
+            self.gc_input.update_game_dialogue("You do not have enough " + str(item_name))
         else:
             print("there was nothing to remove??")
+
         if self.gd_input.item_list[item_name].quantity == 0:
             self.current_items.remove(self.gd_input.item_list[item_name].name)
 
@@ -84,4 +91,50 @@ class Inventory(object):
     def sort_current_items(self):
         self.gc_input.inventory.current_items = sorted(self.gc_input.inventory.current_items)
 
+class Outfit(object):
+    NAME = "Outfit"
+    def __init__(self, gc_input, gd_input):
+        self.gd_input = gd_input
+        self.gc_input = gc_input
+        self.name = self.NAME
+        self.have = False
+        self.spritesheet = None
 
+    def wear_outfit(self):
+        self.gd_input.player["Player"].put_on_outfit(self.spritesheet)
+
+class CowboyOutfit(Outfit):
+    NAME = "Cowboy Outfit"
+    def __init__(self, gd_input, gc_input):
+        super().__init__(gc_input, gd_input)
+        self.name = self.NAME
+        self.have = False
+        self.spritesheet = Spritesheet("assets/player/Player_cowboy_CS.png", 32, 40)
+        self.display_pic = self.spritesheet.get_image(0, 0)
+
+class NormalOutfit(Outfit):
+    NAME = "Normal Outfit"
+    def __init__(self, gd_input, gc_input):
+        super().__init__(gc_input, gd_input)
+        self.name = self.NAME
+        self.have = False
+        self.spritesheet = Spritesheet("assets/player/Player_CS.png", 32, 40)
+        self.display_pic = self.spritesheet.get_image(0, 0)
+
+class FrogOutfit(Outfit):
+    NAME = "Frog Outfit"
+    def __init__(self, gd_input, gc_input):
+        super().__init__(gc_input, gd_input)
+        self.name = self.NAME
+        self.have = False
+        self.spritesheet = Spritesheet("assets/player/Player_frog_CS.png", 32, 40)
+        self.display_pic = self.spritesheet.get_image(0, 0)
+
+class ShumaOutfit(Outfit):
+    NAME = "Shuma Outfit"
+    def __init__(self, gd_input, gc_input):
+        super().__init__(gc_input, gd_input)
+        self.name = self.NAME
+        self.have = False
+        self.spritesheet = Spritesheet("assets/NPC_sprites/Shuma_CS.png", 32, 40)
+        self.display_pic = self.spritesheet.get_image(0, 0)

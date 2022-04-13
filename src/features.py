@@ -48,10 +48,21 @@ class Player(Feature):
         self.feature_type = "Player"
         self.width = 32
         self.height = 40
-        self.spritesheet = Spritesheet("assets/NPC_sprites/Shuma_CS.png", 32, 40)
+        self.spritesheet = Spritesheet("assets/player/Player_CS.png", 32, 40)
         self.img = self.spritesheet.get_image(0, 0)
         self.name = "Bug"
         self.offset_y = 16
+
+    def put_on_outfit(self, new_outfit_spritesheet):
+        self.spritesheet = new_outfit_spritesheet
+        if self.facing == Direction.DOWN:
+            self.img = self.spritesheet.get_image(0, 0)
+        if self.facing == Direction.UP:
+            self.img = self.spritesheet.get_image(0, 1)
+        if self.facing == Direction.RIGHT:
+            self.img = self.spritesheet.get_image(0, 2)
+        if self.facing == Direction.LEFT:
+            self.img = self.spritesheet.get_image(0, 3)
 
     def teleport_to_ringside(self):
         self.gc_input.current_room = "Ringside"
