@@ -85,6 +85,12 @@ class GameData(object):
         self.outfit_list[outfit_name] = outfit_object
 
 
+# TODO: Make this in charge of some things
+class GameSettings(object):
+    def __init__(self, GameData):
+        self.GameData = GameData
+
+
 class GameController(object):
     def __init__(self, GameData):
         self.GameData = GameData
@@ -95,7 +101,7 @@ class GameController(object):
         self._FPS = GameData.settings["FPS"]
         self.font = "assets/fonts/PressStart.ttf"
         self.current_room = "Ringside"
-        self.camera = [-24, -79]
+        self.camera = [-24-55, -79]
         self.current_menu = None # type: Menu
         self.keyboard_manager_list = {}
         self.current_keyboard_manager = None # type: KeyboardManager
@@ -155,6 +161,7 @@ class GameController(object):
 
     def update_game_dialogue(self, phrase):
         self.GameData.menu_list[GameActionDialogue.NAME].show_dialogue(phrase)
+
 
 class Updater(object):
     def __init__(self, GameData, GameController):

@@ -36,7 +36,7 @@ class Player(Feature):
     NAME = "Player"
     def __init__(self, x, y, gc_input, gd_input):
         super().__init__(x, y, gc_input, gd_input)
-        self.x = 24
+        self.x = 79
         self.y = 79
         self.imagex = 0
         self.imagey = 0
@@ -51,9 +51,10 @@ class Player(Feature):
         self.spritesheet = Spritesheet("assets/player/Player_CS.png", 32, 40)
         self.img = self.spritesheet.get_image(0, 0)
         self.name = "Bug"
+        self.current_outfit = "Normal Outfit"
         self.offset_y = 16
 
-    def put_on_outfit(self, new_outfit_spritesheet):
+    def put_on_outfit(self, new_outfit_spritesheet, name):
         self.spritesheet = new_outfit_spritesheet
         if self.facing == Direction.DOWN:
             self.img = self.spritesheet.get_image(0, 0)
@@ -63,6 +64,7 @@ class Player(Feature):
             self.img = self.spritesheet.get_image(0, 2)
         if self.facing == Direction.LEFT:
             self.img = self.spritesheet.get_image(0, 3)
+        self.current_outfit = name
 
     def teleport_to_ringside(self):
         self.gc_input.current_room = "Ringside"
@@ -72,7 +74,7 @@ class Player(Feature):
         self.gc_input.camera[1] = 0 - self.y
 
     def activate_timer(self):
-        pygame.time.set_timer(self.step_timer, 30)
+        pygame.time.set_timer(self.step_timer, 20)
 
     def draw(self, screen):
         self_x = (self.imagex * self.gd_input.square_size[0]) + self.gd_input.base_locator_x
@@ -279,13 +281,14 @@ class Player(Feature):
 
     def perform_diagnostic(self):
         #Player Location:
-        print("(" + str(self.x) + ", " + str(self.y) + ")")
+        print("(" + str(self.x-55-1) + ", " + str(self.y-1) + ")")
 
         #Player Image Location:
         print("(" + str(self.imagex) + ", " + str(self.imagey) + ")")
 
         #Camera Location
         print("(" + str(self.gc_input.camera[0]) + ", " + str(self.gc_input.camera[1]) + ")")
+
 
 class NPC(Feature):
     WALK_LEFT = "walk_left"
@@ -552,6 +555,7 @@ class NPC(Feature):
                 elif self.current_step_number < len(self.step) -1:
                     self.current_step_number += 1
 
+
 class GenericNPC(NPC):
     WALK_LEFT = "walk_left"
     WALK_RIGHT = "walk_right"
@@ -619,6 +623,7 @@ class ShopKeeperTamma(ShopKeeper):
         super().__init__(x, y, gc_input, gd_input, spritesheet, name, room, phrase, walk_pattern, start_facing, face_image)
         self.items_list = [(Cheese.NAME, 2), (Toy.NAME, 2), (Stick.NAME, 1)]
         self.intro = "Hi, welcome to the Hornby Creative! What can I help you with?"
+
 
 class ShopKeeperCheryl(ShopKeeper):
     IDLE = "idle"

@@ -101,7 +101,7 @@ class Outfit(object):
         self.spritesheet = None
 
     def wear_outfit(self):
-        self.gd_input.player["Player"].put_on_outfit(self.spritesheet)
+        self.gd_input.player["Player"].put_on_outfit(self.spritesheet, self.name)
 
 class CowboyOutfit(Outfit):
     NAME = "Cowboy Outfit"

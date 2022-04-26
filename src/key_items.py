@@ -8,10 +8,10 @@ class KeyItem(object):
 
     def use_item(self):
         if self.check_if_can_use_item():
-            print("You used the " + self.name)
             self.gc_input.update_game_dialogue("You used the " + str(self.name))
             self.item_use()
         else:
+            self.gc_input.update_game_dialogue("You attempted to use the " + str(self.name))
             self.fail_to_use_item()
 
     def item_use(self):

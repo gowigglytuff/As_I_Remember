@@ -3,9 +3,16 @@ def main():
 
     ss = load_spreadsheet(file_name="../assets/spreadsheets/sheet1.xlsx", sheet_name='Sheet1')
 
-    ss_keys = list(ss[0].keys())
+    print(ss)
 
-    flag_keys = [k for k in ss_keys if k[0:4]=='flag']
+    ss_keys = list(ss[0].keys())
+    print(ss_keys)
+
+
+    flag_keys = [k for k in ss_keys if k[0:4] == 'flag']
+
+    print(flag_keys)
+    pass
 
     for row in ss:
         all_flags_true = True
@@ -15,12 +22,6 @@ def main():
 
         if all_flags_true:
             print(row['dialogue'])
-
-
-
-
-
-
 
 def load_spreadsheet(file_name, sheet_name):
     from openpyxl import load_workbook
@@ -34,20 +35,21 @@ def load_spreadsheet(file_name, sheet_name):
     column_count = sheet.max_column
 
     header = []
-    for col in range(1,column_count+1):
+    for col in range(1, column_count+1):
         header.append(sheet.cell(1, col).value)
 
     row_values = []
 
-    for row in range(2,row_count+1):
+    for row in range(2, row_count+1):
         this_row = {}
-        for ind,header_name in enumerate(header):
-            this_row[header_name] = sheet.cell(row,ind+1).value
+        for ind, header_name in enumerate(header):
+            this_row[header_name] = sheet.cell(row, ind+1).value
         row_values.append(this_row)
 
 
     for row in row_values:
-        print(row)
+        pass
+        # print(row)
     return row_values
 
 

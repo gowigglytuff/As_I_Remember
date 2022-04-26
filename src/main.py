@@ -5,7 +5,9 @@ from keyboards import *
 from loading import *
 from menus import *
 
+
 gd = GameData()
+gs = GameSettings(gd)
 gc = GameController(gd)
 mm = MenuManager(gd, gc)
 gc.set_menu_manager(mm)

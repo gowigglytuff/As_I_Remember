@@ -595,11 +595,32 @@ class ProfileMenu(MenuTemporary):
         self.screen.blit(self.gd_input.player["Player"].spritesheet.get_image(0, 0), (self.x + 27, self.y + 30))
 
         my_font = pygame.font.Font(self.gc_input.font, 10)
-        item = my_font.render("Name: Shuma", True, (0, 0, 0))
-        self.gc_input.screen.blit(item, (self.x +125, self.y + 40))
+        item = my_font.render("NAME:    Jayden", True, (0, 0, 0))
+        self.gc_input.screen.blit(item, (self.x +100, self.y - 5))
 
-        item2 = my_font.render("Reputation: ", True, (0, 0, 0))
-        self.gc_input.screen.blit(item2, (self.x + 125, self.y + 60))
+        item2 = my_font.render("AGE:          9", True, (0, 0, 0))
+        self.gc_input.screen.blit(item2, (self.x + 100, self.y + 15))
+
+        item3 = my_font.render("PLAY TIME: 2:45", True, (0, 0, 0))
+        self.gc_input.screen.blit(item3, (self.x + 100, self.y + 35))
+
+        item4 = my_font.render("SCORE:    14067", True, (0, 0, 0))
+        self.gc_input.screen.blit(item4, (self.x + 100, self.y + 75))
+
+        item7 = my_font.render("REPUTATION: 10", True, (0, 0, 0))
+        self.gc_input.screen.blit(item7, (self.x + 100, self.y + 55))
+
+        item5 = my_font.render("BEST FRIEND:        Shuma", True, (0, 0, 0))
+        self.gc_input.screen.blit(item5, (self.x, self.y + 95))
+
+        item6 = my_font.render("FAVOURITE FOOD:  Burritos", True, (0, 0, 0))
+        self.gc_input.screen.blit(item6, (self.x, self.y + 115))
+
+        item8 = my_font.render("FAVOURITE FlOWER:  Dahlia", True, (0, 0, 0))
+        self.gc_input.screen.blit(item8, (self.x, self.y + 135))
+
+        item7 = my_font.render("GEMS:   O ? < > $ % & @ ", True, (0, 0, 0))
+        self.gc_input.screen.blit(item7, (self.x, self.y + 155))
 
     def do_option(self):
         self.exit_all_menus()

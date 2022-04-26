@@ -16,6 +16,12 @@ def init_game(gd_input, gc_input):
     pygame.display.set_caption('As I Remember')
     pygame.key.set_repeat()
 
+    pygame.mixer.init()
+    pygame.mixer.music.load("assets/music/little_song.mp3")
+    pygame.mixer.music.set_volume(0.7)
+    # pygame.mixer.music.play(-1)
+
+
     # Load all the differnt keyboard modes that the you encounter when in different things like the menus and stuff
     load_keyboard_managers(gc_input, gd_input)
 
