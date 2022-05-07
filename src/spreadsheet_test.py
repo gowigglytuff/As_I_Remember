@@ -6,12 +6,10 @@ def main():
     print(ss)
 
     ss_keys = list(ss[0].keys())
-    print(ss_keys)
 
 
     flag_keys = [k for k in ss_keys if k[0:4] == 'flag']
 
-    print(flag_keys)
     pass
 
     for row in ss:

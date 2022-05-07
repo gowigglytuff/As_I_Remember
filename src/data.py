@@ -32,6 +32,7 @@ class GameData(object):
         self.tiles_img_dict = {}
         self.goal_list = {}
         self.outfit_list = {}
+        self.spreadsheet_list = {}
 
     def get_all_drawables(self):
         return list(self.character_list.values()) + list(self.player.values()) + list(self.prop_list.values())
@@ -84,6 +85,9 @@ class GameData(object):
     def add_outfit(self, outfit_name, outfit_object):
         self.outfit_list[outfit_name] = outfit_object
 
+    def add_spreadsheet(self, spreadsheet_name, spreadsheet_object):
+        self.spreadsheet_list[spreadsheet_name] = spreadsheet_object
+
 
 # TODO: Make this in charge of some things
 class GameSettings(object):
@@ -109,7 +113,9 @@ class GameController(object):
         self.your_coins = 127
         self.your_seeds = 24
         self.day_of_summer = 12
-        self.time_of_day = 3
+        self.time_of_day = 17
+        self.night_filter = pygame.Surface(pygame.Rect((0, 0, self.GameData.settings["resolution"][0], self.GameData.settings["resolution"][1])).size)
+        self.night_filter.set_alpha(0)
 
 
     def add_keyboard_manager(self, keyboard_manager_name, keyboard_manager_object):
@@ -162,6 +168,32 @@ class GameController(object):
     def update_game_dialogue(self, phrase):
         self.GameData.menu_list[GameActionDialogue.NAME].show_dialogue(phrase)
 
+    # TODO: Edit for efficiency
+    def display_night_sky_layer(self, surface):
+        pygame.draw.rect(self.night_filter, (0, 0, 25), self.night_filter.get_rect())
+        surface.blit(self.night_filter, (0, 0, self.GameData.settings["resolution"][0], self.GameData.settings["resolution"][1]))
+
+    def darken_sky(self):
+        self.night_filter.set_alpha(self.night_filter.get_alpha()+12)
+
+    def lighten_sky(self):
+        self.night_filter.set_alpha(self.night_filter.get_alpha()-12)
+
+    def tick_hour(self):
+        print("Did it?")
+        if self.time_of_day < 23:
+            self.time_of_day += 1
+
+        elif self.time_of_day == 23:
+            self.time_of_day = 0
+
+        if 16 <= self.time_of_day <= 23:
+            self.darken_sky()
+
+        elif 1 <= self.time_of_day <= 8:
+            self.lighten_sky()
+
+        print("tod:" + str(self.time_of_day))
 
 class Updater(object):
     def __init__(self, GameData, GameController):
@@ -229,6 +261,9 @@ class Picaso(object):
         drawable_list = self.get_all_drawable()
         for drawable in drawable_list:
             drawable[0].draw(self.GameController.screen)
+
+        # TODO: Make this work for night time
+        self.GameController.display_night_sky_layer(self.GameController.screen)
 
         for item in self.GameController.menu_manager.static_menus:
             self.GameData.menu_list[item].display_menu()

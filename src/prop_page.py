@@ -368,3 +368,51 @@ class Planter(Prop):
 
     def get_interacted_with(self):
         self.gc_input.update_game_dialogue("Could use a nice plant!")
+
+class StopSign(Prop):
+    _TYPENAME = "stop sign"
+    _serial_number = 1
+
+    def __init__(self, x, y, gc_input, gd_input, room_name):
+        super().__init__(x, y, gc_input, gd_input)
+        self.width = (1*32)
+        self.height = (1*32)+8
+        self.offset_y = 8
+        self.img_location = "assets/prop_sprites/stopsign_quarter.png"
+        self.size_x = 1
+        self.size_y = 1
+        self.fill_out_initiation(room_name)
+
+    def get_interacted_with(self):
+        self.gc_input.update_game_dialogue("STOP!")
+
+class PineTree(Prop):
+    _TYPENAME = "pine tree"
+    _serial_number = 1
+
+    def __init__(self, x, y, gc_input, gd_input, room_name):
+        super().__init__(x, y, gc_input, gd_input)
+        self.width = 64
+        self.height = (2*32)+8
+        self.offset_y = (32*2)-16
+        self.img_location = "assets/prop_sprites/pine_tree.png"
+        self.size_x = 2
+        self.size_y = 1
+        self.fill_out_initiation(room_name)
+
+class SignPost(Prop):
+    _TYPENAME = "sign post"
+    _serial_number = 1
+
+    def __init__(self, x, y, gc_input, gd_input, room_name, address):
+        super().__init__(x, y, gc_input, gd_input)
+        self.width = (1*32)
+        self.height = (1*32)+8
+        self.offset_y = 16
+        self.img_location = "assets/prop_sprites/signpost.png"
+        self.size_x = 1
+        self.size_y = 1
+        self.fill_out_initiation(room_name)
+        self.address = address
+    def get_interacted_with(self):
+        self.gc_input.update_game_dialogue("Address: " + self.address)

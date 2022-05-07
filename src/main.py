@@ -35,6 +35,9 @@ def run_game_loop():
     printout = pygame.USEREVENT + 3
     pygame.time.set_timer(printout, 500)
 
+    time_ticking = pygame.USEREVENT + 150
+    pygame.time.set_timer(time_ticking, 60000)
+
     while running:
         pygame.draw.rect(gc.screen, (0, 0, 0), (0, 0, 1000, 10000))
         for event in pygame.event.get():
@@ -66,10 +69,15 @@ def run_game_loop():
             if event.type == gd.player["Player"].step_timer:
                 gd.player["Player"].continue_walking()
 
+            if event.type == time_ticking:
+                gc.tick_hour()
+                print("it ticked")
+
         if isinstance(gc.current_keyboard_manager, InGame):
             if gc.current_keyboard_manager.current_direction_key is not None:
                 if not gd.player["Player"].check_if_walking():
                     gd.player["Player"].try_walk(gc.current_keyboard_manager.current_direction_key)
+
 
         gm.check_goals()
         up.run_updates()

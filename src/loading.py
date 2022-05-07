@@ -3,6 +3,7 @@ from goals import *
 from goals import *
 from room_page import *
 from key_items import *
+from ss_outfits import *
 
 
 def init_game(gd_input, gc_input):
@@ -39,8 +40,10 @@ def init_game(gd_input, gc_input):
 
     load_goals(gc_input, gd_input)
 
+
+
     # Load the Tileset
-    FT = TileSet("assets/room_maps/csv_tiles/Full_Tileset_Adjusted.png", 32, 32,40, 40)
+    FT = TileSet("assets/room_maps/csv_tiles/MapTileset.png", 32, 32, 40, 40)
     BT = TileSet("assets/room_maps/csv_tiles/Big_Tileset.png", 32, 32, 40, 10)
     T = TileSet("assets/room_maps/csv_tiles/tileset.png", 32, 32, 3, 5)
     # store each tile in a dictionary in GameData that will be accessed by the TileMap function
@@ -53,6 +56,12 @@ def init_game(gd_input, gc_input):
     # run functions that initiate all rooms
     init_all_rooms(gc_input, gd_input)
 
+    load_spreadsheets(gc_input, gd_input)
+
+
+def load_spreadsheets(GameController, GameData):
+    # GameData.add_spreadsheet("Outfits", GameSpreadsheet(GameController, GameData, "assets/spreadsheets/outfits_sheet.xlsx", "Outfits"))
+    GameData.add_spreadsheet(ThanksSpreadsheet.NAME, ThanksSpreadsheet(GameController, GameData))
 
 
 def load_keyboard_managers(GameController, GameData):
@@ -63,6 +72,7 @@ def load_keyboard_managers(GameController, GameData):
 
     # sets the initial Keyboard Manager to be the InGame Manager
     GameController.set_keyboard_manager(InGame.ID)
+
 
 def load_menus2(GameController, GameData):
     # GameData.add_overlay("text_box_2", TextBox2(GameController, GameData, "text_box_2", 250, 550, Spritesheet("assets/menu_images/text_box.png", 500, 150)))
@@ -100,6 +110,13 @@ def load_menus2(GameController, GameData):
     GameData.add_menu(SellingMenu.NAME, SellingMenu(GameController, GameData))
 
     GameData.add_menu(OutfitsMenu.NAME, OutfitsMenu(GameController, GameData))
+
+    GameData.add_menu(GameMasterInteractMenu.NAME, GameMasterInteractMenu(GameController, GameData))
+
+    GameData.add_menu(InfoSelectMenu.NAME, InfoSelectMenu(GameController, GameData))
+
+    GameData.add_menu(HitchikingMenu.NAME, HitchikingMenu(GameController, GameData))
+
 
 def load_goals(gc_input, gd_input):
     gd_input.add_goal(Goal1.NAME, Goal1( gd_input, gc_input))
@@ -200,6 +217,9 @@ def init_all_rooms(gc_input, gd_input):
 
     gd_input.add_room("Ringside", Ringside(gc_input, gd_input))
     gd_input.room_list["Ringside"].activate_room()
+
+    gd_input.add_room("Sandpiper", Sandpiper(gc_input, gd_input))
+    gd_input.room_list["Sandpiper"].activate_room()
 
     gd_input.add_room("computer_centre", ComputerCentreRoom(gc_input, gd_input))
     gd_input.room_list["computer_centre"].activate_room()

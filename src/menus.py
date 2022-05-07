@@ -115,14 +115,14 @@ class StatsMenu(object):
         self.gc_input = gc_input
         self.gd_input = gd_input
         self.screen = self.gc_input.screen
-        gd_input.add_overlay(self.OVERLAYNAME, Overlay(gc_input, gd_input, self.OVERLAYNAME, 830, 20, Spritesheet("assets/menu_images/stats_menu.png", 150, 100)))
+        gd_input.add_overlay(self.OVERLAYNAME, Overlay(gc_input, gd_input, self.OVERLAYNAME, 788, 20, Spritesheet("assets/menu_images/menu_6X3.png", 192, 96)))
         self.overlay = self.OVERLAYNAME
         self.offset_x = 20
         self.offset_y = 15
         self.x = self.gd_input.overlay_list[self.overlay].x + self.offset_x
         self.y = self.gd_input.overlay_list[self.overlay].y + self.offset_y
         self.name = self.NAME
-        self.menu_item_list = [("Coins: ", str(self.gc_input.your_coins)), ("Day: ", str(self.gc_input.day_of_summer)), ("Time: ", str(self.gc_input.time_of_day)+":00"), ("Seeds:", str(self.gc_input.your_seeds))]
+        self.menu_item_list = [("Coins: ", str(self.gc_input.your_coins)), ("Day: ", str(self.gc_input.day_of_summer)), ("Time: ", str(self.gc_input.time_of_day)+":00"), ("Shift:", self.gc_input.inventory.selected_tool), ("Seeds:", str(1))]
         self.menu_spread = 15
         self.cursor_at = 0
         self.y_spacing = 0
@@ -142,10 +142,10 @@ class StatsMenu(object):
         for quantitity in range(self.size):
             my_font = pygame.font.Font(self.gc_input.font, 7)
             item = my_font.render(self.menu_item_list[quantitity][1], True, (0, 0, 0))
-            self.screen.blit(item, (self.x + 112 - (7 * len(self.menu_item_list[quantitity][1])), self.y + (quantitity * self.menu_spread)))
+            self.screen.blit(item, (self.x + 155 - (7 * len(self.menu_item_list[quantitity][1])), self.y + (quantitity * self.menu_spread)))
 
     def update_menu_items_list(self):
-        self.menu_item_list = [("Coins: ", str(self.gc_input.your_coins)), ("Day: ", str(self.gc_input.day_of_summer)), ("Time: ", str(self.gc_input.time_of_day)+":00"), ("Friends:", str(self.gc_input.your_seeds)), ("Seeds:", str(1))]
+        self.menu_item_list = [("Coins: ", str(self.gc_input.your_coins)), ("Day: ", str(self.gc_input.day_of_summer)), ("Time: ", str(self.gc_input.time_of_day)+":00"), ("Shift:", self.gc_input.inventory.selected_tool), ("Seeds:", str(1))]
 
 
 # Base Menus            
@@ -240,6 +240,9 @@ class MenuTemporary(object):
         if len(self.gc_input.menu_manager.menu_stack) > 0:
             self.gd_input.menu_list[self.gc_input.menu_manager.menu_stack[0]].exit_all_menus()
 
+    def shift_pressed(self):
+        pass
+
 
 class StartMenu(MenuTemporary):
     NAME = "start_menu"
@@ -261,12 +264,15 @@ class StartMenu(MenuTemporary):
 
         if menu_selection == "Bag":
             self.gd_input.menu_list[InventoryMenu.NAME].set_menu()
+            self.exit_menu()
 
         elif menu_selection == "Key Items":
             self.gd_input.menu_list[KeyInventoryMenu.NAME].set_menu()
+            self.exit_menu()
 
         elif menu_selection == "Chore List":
             self.gd_input.menu_list[ToDoListMenu.NAME].set_menu()
+            self.exit_menu()
 
         elif menu_selection == "Profile":
             self.gd_input.menu_list[ProfileMenu.NAME].set_menu()
@@ -478,7 +484,8 @@ class KeyInventoryMenu(MenuTemporary):
 
         if menu_selection == "Use":
             self.gd_input.key_item_list[self.get_current_menu_item()].use_item()
-            self.exit_all_menus()
+            self.exit_menu()
+
 
         elif menu_selection == "Toss":
             self.gc_input.update_game_dialogue("You cannot toss a Key Item")
@@ -548,6 +555,12 @@ class KeyInventoryMenu(MenuTemporary):
     def reset_cursor(self):
         self.cursor_at = 0
         self.list_shifts = 0
+
+    def shift_pressed(self):
+        current_item = self.get_current_menu_item()
+        if current_item != "Exit":
+            self.gc_input.inventory.selected_tool = current_item
+            self.gc_input.update_game_dialogue("You readied the " + current_item)
 
 
 class ToDoListMenu(MenuTemporary):
@@ -712,6 +725,7 @@ class YesNoMenu(MenuTemporary):
         self.update_menu_items_list()
         self.gc_input.set_keyboard_manager(InMenu.ID)
         self.gc_input.menu_manager.add_menu_to_stack(self.name)
+        self.reposition_menu()
 
     def choose_option(self):
         menu_selection = self.gd_input.menu_list[self.name].get_current_menu_item()
@@ -723,6 +737,12 @@ class YesNoMenu(MenuTemporary):
         elif menu_selection == "No":
             self.exit_menu()
             self.gd_input.menu_list[self.gc_input.menu_manager.menu_stack[0]].exit_all_menus()
+
+    def reposition_menu(self):
+        position_in_stack = self.gc_input.menu_manager.menu_stack.index(self.NAME)
+        self.gd_input.overlay_list[self.overlay].x = self.gd_input.overlay_list[self.gd_input.menu_list[self.gc_input.menu_manager.menu_stack[position_in_stack+1]].overlay].x - 100
+        self.x = self.gd_input.overlay_list[self.overlay].x + self.offset_x
+        pass
 
 
 # Character Interaction Menus
@@ -751,12 +771,24 @@ class ConversationOptionsMenu(MenuTemporary):
         self.talking_to = None
 
     def display_menu(self):
+        friendship_counter = "           "
+        if self.gd_input.character_list[self.talking_to].friendship == 0:
+            friendship_counter = "           "
+        elif 5 >= self.gd_input.character_list[self.talking_to].friendship >= 1 :
+            friendship_counter = "<3         "
+        elif 10 >= self.gd_input.character_list[self.talking_to].friendship >= 6:
+            friendship_counter = "<3 <3      "
+        elif 15 >= self.gd_input.character_list[self.talking_to].friendship >= 11:
+            friendship_counter = "<3 <3 <3   "
+        elif self.gd_input.character_list[self.talking_to].friendship >= 16:
+            friendship_counter = "<3 <3 <3 <3"
+
         # Display Overlay
         self.gd_input.overlay_list[self.overlay].display_overlay()
 
         # Display speakers name
         my_font = pygame.font.Font(self.gc_input.font, 10)
-        item = my_font.render(self.gd_input.character_list[self.talking_to].name + ":", True, (0, 0, 0))
+        item = my_font.render(self.gd_input.character_list[self.talking_to].name + ": " + friendship_counter, True, (0, 0, 0))
         self.gc_input.screen.blit(item, (self.x, self.y))
 
         # Display Dialogue Options
@@ -793,7 +825,7 @@ class ConversationOptionsMenu(MenuTemporary):
     def give_item(self, item):
         self.gc_input.inventory.unget_item(item, 1)
         self.gc_input.update_game_dialogue("You gave " + self.talking_to + " 1 " + item)
-        self.gd_input.menu_list[CharacterDialogue.NAME].set_menu(self.talking_to, self.gd_input.character_list[self.talking_to].phrase_thanks)
+        self.gd_input.menu_list[CharacterDialogue.NAME].set_menu(self.talking_to, self.gd_input.character_list[self.talking_to].receive_gift(item))
 
     def exit_menu(self):
         self.gd_input.character_list[self.talking_to].set_state("idle")
@@ -853,12 +885,24 @@ class CharacterDialogue(MenuTemporary):
         return len(self.menu_item_list)
 
     def display_menu(self):
+        friendship_counter = "           "
+        if self.gd_input.character_list[self.talking_to].friendship == 0:
+            friendship_counter = "           "
+        elif 5 >= self.gd_input.character_list[self.talking_to].friendship >= 1:
+            friendship_counter = "<3         "
+        elif 10 >= self.gd_input.character_list[self.talking_to].friendship >= 6:
+            friendship_counter = "<3 <3      "
+        elif 15 >= self.gd_input.character_list[self.talking_to].friendship >= 11:
+            friendship_counter = "<3 <3 <3   "
+        elif self.gd_input.character_list[self.talking_to].friendship >= 16:
+            friendship_counter = "<3 <3 <3 <3"
+
         # prints the dialgue text box
         self.gd_input.overlay_list[self.overlay].display_overlay()
 
         # Display characters name
         my_font = pygame.font.Font(self.gc_input.font, 10)
-        item = my_font.render(self.gd_input.character_list[self.talking_to].name + ":", True, (0, 0, 0))
+        item = my_font.render(self.gd_input.character_list[self.talking_to].name + ": " + friendship_counter, True, (0, 0, 0))
         self.gc_input.screen.blit(item, (self.x,  self.y))
 
         # Displays characters dialogue
@@ -1445,3 +1489,135 @@ class OutfitsMenu(MenuTemporary):
         self.currently_wearing = self.currently_selected_outfit
         self.gd_input.outfit_list[self.currently_selected_outfit].wear_outfit()
         self.exit_all_menus()
+
+
+class GameMasterInteractMenu(MenuTemporary):
+    NAME = "game_master_interact_menu"
+    OVERLAYNAME = "game_master_interact_overlay"
+
+    def __init__(self, gc_input, gd_input):
+        super().__init__(gc_input, gd_input)
+        self.menu_item_list = ["Ask Advice", "Info"]
+        gd_input.add_overlay(self.OVERLAYNAME, TextBox(gc_input, gd_input, self.OVERLAYNAME, 250, 525, Spritesheet("assets/menu_images/text_box.png", 500, 150)))
+        self.overlay = self.OVERLAYNAME
+        self.talking_to = None
+        self.menu_item_list.append("Exit")
+        self.offset_x = 150
+        self.offset_y = 25
+        self.x = self.gd_input.overlay_list[self.overlay].x + self.offset_x
+        self.y = self.gd_input.overlay_list[self.overlay].y + self.offset_y
+        self.y_spacing = 25
+        self.menu_type = "base"
+
+    def set_talking_to(self, talking_to):
+        self.talking_to = talking_to
+
+    def unset_talking_to(self):
+        self.talking_to = None
+
+    def display_menu(self):
+        # Display Overlay
+        self.gd_input.overlay_list[self.overlay].display_overlay()
+
+        # Display speakers name
+        my_font = pygame.font.Font(self.gc_input.font, 10)
+        item = my_font.render(self.gd_input.character_list[self.talking_to].name + ":", True, (0, 0, 0))
+        self.gc_input.screen.blit(item, (self.x, self.y))
+
+        # Display Dialogue Options
+        text_line = 1
+        for option in range(self.size):
+            my_font = pygame.font.Font(self.gc_input.font, 10)
+            item = my_font.render(self.menu_item_list[option], True, (0, 0, 0))
+            self.screen.blit(item, (self.x, self.y + self.y_spacing * text_line))
+            text_line += 1
+        self.display_cursor()
+        text_line = 1
+
+        # Displays characters photo
+        self.gc_input.screen.blit(self.gd_input.character_list[self.talking_to].face_image, (self.gd_input.overlay_list[self.overlay].x,  self.gd_input.overlay_list[self.overlay].y+2))
+
+    def do_option(self):
+        menu_selection = self.gd_input.menu_list[self.name].get_current_menu_item()
+        if menu_selection == "Ask Advice":
+            self.gd_input.menu_list[CharacterDialogue.NAME].set_menu(self.talking_to, self.gd_input.character_list[self.talking_to].phrase)
+
+        elif menu_selection == "Info":
+            self.gd_input.menu_list[InfoSelectMenu.NAME].set_menu()
+
+        elif menu_selection == "Exit":
+            self.exit_all_menus()
+
+    def set_menu(self, person_talking_to):
+        self.update_menu_items_list()
+        self.gc_input.set_keyboard_manager(InMenu.ID)
+
+        self.gc_input.menu_manager.add_menu_to_stack(self.name)
+        self.set_talking_to(person_talking_to)
+
+    def give_item(self, item):
+        self.gc_input.inventory.unget_item(item, 1)
+        self.gc_input.update_game_dialogue("You gave " + self.talking_to + " 1 " + item)
+        self.gd_input.menu_list[CharacterDialogue.NAME].set_menu(self.talking_to, self.gd_input.character_list[self.talking_to].receive_gift(item))
+
+    def exit_menu(self):
+        self.gd_input.character_list[self.talking_to].set_state("idle")
+        self.unset_talking_to()
+        self.reset_cursor()
+        self.gc_input.menu_manager.deactivate_menu(self.name)
+
+
+class InfoSelectMenu(MenuTemporary):
+    NAME = "info_select_menu"
+    OVERLAYNAME = "info_select_overlay"
+
+    def __init__(self, gc_input, gd_input):
+        super().__init__(gc_input, gd_input)
+        self.menu_item_list = ["Friendship", "Items", "Key Items", "Time", "People", "Music", "Shops", "Other"]
+        self.menu_item_list.append("Exit")
+        self.menu_type = "base"
+        gd_input.add_overlay(self.OVERLAYNAME, Overlay(gc_input, gd_input, self.OVERLAYNAME, 700, 200, Spritesheet("assets/menu_images/start_menu.png", 150, 400)))
+        self.overlay = self.OVERLAYNAME
+        self.x = self.gd_input.overlay_list[self.overlay].x + self.offset_x
+        self.y = self.gd_input.overlay_list[self.overlay].y + self.offset_y
+        self.menu_type = "base"
+
+    def do_option(self):
+        menu_selection = self.get_current_menu_item()
+        self.exit_all_menus()
+
+    def choose_option(self):
+        self.do_option()
+
+
+class HitchikingMenu(MenuTemporary):
+    NAME = "hitchiking_menu"
+    OVERLAYNAME = "hitchiking_overlay"
+
+    def __init__(self, gc_input, gd_input):
+        super().__init__(gc_input, gd_input)
+        self.menu_item_list = ["Ringside", "Sandpiper"]
+        self.menu_item_list.append("Exit")
+        self.menu_type = "base"
+        gd_input.add_overlay(self.OVERLAYNAME, Overlay(gc_input, gd_input, self.OVERLAYNAME, 700, 200, Spritesheet("assets/menu_images/start_menu.png", 150, 400)))
+        self.overlay = self.OVERLAYNAME
+        self.x = self.gd_input.overlay_list[self.overlay].x + self.offset_x
+        self.y = self.gd_input.overlay_list[self.overlay].y + self.offset_y
+        self.menu_type = "base"
+
+    def do_option(self):
+        menu_selection = self.get_current_menu_item()
+
+        if menu_selection == "Ringside":
+            self.gd_input.player["Player"].teleport_to_ringside()
+            self.exit_all_menus()
+
+        if menu_selection == "Sandpiper":
+            self.gd_input.player["Player"].teleport_to_sandpiper()
+            self.exit_all_menus()
+
+        if menu_selection == "Exit":
+            self.exit_all_menus()
+
+    def choose_option(self):
+        self.do_option()

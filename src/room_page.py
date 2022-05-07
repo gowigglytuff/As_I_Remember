@@ -116,6 +116,53 @@ class Room(object):
             self.gd_input.positioner_list[self.name].fill_terrain(self.terrain_map, self.name)
 
 
+class Sandpiper(Room):
+    def __init__(self, gc_input, gd_input):
+        super().__init__(gc_input, gd_input)
+        self.terrain_map = None
+        self.obstacle_map = "assets/room_maps/sandpiper_fill_1_1.csv"
+
+        self.name = "Sandpiper"
+        self.room_width = 106
+        self.room_height = 106
+        self.left_edge_x = 1
+        self.top_edge_y = 1
+
+        self.right_edge_x = self.left_edge_x + self.room_width - 1
+        self.bottom_edge_y = self.top_edge_y + self.room_height - 1
+
+        self.map_style = "csv"
+
+        self.total_plots_x = 1
+        self.total_plots_y = 1
+        self.plot_size_x = int(self.room_width / self.total_plots_x)
+        self.plot_size_y = int(self.room_height / self.total_plots_y)
+
+    def add_room_and_plots(self):
+        sandpiper_map = TileMap("assets/room_maps/sandpiper_map_1_1.csv", self.gd_input.tiles_img_dict)
+        self.gd_input.room_list["Sandpiper"].add_room_plot("Sandpiper_1_1", Plot("Sandpiper_1_1", 1, 1, sandpiper_map.return_map(), self.gc_input, self.gd_input, "assets/room_maps/sandpiper_fill_1_1.csv"))
+        self.gd_input.room_list[self.name].activate_plot("Sandpiper_1_1")
+
+    def add_room_doors(self):
+        pass
+
+    def add_room_characters(self):
+        self.gd_input.add_character("Ian_2", GenericNPC(70, 49, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Ian_CS.png", 32, 40), "Ian_2", self.name, "Where the heck is my house?", "stay_front", Direction.DOWN, Spritesheet("assets/NPC_sprites/faces/IanFace.png", 150, 150)))
+        pass
+
+    def add_room_props(self):
+            # self.gd_input.add_prop(AppleTree.assign_dict_key(), AppleTree(38+55, 69, self.gc_input, self.gd_input, self.name))
+            # self.gd_input.add_prop(PicnicTable.assign_dict_key(), PicnicTable(13+55, 69, self.gc_input, self.gd_input, self.name))
+            self.gd_input.add_prop(StopSign.assign_dict_key(), StopSign(27, 72, self.gc_input, self.gd_input, self.name))
+            self.gd_input.add_prop(PineTree.assign_dict_key(), PineTree(40, 20, self.gc_input, self.gd_input, self.name))
+            self.gd_input.add_prop(SignPost.assign_dict_key(), SignPost(28, 14, self.gc_input, self.gd_input, self.name, "1025 Sandpipder Rd."))
+            self.gd_input.add_prop(SignPost.assign_dict_key(), SignPost(72, 65, self.gc_input, self.gd_input, self.name, "1025 Sandpipder Rd."))
+            self.gd_input.add_prop(SignPost.assign_dict_key(), SignPost(28, 82, self.gc_input, self.gd_input, self.name, "---- Sandpipder Rd."))
+            self.gd_input.add_prop(SignPost.assign_dict_key(), SignPost(20, 29, self.gc_input, self.gd_input, self.name, "---- Sandpipder Rd."))
+            self.gd_input.add_prop(SignPost.assign_dict_key(), SignPost(20, 6, self.gc_input, self.gd_input, self.name, "---- Sandpipder Rd."))
+            self.gd_input.add_prop(SignPost.assign_dict_key(), SignPost(28, 6, self.gc_input, self.gd_input, self.name, "---- Sandpipder Rd."))
+            self.gd_input.add_prop(SignPost.assign_dict_key(), SignPost(92, 65, self.gc_input, self.gd_input, self.name, "---- Sandpipder Rd."))
+
 class Ringside(Room):
     def __init__(self, gc_input, gd_input):
         super().__init__(gc_input, gd_input)
@@ -167,6 +214,7 @@ class Ringside(Room):
         self.gd_input.add_character("Maggie", GenericNPC(21+55, 82, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Maggie.png", 32, 40), "Maggie", self.name, "This outfit makes me feel really cool and powerful, so I've decided I'm going to wear it everywhere.", "stand_still", Direction.DOWN, Spritesheet("assets/NPC_sprites/faces/MaggieFace.png", 150, 150)))
         self.gd_input.add_character("Laurie", GenericNPC(32+55, 101, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Laurie.png", 32, 40), "Laurie", self.name, "Have you seen my drink anywhere?", "square", Direction.DOWN, Spritesheet("assets/NPC_sprites/faces/LaurieFace.png", 150, 150)))
         self.gd_input.add_character("Ian", GenericNPC(23+55, 59, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Ian_CS.png", 32, 40), "Ian", self.name, "Shoot, I left my wallet in the farm truck, guess I'll be paying in charm again...", "stay_front", Direction.DOWN, Spritesheet("assets/NPC_sprites/faces/IanFace.png", 150, 150)))
+        self.gd_input.add_character("Grandma", GameMaster(28+55, 70, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Grandma_CS.png", 32, 40), "Grandma", self.name, "Hi squirt, how's it going?", "stay_front", Direction.DOWN, Spritesheet("assets/NPC_sprites/faces/GrandmaFace.png", 150, 150)))
 
     def add_room_props(self):
             self.gd_input.add_prop("Coop_Building", Building(10+55, 8, self.gc_input, self.gd_input, 832, 1632, "assets/prop_sprites/Buildings/Coop_Building.png", "Coop_Building", 26, 51, self.name, "assets/prop_sprites/Buildings/building_csv/coop_fill_csv.csv"))
@@ -211,6 +259,7 @@ class Ringside(Room):
             self.gd_input.add_prop(PicnicTable.assign_dict_key(), PicnicTable(13+55, 65, self.gc_input, self.gd_input, self.name))
             self.gd_input.add_prop(PicnicTable.assign_dict_key(), PicnicTable(13+55, 69, self.gc_input, self.gd_input, self.name))
 
+
 class ComputerCentreRoom(Room):
     def __init__(self, gc_input, gd_input):
         super().__init__(gc_input, gd_input)
@@ -252,6 +301,7 @@ class ComputerCentreRoom(Room):
         self.gd_input.add_prop(ComputerRight.assign_dict_key(), ComputerRight(1, 2, self.gc_input, self.gd_input, "computer_centre"))
         self.gd_input.add_prop(ComputerBack.assign_dict_key(), ComputerBack(6, 3, self.gc_input, self.gd_input, "computer_centre"))
 
+
 class HornbyCreativeRoom(Room):
     def __init__(self, gc_input, gd_input):
         super().__init__(gc_input, gd_input)
@@ -292,6 +342,7 @@ class HornbyCreativeRoom(Room):
         self.gd_input.add_prop(Dress.assign_dict_key(), Dress(6, 2, self.gc_input, self.gd_input, self.name, "assets/prop_sprites/green_dress_stand.png"))
         self.gd_input.add_prop(Dress.assign_dict_key(), Dress(6, 3, self.gc_input, self.gd_input, self.name, "assets/prop_sprites/blue_dress_stand.png"))
 
+
 class ToTheMoon(Room):
     def __init__(self, gc_input, gd_input):
         super().__init__(gc_input, gd_input)
@@ -331,6 +382,7 @@ class ToTheMoon(Room):
         self.gd_input.add_prop(Bookcase.assign_dict_key(), Bookcase(3, 3, self.gc_input, self.gd_input, self.name))
         self.gd_input.add_prop(Counter.assign_dict_key(), Counter(1, 3, self.gc_input, self.gd_input, self.name))
 
+
 class HornbyRealestate(Room):
     def __init__(self, gc_input, gd_input):
         super().__init__(gc_input, gd_input)
@@ -369,6 +421,7 @@ class HornbyRealestate(Room):
         self.gd_input.add_prop(ComputerRight.assign_dict_key(), ComputerRight(1, 2, self.gc_input, self.gd_input, self.name))
         self.gd_input.add_prop(ComputerBack.assign_dict_key(), ComputerBack(4, 3, self.gc_input, self.gd_input, self.name))
 
+
 class IslandPotters(Room):
     def __init__(self, gc_input, gd_input):
         super().__init__(gc_input, gd_input)
@@ -406,6 +459,7 @@ class IslandPotters(Room):
 
     def add_room_props(self):
         self.gd_input.add_prop(Counter.assign_dict_key(), Counter(4, 2, self.gc_input, self.gd_input, self.name))
+
 
 class BikeShop(Room):
     def __init__(self, gc_input, gd_input):

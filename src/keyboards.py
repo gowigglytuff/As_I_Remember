@@ -158,7 +158,6 @@ class InGame(KeyboardManager):
 
         self.GameData.player["Player"].interact_with()
 
-
     def key_space(self):
         self.GameData.player["Player"].perform_diagnostic()
 
@@ -169,10 +168,12 @@ class InGame(KeyboardManager):
             self.GameData.menu_list["start_menu"].set_menu()
 
     def key_shift(self):
-        pass
+        # self.GameData.player["Player"].teleport_to_sandpiper()
+        self.GameData.key_item_list[self.GameController.inventory.selected_tool].use_item()
+
 
     def key_caps(self):
-        pass
+        self.GameData.menu_list["hitchiking_menu"].set_menu()
 
 class InMenu(KeyboardManager):
     ID = "IM_Keyer"
@@ -206,4 +207,4 @@ class InMenu(KeyboardManager):
         self.GameData.menu_list[self.GameController.menu_manager.menu_stack[0]].exit_all_menus()
 
     def key_shift(self):
-        pass
+        self.GameData.menu_list[self.GameController.menu_manager.menu_stack[0]].shift_pressed()

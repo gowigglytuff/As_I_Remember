@@ -10,6 +10,7 @@ class KeyItem(object):
         if self.check_if_can_use_item():
             self.gc_input.update_game_dialogue("You used the " + str(self.name))
             self.item_use()
+
         else:
             self.gc_input.update_game_dialogue("You attempted to use the " + str(self.name))
             self.fail_to_use_item()
@@ -128,12 +129,11 @@ class HitchingThumb(KeyItem):
         super().__init__(gd_input, gc_input)
 
     def item_use(self):
-        # TODO: Give this a use
-        self.gc_input.update_game_dialogue("You keep your Time Seeds in there...")
+        self.gd_input.menu_list["hitchiking_menu"].set_menu()
 
     def check_if_can_use_item(self):
         # TODO: Make it check if it's near a road
-        result = False
+        result = True
         return result
 
     def fail_to_use_item(self):
