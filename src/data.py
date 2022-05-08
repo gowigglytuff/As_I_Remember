@@ -9,15 +9,15 @@ class Game(object):
         self.state = state
         self.tick = tick
 
+
 class GameData(object):
     def __init__(self):
         self.settings = {}
-        self.settings["resolution"] = (1000, 800)
+        self.settings["resolution"] = (1800, 1000)
         self.settings["FPS"] = 30
-        self.base_locator_x = 400
-        self.base_locator_y = 300
         self.square_size = [32, 32]
-        self.BG = {}
+        self.base_locator_x = self.settings["resolution"][0]/2 - self.square_size[0]/2
+        self.base_locator_y = self.settings["resolution"][1]/2 - self.square_size[1]/2
         self.room_list = {}
         self.prop_list = {}
         self.decoration_list = {}
@@ -42,9 +42,6 @@ class GameData(object):
 
     def add_player(self, player_name, player_object):
         self.player[player_name] = player_object
-
-    def add_bg(self, bg_name, bg_object):
-        self.BG[bg_name] = bg_object
 
     def add_room(self, room_name, room_object):
         self.room_list[room_name] = room_object
@@ -117,6 +114,14 @@ class GameController(object):
         self.night_filter = pygame.Surface(pygame.Rect((0, 0, self.GameData.settings["resolution"][0], self.GameData.settings["resolution"][1])).size)
         self.night_filter.set_alpha(0)
 
+    def load_saved_data(self):
+        ss_data = self.GameData.spreadsheet_list["player_location"].spreadsheet_load_location()
+        self.camera[0] = ss_data["camera_x"]
+        self.camera[1] = ss_data["camera_y"]
+        self.current_room = ss_data["current_room"]
+
+    def save_game(self):
+        self.GameData.spreadsheet_list["player_location"].write_to_workbook(self.GameData.player["Player"].x, self.GameData.player["Player"].y, self.camera[0], self.camera[1], self.current_room)
 
     def add_keyboard_manager(self, keyboard_manager_name, keyboard_manager_object):
         self.keyboard_manager_list[keyboard_manager_name] = keyboard_manager_object
@@ -174,10 +179,10 @@ class GameController(object):
         surface.blit(self.night_filter, (0, 0, self.GameData.settings["resolution"][0], self.GameData.settings["resolution"][1]))
 
     def darken_sky(self):
-        self.night_filter.set_alpha(self.night_filter.get_alpha()+12)
+        self.night_filter.set_alpha(self.night_filter.get_alpha()+20)
 
     def lighten_sky(self):
-        self.night_filter.set_alpha(self.night_filter.get_alpha()-12)
+        self.night_filter.set_alpha(self.night_filter.get_alpha()-20)
 
     def tick_hour(self):
         print("Did it?")

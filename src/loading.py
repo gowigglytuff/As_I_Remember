@@ -12,61 +12,50 @@ def init_game(gd_input, gc_input):
     :type gd_input: GameData
     :return: None
     '''
+
     # initialize pygame
     pygame.init()
     pygame.display.set_caption('As I Remember')
     pygame.key.set_repeat()
 
+    start_music(gc_input, gd_input)
+
+    # Load all the different keyboard modes that you encounter when in different things like the menus and stuff
+    load_keyboard_managers(gc_input, gd_input)
+    load_menus2(gc_input, gd_input)
+    load_items(gc_input, gd_input)
+    load_outfits(gc_input, gd_input)
+    load_key_items(gc_input, gd_input)
+    load_goals(gc_input, gd_input)
+    load_tileset(gc_input, gd_input)
+    load_player(gc_input, gd_input)
+    init_all_rooms(gc_input, gd_input)
+    load_spreadsheets(gc_input, gd_input)
+    load_all_saved_data(gc_input, gd_input)
+
+def start_music(GameController, GameData):
     pygame.mixer.init()
     pygame.mixer.music.load("assets/music/little_song.mp3")
     pygame.mixer.music.set_volume(0.7)
-    # pygame.mixer.music.play(-1)
+    pygame.mixer.music.play(-1)
 
+def load_player(GameController, GameData):
+    GameData.add_player(Player.NAME, Player(0, 0, GameController, GameData))
+    GameData.player[Player.NAME].activate_timer()
 
-    # Load all the differnt keyboard modes that the you encounter when in different things like the menus and stuff
-    load_keyboard_managers(gc_input, gd_input)
-
-    # load all the different menus
-    # load_menus(gc_input, gd_input)
-    load_menus2(gc_input, gd_input)
-
-    # load the full list of items that are available in the game
-    load_items(gc_input, gd_input)
-
-    load_outfits(gc_input, gd_input)
-
-    # load the full list of key items that are available in the game
-    load_key_items(gc_input, gd_input)
-
-    load_goals(gc_input, gd_input)
-
-
-
+def load_tileset(GameController, GameData):
     # Load the Tileset
-    FT = TileSet("assets/room_maps/csv_tiles/MapTileset.png", 32, 32, 40, 40)
-    BT = TileSet("assets/room_maps/csv_tiles/Big_Tileset.png", 32, 32, 40, 10)
-    T = TileSet("assets/room_maps/csv_tiles/tileset.png", 32, 32, 3, 5)
+    T = TileSet("assets/room_maps/csv_tiles/MapTileset.png", 32, 32, 40, 40)
     # store each tile in a dictionary in GameData that will be accessed by the TileMap function
-    gd_input.add_tile_dict(FT.load_tile_images())
-
-    # add the player to the game
-    gd_input.add_player(Player.NAME, Player(0, 0, gc_input, gd_input))
-    gd_input.player[Player.NAME].activate_timer()
-
-    # run functions that initiate all rooms
-    init_all_rooms(gc_input, gd_input)
-
-    load_spreadsheets(gc_input, gd_input)
-
+    GameData.add_tile_dict(T.load_tile_images())
 
 def load_spreadsheets(GameController, GameData):
-    # GameData.add_spreadsheet("Outfits", GameSpreadsheet(GameController, GameData, "assets/spreadsheets/outfits_sheet.xlsx", "Outfits"))
     GameData.add_spreadsheet(ThanksSpreadsheet.NAME, ThanksSpreadsheet(GameController, GameData))
+    GameData.add_spreadsheet(PlayerLocationSheet.NAME, PlayerLocationSheet(GameController, GameData))
 
 
 def load_keyboard_managers(GameController, GameData):
     # load all keyboard managers
-    # TODO: add other possible Keyboard_managers
     GameController.add_keyboard_manager(InGame.ID, InGame(GameController, GameData))
     GameController.add_keyboard_manager(InMenu.ID, InMenu(GameController, GameData))
 
@@ -78,55 +67,42 @@ def load_menus2(GameController, GameData):
     # GameData.add_overlay("text_box_2", TextBox2(GameController, GameData, "text_box_2", 250, 550, Spritesheet("assets/menu_images/text_box.png", 500, 150)))
     GameData.add_menu(GameActionDialogue.NAME, GameActionDialogue(GameController, GameData))
     GameData.add_menu(StatsMenu.NAME, StatsMenu(GameController, GameData))
+    GameData.add_menu(UseMenu.NAME, UseMenu(GameController, GameData))
+    GameData.add_menu(YesNoMenu.NAME, YesNoMenu(GameController, GameData))
 
     GameData.add_menu(StartMenu.NAME, StartMenu(GameController, GameData))
     GameData.add_menu(InventoryMenu.NAME, InventoryMenu(GameController, GameData))
-    GameData.add_menu(ToDoListMenu.NAME, ToDoListMenu(GameController, GameData))
-
     GameData.add_menu(KeyInventoryMenu.NAME, KeyInventoryMenu(GameController, GameData))
-
-    # the menu that pops up when a player selects an item from the inventory or key inventory
-    GameData.add_menu(UseMenu.NAME, UseMenu(GameController, GameData))
-
-    GameData.add_menu(YesNoMenu.NAME, YesNoMenu(GameController, GameData))
-
+    GameData.add_menu(ToDoListMenu.NAME, ToDoListMenu(GameController, GameData))
     GameData.add_menu(ProfileMenu.NAME, ProfileMenu(GameController, GameData))
-
     GameData.add_menu(MapMenu.NAME, MapMenu(GameController, GameData))
+    GameData.add_menu(OutfitsMenu.NAME, OutfitsMenu(GameController, GameData))
+    GameData.add_menu(HitchikingMenu.NAME, HitchikingMenu(GameController, GameData))
 
     GameData.add_menu(ConversationOptionsMenu.NAME, ConversationOptionsMenu(GameController, GameData))
-
     GameData.add_menu(CharacterDialogue.NAME, CharacterDialogue(GameController, GameData))
-
     GameData.add_menu(GiftingMenu.NAME, GiftingMenu(GameController, GameData))
 
-    GameData.add_menu(ShopkeeperDialogue.NAME, ShopkeeperDialogue(GameController, GameData))
-
-    # the menu that pops up when you talk to an NPC and have to decide how to interact with them
     GameData.add_menu(ShopKeeperInteractMenu.NAME, ShopKeeperInteractMenu(GameController, GameData))
-
+    GameData.add_menu(ShopkeeperDialogue.NAME, ShopkeeperDialogue(GameController, GameData))
     GameData.add_menu(BuyingMenu.NAME, BuyingMenu(GameController, GameData))
-
     GameData.add_menu(SellingMenu.NAME, SellingMenu(GameController, GameData))
 
-    GameData.add_menu(OutfitsMenu.NAME, OutfitsMenu(GameController, GameData))
-
     GameData.add_menu(GameMasterInteractMenu.NAME, GameMasterInteractMenu(GameController, GameData))
-
     GameData.add_menu(InfoSelectMenu.NAME, InfoSelectMenu(GameController, GameData))
-
-    GameData.add_menu(HitchikingMenu.NAME, HitchikingMenu(GameController, GameData))
 
 
 def load_goals(gc_input, gd_input):
     gd_input.add_goal(Goal1.NAME, Goal1( gd_input, gc_input))
     gd_input.add_goal(Goal2.NAME, Goal2(gd_input, gc_input))
 
+
 def load_outfits(GameController, GameData):
     GameData.add_outfit(CowboyOutfit.NAME, CowboyOutfit(GameData, GameController))
     GameData.add_outfit(NormalOutfit.NAME, NormalOutfit(GameData, GameController))
     GameData.add_outfit(FrogOutfit.NAME, FrogOutfit(GameData, GameController))
     GameData.add_outfit(ShumaOutfit.NAME, ShumaOutfit(GameData, GameController))
+
 
 def load_items(GameController, GameData):
     # adds all the items that exist in the game to the storage in GameData
@@ -142,7 +118,6 @@ def load_items(GameController, GameData):
     GameData.add_item(FossilA.NAME, FossilA(GameData, GameController))
     GameData.add_item(FossilB.NAME, FossilB(GameData, GameController))
     GameData.add_item(FossilC.NAME, FossilC(GameData, GameController))
-
 
     # TODO: Make this only the items you start with
     # adds the number of items to your inventory - temporary - for testing purposes
@@ -238,3 +213,7 @@ def init_all_rooms(gc_input, gd_input):
 
     gd_input.add_room("bike_shop", BikeShop(gc_input, gd_input))
     gd_input.room_list["bike_shop"].activate_room()
+
+def load_all_saved_data(gc_input, gd_input):
+    gd_input.player["Player"].load_location()
+    gc_input.load_saved_data()

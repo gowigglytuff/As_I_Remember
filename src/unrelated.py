@@ -14,3 +14,9 @@ for vow in vowels:
         print(con_list)
     print("-----")
 print(count)
+
+def run_words(leading, letters_list):
+    for x in letters_list:
+        print(leading + "a"+x, leading + "e"+x,leading + "i"+x,leading + "o"+x, leading + "u"+x)
+
+run_words("R",["f", "t", "p"])

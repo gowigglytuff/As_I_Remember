@@ -36,8 +36,8 @@ class Player(Feature):
     NAME = "Player"
     def __init__(self, x, y, gc_input, gd_input):
         super().__init__(x, y, gc_input, gd_input)
-        self.x = 79
-        self.y = 79
+        self.x = None
+        self.y = None
         self.imagex = 0
         self.imagey = 0
         self.state = "idle"
@@ -53,6 +53,13 @@ class Player(Feature):
         self.name = "Bug"
         self.current_outfit = "Normal Outfit"
         self.offset_y = 16
+
+    def load_location(self):
+        ss_data = self.gd_input.spreadsheet_list["player_location"].spreadsheet_load_location()
+        self.x = ss_data["player_x"]
+        self.y = ss_data["player_y"]
+        self.imagex = ss_data["player_image_x"]
+        self.imagey = ss_data["player_image_y"]
 
     def put_on_outfit(self, new_outfit_spritesheet, name):
         self.spritesheet = new_outfit_spritesheet
@@ -84,8 +91,6 @@ class Player(Feature):
 
     def empty_tile_standing(self):
         self.gd_input.positioner_list[self.gc_input.current_room].empty_tile(self)
-
-
 
     def activate_timer(self):
         pygame.time.set_timer(self.step_timer, 20)
@@ -302,8 +307,6 @@ class Player(Feature):
 
         #Player Location:
         print("(" + str(self.x) + ", " + str(self.y) + ")")
-
-
 
 
 class NPC(Feature):
@@ -623,6 +626,7 @@ class GenericNPC(NPC):
             reaction = "bad"
         return reaction
 
+
 class GameMaster(NPC):
     WALK_LEFT = "walk_left"
     WALK_RIGHT = "walk_right"
@@ -666,51 +670,6 @@ class GameMaster(NPC):
         if gift_name in self.gift_reactions["bad"]:
             reaction = "bad"
         return reaction
-
-class Maggie(NPC):
-    WALK_LEFT = "walk_left"
-    WALK_RIGHT = "walk_right"
-    WALK_FRONT = "walk_front"
-    WALK_BACK = "walk_back"
-    TURNING_LEFT = "turning_left"
-    TURNING_FRONT = "turning_front"
-    TURNING_RIGHT = "turning_right"
-    TURNING_BACK = "turning_back"
-    IDLE = "idle"
-    AVAILABLE_STATES = [WALK_BACK, WALK_RIGHT, WALK_BACK, WALK_FRONT, TURNING_BACK, TURNING_RIGHT, TURNING_FRONT, TURNING_LEFT, IDLE]
-
-    def __init__(self, x, y, gc_input, gd_input, spritesheet, name, room, phrase, walk_pattern, start_facing, face_image):
-        super().__init__(x, y, gc_input, gd_input, spritesheet, name, room, phrase, walk_pattern, start_facing, face_image)
-        assert self.state in self.AVAILABLE_STATES
-        self.gift_reactions = {'bad': ["Cheese", "Bread"],
-                               'good': ["Book 1", "Book 2", "Book 3"]}
-
-    def activate_timers(self):
-        pygame.time.set_timer(self.initiate, 1000)
-        pygame.time.set_timer(self.action_clock, 80)
-
-    def get_interacted_with(self):
-        if self.state == "idle":
-            self.npc_face_player()
-            # TODO: Fix this to not be a string
-            self.gd_input.menu_list[ConversationOptionsMenu.NAME].set_menu(self.name)
-            self.set_state("talking")
-            self.gc_input.update_game_dialogue("You talked to " + self.name)
-        else:
-            pass
-
-    def receive_gift(self, gift_name):
-        get_phrase = self.gd_input.spreadsheet_list["Thanks"].spreadsheet_get_phrase(self.name, self.parse_gift(gift_name))
-        return get_phrase
-
-    def parse_gift(self, gift_name):
-        reaction = "neutral"
-        if gift_name in self.gift_reactions["good"]:
-            reaction = "good"
-        if gift_name in self.gift_reactions["bad"]:
-            reaction = "bad"
-        return reaction
-
 
 
 class ShopKeeper(NPC):

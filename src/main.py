@@ -36,12 +36,13 @@ def run_game_loop():
     pygame.time.set_timer(printout, 500)
 
     time_ticking = pygame.USEREVENT + 150
-    pygame.time.set_timer(time_ticking, 60000)
+    pygame.time.set_timer(time_ticking, 600)
 
     while running:
         pygame.draw.rect(gc.screen, (0, 0, 0), (0, 0, 1000, 10000))
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
+                gc.save_game()
                 running = False
 
             if event.type == pygame.KEYDOWN:
