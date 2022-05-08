@@ -27,9 +27,6 @@ class Inventory(object):
         self.gd_input.menu_list[self.bag_slots[self.current_bag_slot]].set_menu()
 
     def bag_slot_left(self):
-        print(self.gd_input.menu_list[self.bag_slots[self.current_bag_slot]])
-        print(self.current_bag_slot)
-
         self.gd_input.menu_list[self.bag_slots[self.current_bag_slot]].exit_menu()
         # if self.current_bag_slot > 0:
         #     self.current_bag_slot -=1
@@ -38,13 +35,10 @@ class Inventory(object):
 
         if self.current_bag_slot == 0:
             self.current_bag_slot = 1
-            print("moving 1")
+
         elif self.current_bag_slot == 1:
             self.current_bag_slot = 0
-            print("moving 2")
 
-        print(self.gd_input.menu_list[self.bag_slots[self.current_bag_slot]])
-        print(self.current_bag_slot)
         self.gd_input.menu_list[self.bag_slots[self.current_bag_slot]].set_menu()
 
     def reset_bag_slot(self):
@@ -64,7 +58,7 @@ class Inventory(object):
         elif (item_name in self.current_items) and (quantity_used > self.gd_input.item_list[item_name].quantity):
             self.gc_input.update_game_dialogue("You do not have enough " + str(item_name))
         else:
-            print("there was nothing to remove??")
+            self.gc_input.update_game_dialogue("there was nothing to remove??")
 
         if self.gd_input.item_list[item_name].quantity == 0:
             self.current_items.remove(self.gd_input.item_list[item_name].name)
@@ -73,13 +67,11 @@ class Inventory(object):
         #TODO: Make sure this can't go below 0
         if self.gd_input.item_list[item_name].quantity > quantity_used:
             self.gd_input.item_list[item_name].quantity -= quantity_used
-            print(self.gd_input.item_list[item_name].quantity)
         elif self.gd_input.item_list[item_name].quantity == quantity_used:
             self.current_items.remove(self.gd_input.item_list[item_name].name)
             self.gd_input.item_list[item_name].quantity -= quantity_used
-            print(str(self.gd_input.item_list[item_name].quantity) + " part2")
         else:
-            print("you cannot use that now")
+            self.gc_input.update_game_dialogue("You do not have that many " + item_name)
 
     def get_key_item(self, key_item_name: str):
         self.current_key_items.append(self.gd_input.key_item_list[key_item_name].name)

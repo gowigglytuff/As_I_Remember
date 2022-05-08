@@ -18,7 +18,6 @@ class Item(object):
 
     def use_item(self):
         if self.check_if_can_use_item():
-            print("You used the " + self.name)
             self.gc_input.inventory.use_up_item(self.name, 1)
             self.gc_input.update_game_dialogue("You used 1 " + str(self.name))
             self.item_use()

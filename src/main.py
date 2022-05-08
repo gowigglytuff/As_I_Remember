@@ -72,7 +72,6 @@ def run_game_loop():
 
             if event.type == time_ticking:
                 gc.tick_hour()
-                print("it ticked")
 
         if isinstance(gc.current_keyboard_manager, InGame):
             if gc.current_keyboard_manager.current_direction_key is not None:

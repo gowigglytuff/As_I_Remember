@@ -66,7 +66,6 @@ class Prop(Feature):
     @classmethod
     def assign_dict_key(cls):
         key = cls._TYPENAME + "_" + str(cls._serial_number)
-        print(cls._serial_number)
         return key
 
     @classmethod
@@ -165,7 +164,6 @@ class Building(GenericProp):
         for item in range(self.size_y):
             self.image_list.append(self.spritesheet.get_strip(item))
             if self.name == "Coop_Building":
-                # print(self.spritesheet.get_strip(item))
                 pass
 
         try:

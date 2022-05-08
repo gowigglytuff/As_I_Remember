@@ -300,13 +300,7 @@ class Player(Feature):
 
     def perform_diagnostic(self):
         # Player Image Location:
-        print("(" + str(self.imagex) + ", " + str(self.imagey) + ")")
-
-        # Camera Location
-        print("(" + str(self.gc_input.camera[0]) + ", " + str(self.gc_input.camera[1]) + ")")
-
-        #Player Location:
-        print("(" + str(self.x) + ", " + str(self.y) + ")")
+        print("PlayerImg: " + "(" + str(self.imagex) + ", " + str(self.imagey) + ")", "Camera: " +"(" + str(self.gc_input.camera[0]) + ", " + str(self.gc_input.camera[1]) + ")", "Player: " + "(" + str(self.x) + ", " + str(self.y) + ")")
 
 
 class NPC(Feature):

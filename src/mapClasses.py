@@ -56,26 +56,6 @@ class Door(object):
         self.name = name
         self.entrance = entrance
 
-class BG(object):
-    def __init__(self, x, y, name, img_file_name_list, GameController, GameData):
-        self.x = x
-        self.y = y
-        self.img_file_name_list = img_file_name_list
-        self.img_list = [file_name for file_name in
-                        img_file_name_list]
-
-        self.cur_img = 0
-        self.img = self.img_list[self.cur_img]
-        self.name = name
-        self.GameController = GameController
-        self.GameData = GameData
-
-    def draw(self, screen):
-        screen.blit(self.img,
-                    (((self.x + self.GameController.camera[0]) * self.GameData.square_size[0]) + self.GameData.base_locator_x,
-                    ((self.y + self.GameController.camera[1]) * self.GameData.square_size[1]) + self.GameData.base_locator_y))
-
-
 class Position_Manager(object):
     def __init__(self, name, GameController, GameData):
         self.GameController = GameController
@@ -100,7 +80,6 @@ class Position_Manager(object):
                                 if drawable.fill_map[size_y][size_x] == '0':
                                     pass
                                 elif drawable.fill_map[size_y][size_x] == '1':
-                                    #print(size_x, size_y)
                                     self.GameData.room_list[fillable_room].tiles_array[drawable.x + size_x][drawable.y + size_y].object_filling = drawable.name
                                     self.GameData.room_list[fillable_room].tiles_array[drawable.x + size_x][drawable.y + size_y].filling_type = drawable.feature_type
                                     self.GameData.room_list[fillable_room].tiles_array[drawable.x + size_x][drawable.y + size_y].full = True
@@ -275,7 +254,6 @@ class Position_Manager(object):
                     full = True
                 else:
                     full = False
-        #print(str(direction) + str(full))
         return full
 
     def check_door(self, mover, direction):

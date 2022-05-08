@@ -18,30 +18,34 @@ class GameData(object):
         self.square_size = [32, 32]
         self.base_locator_x = self.settings["resolution"][0]/2 - self.square_size[0]/2
         self.base_locator_y = self.settings["resolution"][1]/2 - self.square_size[1]/2
-        self.room_list = {}
+
+        self.player = {}
+        self.character_list = {}
         self.prop_list = {}
         self.decoration_list = {}
+
+        self.room_list = {}
+        self.positioner_list = {}
         self.door_list = {}
+        self.tiles_img_dict = {}
+        self.keyboard_manager_list = {}
+
         self.menu_list = {}
         self.overlay_list = {}
-        self.character_list = {}
-        self.player = {}
-        self.positioner_list = {}
         self.item_list = {}
         self.key_item_list = {}
-        self.tiles_img_dict = {}
         self.goal_list = {}
         self.outfit_list = {}
         self.spreadsheet_list = {}
-
-    def get_all_drawables(self):
-        return list(self.character_list.values()) + list(self.player.values()) + list(self.prop_list.values())
 
     def add_character(self, character_name, character_object):
         self.character_list[character_name] = character_object
 
     def add_player(self, player_name, player_object):
         self.player[player_name] = player_object
+
+    def add_keyboard_manager(self, keyboard_manager_name, keyboard_manager_object):
+        self.keyboard_manager_list[keyboard_manager_name] = keyboard_manager_object
 
     def add_room(self, room_name, room_object):
         self.room_list[room_name] = room_object
@@ -88,46 +92,48 @@ class GameData(object):
 
 # TODO: Make this in charge of some things
 class GameSettings(object):
-    def __init__(self, GameData):
-        self.GameData = GameData
+    def __init__(self, gd_input):
+        self.gd_input = gd_input
 
 
 class GameController(object):
-    def __init__(self, GameData):
-        self.GameData = GameData
-        self.inventory = None
+    def __init__(self, gd_input):
+        self.gd_input = gd_input
+        self.inventory = None # type: Inventory
         self.menu_manager = None # type: MenuManager
-        self.screen = pygame.display.set_mode(GameData.settings["resolution"])
-        self.clock = pygame.time.Clock()
-        self._FPS = GameData.settings["FPS"]
+        self.screen = pygame.display.set_mode(gd_input.settings["resolution"])
+        self._FPS = gd_input.settings["FPS"]
         self.font = "assets/fonts/PressStart.ttf"
-        self.current_room = "Ringside"
-        self.camera = [-24-55, -79]
-        self.current_menu = None # type: Menu
-        self.keyboard_manager_list = {}
         self.current_keyboard_manager = None # type: KeyboardManager
-        self.current_key_pressed = None
-        self.your_coins = 127
-        self.your_seeds = 24
-        self.day_of_summer = 12
-        self.time_of_day = 17
-        self.night_filter = pygame.Surface(pygame.Rect((0, 0, self.GameData.settings["resolution"][0], self.GameData.settings["resolution"][1])).size)
+        self.current_menu = None # type: Menu
+        self.clock = pygame.time.Clock()
+        self.night_filter = pygame.Surface(pygame.Rect((0, 0, self.gd_input.settings["resolution"][0], self.gd_input.settings["resolution"][1])).size)
         self.night_filter.set_alpha(0)
+        self.number_of_sky_change_hours = 6
+        self.fully_dark_hours = 4
 
+
+        self.current_room = "Ringside"
+        self.camera = [-79, -79]
+        self.your_coins = 127 # type: int
+        self.your_seeds = 24 # type: int
+        self.day_of_summer = 12 # type: int
+        self.time_of_day = 14 # type: int
+        self.night_filter_current_alpha = 0
+
+    # save stuff
     def load_saved_data(self):
-        ss_data = self.GameData.spreadsheet_list["player_location"].spreadsheet_load_location()
+        ss_data = self.gd_input.spreadsheet_list["player_location"].spreadsheet_load_location()
         self.camera[0] = ss_data["camera_x"]
         self.camera[1] = ss_data["camera_y"]
         self.current_room = ss_data["current_room"]
 
     def save_game(self):
-        self.GameData.spreadsheet_list["player_location"].write_to_workbook(self.GameData.player["Player"].x, self.GameData.player["Player"].y, self.camera[0], self.camera[1], self.current_room)
+        self.gd_input.spreadsheet_list["player_location"].write_to_workbook(self.gd_input.player["Player"].x, self.gd_input.player["Player"].y, self.camera[0], self.camera[1], self.current_room)
 
-    def add_keyboard_manager(self, keyboard_manager_name, keyboard_manager_object):
-        self.keyboard_manager_list[keyboard_manager_name] = keyboard_manager_object
-
-    def set_keyboard_manager(self, active_manager):
-        self.current_keyboard_manager = self.keyboard_manager_list[active_manager]
+    # setters
+    def set_current_keyboard_manager(self, active_manager):
+        self.current_keyboard_manager = self.gd_input.keyboard_manager_list[active_manager]
 
     def set_current_menu(self, active_menu):
         self.current_menu = active_menu
@@ -147,14 +153,18 @@ class GameController(object):
     def get_current_drawables(self, fillable):
         drawables_list = []
 
-        for character in self.GameData.room_list[fillable].character_list:
+        for character in self.gd_input.room_list[fillable].character_list:
             if character != None:
-                drawables_list.append(self.GameData.character_list[character])
-        for prop in self.GameData.room_list[fillable].prop_list:
-            drawables_list.append(self.GameData.prop_list[prop])
-        drawables_list.append(self.GameData.player["Player"])
+                drawables_list.append(self.gd_input.character_list[character])
+
+        for prop in self.gd_input.room_list[fillable].prop_list:
+            drawables_list.append(self.gd_input.prop_list[prop])
+
+        drawables_list.append(self.gd_input.player["Player"])
+
         return drawables_list
 
+    # wallet stuff
     def get_coins(self, amount):
         self.your_coins = self.your_coins + amount
 
@@ -170,75 +180,80 @@ class GameController(object):
             success = False
         return success
 
+    # other
     def update_game_dialogue(self, phrase):
-        self.GameData.menu_list[GameActionDialogue.NAME].show_dialogue(phrase)
+        self.gd_input.menu_list[GameActionDialogue.NAME].show_dialogue(phrase)
 
-    # TODO: Edit for efficiency
+    # time stuff
     def display_night_sky_layer(self, surface):
         pygame.draw.rect(self.night_filter, (0, 0, 25), self.night_filter.get_rect())
-        surface.blit(self.night_filter, (0, 0, self.GameData.settings["resolution"][0], self.GameData.settings["resolution"][1]))
+        surface.blit(self.night_filter, (0, 0, self.gd_input.settings["resolution"][0], self.gd_input.settings["resolution"][1]))
 
     def darken_sky(self):
-        self.night_filter.set_alpha(self.night_filter.get_alpha()+20)
+        self.night_filter_current_alpha += 20
+        self.night_filter.set_alpha(self.night_filter_current_alpha)
 
     def lighten_sky(self):
-        self.night_filter.set_alpha(self.night_filter.get_alpha()-20)
+        self.night_filter_current_alpha -= 20
+        self.night_filter.set_alpha(self.night_filter_current_alpha)
 
     def tick_hour(self):
-        print("Did it?")
-        if self.time_of_day < 23:
+        if self.time_of_day < 24:
             self.time_of_day += 1
+        elif self.time_of_day == 24:
+            self.time_of_day = 1
 
-        elif self.time_of_day == 23:
-            self.time_of_day = 0
-
-        if 16 <= self.time_of_day <= 23:
+        # darken/lighten sky
+        if (24-(self.fully_dark_hours/2)-self.number_of_sky_change_hours) <= self.time_of_day <= (24-(self.fully_dark_hours/2)):
             self.darken_sky()
-
-        elif 1 <= self.time_of_day <= 8:
+        elif (1 + (self.fully_dark_hours / 2)) <= self.time_of_day <= (1 + (self.fully_dark_hours / 2) + self.number_of_sky_change_hours):
             self.lighten_sky()
 
-        print("tod:" + str(self.time_of_day))
+
+class GameState(object):
+    def __init__(self, gc_input):
+        self.gd_input = gc_input
+
 
 class Updater(object):
-    def __init__(self, GameData, GameController):
-        self.GameData = GameData
-        self.GameController = GameController
-
+    def __init__(self, gd_input, gc_input):
+        self.gd_input = gd_input
+        self.gc_input = gc_input
 
     def run_updates(self):
-        self.GameData.menu_list[StatsMenu.NAME].update_menu_items_list()
+        self.gd_input.menu_list[StatsMenu.NAME].update_menu_items_list()
 
 
 class EventsManager(object):
-    def __init__(self, GameData, GameController):
-        self.GameData = GameData
-        self.GameController = GameController
+    def __init__(self, gd_input, gc_input):
+        self.gd_input = gd_input
+        self.gc_input = gc_input
         self.step_timer = pygame.USEREVENT + 6
 
     def start_events(self):
-
         pygame.time.set_timer(self.step_timer, 60)
 
+
 class Picaso(object):
-    def __init__(self, GameData, GameController):
-        self.GameData = GameData
-        self.GameController = GameController
+    def __init__(self, gd_input, gc_input):
+        self.gd_input = gd_input
+        self.gc_input = gc_input
 
     def get_all_drawable(self):
-
         drawables_list = []
-        for character in self.GameData.room_list[self.GameController.current_room].character_list:
-            drawables_list.append(self.GameData.character_list[character])
+        for character in self.gd_input.room_list[self.gc_input.current_room].character_list:
+            drawables_list.append(self.gd_input.character_list[character])
 
-        for prop in self.GameData.room_list[self.GameController.current_room].prop_list:
-            drawables_list.append(self.GameData.prop_list[prop])
+        for prop in self.gd_input.room_list[self.gc_input.current_room].prop_list:
+            drawables_list.append(self.gd_input.prop_list[prop])
 
-        for decoration in self.GameData.room_list[self.GameController.current_room].decoration_list:
-            drawables_list.append(self.GameData.decoration_list[decoration])
+        for decoration in self.gd_input.room_list[self.gc_input.current_room].decoration_list:
+            drawables_list.append(self.gd_input.decoration_list[decoration])
 
-        drawables_list.append(self.GameData.player["Player"])
+        drawables_list.append(self.gd_input.player["Player"])
+
         drawing_order = []
+
         for drawable in drawables_list:
             for height in range(drawable.size_y):
                 height += 1
@@ -255,32 +270,24 @@ class Picaso(object):
 
 
         # drawables_list = sorted(drawables_list, key=lambda x: (x.y, x.drawing_priority))
-        # print(drawables_list)
         return final_drawing_list
 
     def big_draw(self):
         # Blits the background for the current room
-        self.GameData.room_list[self.GameController.current_room].draw_bg(self.GameController.screen)
+        self.gd_input.room_list[self.gc_input.current_room].draw_bg(self.gc_input.screen)
 
-        # get's all the drawables and prints them in order of y and printing priority
+        # Gets all the drawables and prints them in order of y and printing priority
         drawable_list = self.get_all_drawable()
         for drawable in drawable_list:
-            drawable[0].draw(self.GameController.screen)
+            drawable[0].draw(self.gc_input.screen)
 
-        # TODO: Make this work for night time
-        self.GameController.display_night_sky_layer(self.GameController.screen)
+        # Draws the square that makes it lighter or darker depending on time of day
+        self.gc_input.display_night_sky_layer(self.gc_input.screen)
 
-        for item in self.GameController.menu_manager.static_menus:
-            self.GameData.menu_list[item].display_menu()
+        # Draws the menus that are always on screen
+        for item in self.gc_input.menu_manager.static_menus:
+            self.gd_input.menu_list[item].display_menu()
 
-        for item in self.GameController.menu_manager.visible_menus:
-            self.GameData.menu_list[item].display_menu()
-
-
-class Camera(object):
-    def __init__(self, GameController, GameData, coordinates, anchor):
-        self.GameData = GameData
-        self.GameController = GameController
-        self.anchor = anchor
-        self.coordinates = [5 - self.anchor.x, 5 - self.anchor.y]
-
+        # Draws the temporary menus that are currently visible
+        for item in self.gc_input.menu_manager.visible_menus:
+            self.gd_input.menu_list[item].display_menu()

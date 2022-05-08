@@ -36,12 +36,11 @@ class GameSpreadsheet(object):
             if row[indexes[2]] == gc_input_outfit:
                 flag3 = True
 
-            if flag1 and flag2 and flag3 == True:
+            if flag1 and flag2 and flag3:
                 all_flags_true = True
 
             if all_flags_true:
                 return_phrase = row['dialogue']
-                print(row['dialogue'])
 
         return return_phrase
 
@@ -79,7 +78,7 @@ class GameSpreadsheet(object):
 
         for row in row_values:
             pass
-            # print(row)
+
         return row_values
 
 
@@ -91,7 +90,6 @@ class ThanksSpreadsheet(GameSpreadsheet):
         self.name = self.NAME
         self.workbook = load_workbook(self.file)
         self.sheet_names_list = self.workbook.sheetnames
-        print(self.sheet_names_list)
 
     def spreadsheet_get_phrase(self, character_name, reaction):
         return_phrase = 'gggzzzgGGzzz eerrooorr-'
@@ -112,8 +110,6 @@ class ThanksSpreadsheet(GameSpreadsheet):
 
         if result != "default":
             return_phrase = ss_time[result]['dialogue']
-            print(return_phrase)
-
 
         return return_phrase
 
@@ -151,7 +147,6 @@ class PlayerLocationSheet(GameSpreadsheet):
 
         row_count = sheet.max_row
         column_count = sheet.max_column
-        print(row_count, column_count)
 
         header = []
         for col in range(1, column_count + 1):
@@ -172,7 +167,6 @@ class PlayerLocationSheet(GameSpreadsheet):
         column_count = sheet.max_column
 
         for column in range(column_count):
-            print(column)
             column += 1
             if self.workbook["Player"].cell(1, column).value == "player_x":
                 self.workbook["Player"].cell(2, column).value = player_x

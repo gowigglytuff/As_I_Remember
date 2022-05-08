@@ -30,8 +30,7 @@ class MenuManager(object):
             self.visible_menus.remove(menu_to_deactivate)
 
         if len(self.menu_stack) == 0:
-            self.gc_input.set_keyboard_manager(
-                InGame.ID)
+            self.gc_input.set_current_keyboard_manager(InGame.ID)
 
 
 class Overlay(object):
@@ -206,7 +205,7 @@ class MenuTemporary(object):
     # each menu needs its own
     def set_menu(self):
         self.update_menu_items_list()
-        self.gc_input.set_keyboard_manager(InMenu.ID)
+        self.gc_input.set_current_keyboard_manager(InMenu.ID)
         self.gc_input.menu_manager.add_menu_to_stack(self.name)
 
     def exit_menu(self):
@@ -681,7 +680,7 @@ class UseMenu(MenuTemporary):
 
     def set_menu(self):
         self.update_menu_items_list()
-        self.gc_input.set_keyboard_manager(InMenu.ID)
+        self.gc_input.set_current_keyboard_manager(InMenu.ID)
         self.gc_input.menu_manager.add_menu_to_stack(self.name)
 
     def choose_option(self):
@@ -723,7 +722,7 @@ class YesNoMenu(MenuTemporary):
 
     def set_menu(self):
         self.update_menu_items_list()
-        self.gc_input.set_keyboard_manager(InMenu.ID)
+        self.gc_input.set_current_keyboard_manager(InMenu.ID)
         self.gc_input.menu_manager.add_menu_to_stack(self.name)
         self.reposition_menu()
 
@@ -817,7 +816,7 @@ class ConversationOptionsMenu(MenuTemporary):
 
     def set_menu(self, person_talking_to):
         self.update_menu_items_list()
-        self.gc_input.set_keyboard_manager(InMenu.ID)
+        self.gc_input.set_current_keyboard_manager(InMenu.ID)
 
         self.gc_input.menu_manager.add_menu_to_stack(self.name)
         self.set_talking_to(person_talking_to)
@@ -925,7 +924,7 @@ class CharacterDialogue(MenuTemporary):
         self.set_current_phrase()
         self.set_speaking_queue()
         self.gc_input.menu_manager.add_menu_to_stack(self.name)
-        self.gc_input.set_keyboard_manager(InMenu.ID)
+        self.gc_input.set_current_keyboard_manager(InMenu.ID)
 
     def cursor_down(self):
         pass
@@ -1086,7 +1085,7 @@ class ShopkeeperDialogue(CharacterDialogue):
         self.set_current_phrase()
         self.set_speaking_queue()
         self.gc_input.menu_manager.add_menu_to_stack(self.name)
-        self.gc_input.set_keyboard_manager(InMenu.ID)
+        self.gc_input.set_current_keyboard_manager(InMenu.ID)
 
     def cursor_down(self):
         pass
@@ -1124,7 +1123,7 @@ class ShopKeeperInteractMenu(MenuTemporary):
 
     def set_menu(self, person_talking_to):
         self.update_menu_items_list()
-        self.gc_input.set_keyboard_manager(InMenu.ID)
+        self.gc_input.set_current_keyboard_manager(InMenu.ID)
         self.gc_input.menu_manager.add_menu_to_stack(self.name)
         self.set_talking_to(person_talking_to)
 
@@ -1247,7 +1246,7 @@ class BuyingMenu(MenuTemporary):
     def set_menu(self, person_talking_to):
         self.talking_to = person_talking_to
         self.update_menu_items_list()
-        self.gc_input.set_keyboard_manager(InMenu.ID)
+        self.gc_input.set_current_keyboard_manager(InMenu.ID)
         self.gc_input.menu_manager.add_menu_to_stack(self.name)
 
     def update_menu_items_list(self):
@@ -1284,7 +1283,7 @@ class SellingMenu(MenuTemporary):
 
     def set_menu(self, person_talking_to):
         self.update_menu_items_list()
-        self.gc_input.set_keyboard_manager(InMenu.ID)
+        self.gc_input.set_current_keyboard_manager(InMenu.ID)
         self.gc_input.menu_manager.add_menu_to_stack(self.name)
         self.set_talking_to(person_talking_to)
 
@@ -1457,7 +1456,7 @@ class OutfitsMenu(MenuTemporary):
 
     def set_menu(self):
         self.update_menu_items_list()
-        self.gc_input.set_keyboard_manager(InMenu.ID)
+        self.gc_input.set_current_keyboard_manager(InMenu.ID)
         self.gc_input.menu_manager.add_menu_to_stack(self.name)
         self.get_outfits()
 
@@ -1550,7 +1549,7 @@ class GameMasterInteractMenu(MenuTemporary):
 
     def set_menu(self, person_talking_to):
         self.update_menu_items_list()
-        self.gc_input.set_keyboard_manager(InMenu.ID)
+        self.gc_input.set_current_keyboard_manager(InMenu.ID)
 
         self.gc_input.menu_manager.add_menu_to_stack(self.name)
         self.set_talking_to(person_talking_to)

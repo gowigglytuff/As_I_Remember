@@ -40,8 +40,6 @@ class Shovel(KeyItem):
         full = facing_tile.full
 
         if full:
-            print(object_filling, filling_type)
-
             if object_filling == "rock":
                 pass
 

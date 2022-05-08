@@ -43,7 +43,6 @@ class Room(object):
     def add_room_plots(self, img, terrain_file):
         for plots_x in range(self.total_plots_x):
             for plots_y in range(self.total_plots_y):
-                #print(plots_x + 1, plots_y + 1)
                 self.gd_input.room_list[self.name].add_room_plot((self.name + "_" + str(plots_x+1) + "_" + str(plots_y+1)), Plot(self.name, plots_x+1, plots_y+1, img, self.gc_input, self.gd_input, terrain_file))
 
     def generate_room_grid(self):

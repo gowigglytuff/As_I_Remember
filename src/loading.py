@@ -56,11 +56,11 @@ def load_spreadsheets(GameController, GameData):
 
 def load_keyboard_managers(GameController, GameData):
     # load all keyboard managers
-    GameController.add_keyboard_manager(InGame.ID, InGame(GameController, GameData))
-    GameController.add_keyboard_manager(InMenu.ID, InMenu(GameController, GameData))
+    GameData.add_keyboard_manager(InGame.ID, InGame(GameController, GameData))
+    GameData.add_keyboard_manager(InMenu.ID, InMenu(GameController, GameData))
 
     # sets the initial Keyboard Manager to be the InGame Manager
-    GameController.set_keyboard_manager(InGame.ID)
+    GameController.set_current_keyboard_manager(InGame.ID)
 
 
 def load_menus2(GameController, GameData):
