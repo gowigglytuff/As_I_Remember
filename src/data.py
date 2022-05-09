@@ -13,7 +13,7 @@ class Game(object):
 class GameData(object):
     def __init__(self):
         self.settings = {}
-        self.settings["resolution"] = (1800, 1000)
+        self.settings["resolution"] = (900, 1000)
         self.settings["FPS"] = 30
         self.square_size = [32, 32]
         self.base_locator_x = self.settings["resolution"][0]/2 - self.square_size[0]/2

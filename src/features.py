@@ -34,12 +34,14 @@ class Feature(object):
 
 class Player(Feature):
     NAME = "Player"
+
     def __init__(self, x, y, gc_input, gd_input):
         super().__init__(x, y, gc_input, gd_input)
         self.x = None
         self.y = None
         self.imagex = 0
         self.imagey = 0
+
         self.state = "idle"
         self.drawing_priority = 2
         self.step_timer = pygame.USEREVENT + 7
@@ -50,7 +52,7 @@ class Player(Feature):
         self.height = 40
         self.spritesheet = Spritesheet("assets/player/Player_CS.png", 32, 40)
         self.img = self.spritesheet.get_image(0, 0)
-        self.name = "Bug"
+        self.name = self.NAME
         self.current_outfit = "Normal Outfit"
         self.offset_y = 16
 
@@ -110,13 +112,13 @@ class Player(Feature):
     def try_walk(self, direction):
         self.turn_player(direction)
 
-        # checks mapClasses - position_manager to see if the player is acing a wall or another object
-        can_move_player = self.gd_input.positioner_list[self.gc_input.current_room].check_adj_square_full(self.gd_input.player["Player"], direction)
+        # checks mapClasses - position_manager to see if the player is facing a wall or another object
+        can_move_player = self.gd_input.positioner_list[self.gc_input.current_room].check_adj_square_full(self, direction)
 
         # Check if player is going to enter a door
-        is_door = self.gd_input.positioner_list[self.gc_input.current_room].check_door(self.gd_input.player["Player"], direction)
+        is_door = self.gd_input.positioner_list[self.gc_input.current_room].check_door(self, direction)
         if is_door:
-            self.gd_input.player["Player"].try_door(direction)
+            self.try_door(direction)
 
         #  checks to make sure the character doesn't have any obstacles in the direction they want to move
         elif can_move_player:
@@ -149,6 +151,42 @@ class Player(Feature):
         elif direction is Direction.DOWN:
             self.y += 1
         self.gd_input.positioner_list[self.gc_input.current_room].fill_tile(self)
+
+    def walk_cycle1(self):
+        row = 0
+        relevant_camera = None
+        movement = 0
+        if self.state == Direction.LEFT:
+            row = 3
+            relevant_camera = 0
+            movement = 1 / 4
+        elif self.state == Direction.RIGHT:
+            row = 2
+            relevant_camera = 0
+            movement = -1 / 4
+        elif self.state == Direction.DOWN:
+            row = 0
+            relevant_camera = 1
+            movement = -1 / 4
+        elif self.state == Direction.UP:
+            row = 1
+            relevant_camera = 1
+            movement = 1 / 4
+
+        if 0 <= self.cur_img < 3:
+            self.cur_img += 1
+            self.set_image(self.cur_img, row)
+            self.gc_input.camera[relevant_camera] += movement
+
+        elif self.cur_img == 3:
+            self.cur_img = 0
+            self.set_image(self.cur_img, row)
+            self.gc_input.camera[relevant_camera] += movement
+            self.set_state("idle")
+
+        else:
+            self.cur_img = 0
+            self.set_image(0, row)
 
     def walk_cycle(self):
         if self.state == Direction.LEFT:
