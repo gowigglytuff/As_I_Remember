@@ -211,8 +211,10 @@ class GameController(object):
 
 
 class GameState(object):
-    def __init__(self, gc_input):
-        self.gd_input = gc_input
+    def __init__(self, gd_input):
+        self.gd_input = gd_input
+        self.character_states = {"Maggie": {"x": 17, "y": 17, "friendship": 1}}
+
 
 
 class Updater(object):

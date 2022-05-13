@@ -160,6 +160,7 @@ class InGame(KeyboardManager):
 
     def key_space(self):
         self.GameData.player["Player"].perform_diagnostic()
+        self.GameData.character_list["Maggie"].write_to_gamestate()
 
     def key_control(self):
 

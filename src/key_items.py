@@ -34,7 +34,7 @@ class Shovel(KeyItem):
 
     def item_use(self):
         # TODO: Give this a use
-        facing_tile = self.gd_input.player["Player"].check_adj_tile(self.gd_input.player["Player"].get_direct(self.gd_input.player["Player"].facing))
+        facing_tile = self.gd_input.player["Player"].check_adj_tile(self.gd_input.player["Player"].facing)
         object_filling = facing_tile.object_filling
         filling_type = facing_tile.filling_type
         full = facing_tile.full
@@ -46,7 +46,7 @@ class Shovel(KeyItem):
 
     def check_if_can_use_item(self):
             result = False
-            facing_tile = self.gd_input.player["Player"].check_adj_tile(self.gd_input.player["Player"].get_direct(self.gd_input.player["Player"].facing))
+            facing_tile = self.gd_input.player["Player"].check_adj_tile(self.gd_input.player["Player"].facing)
             filling_type = facing_tile.filling_type
             if filling_type == "Rock":
                 result = True
@@ -65,7 +65,7 @@ class Hammer(KeyItem):
         super().__init__(gd_input, gc_input)
 
     def item_use(self):
-        facing_tile = self.gd_input.player["Player"].check_adj_tile(self.gd_input.player["Player"].get_direct(self.gd_input.player["Player"].facing))
+        facing_tile = self.gd_input.player["Player"].check_adj_tile(self.gd_input.player["Player"].facing)
         object_filling = facing_tile.object_filling
         filling_type = facing_tile.filling_type
         full = facing_tile.full
@@ -85,7 +85,7 @@ class Hammer(KeyItem):
 
     def check_if_can_use_item(self):
         result = False
-        facing_tile = self.gd_input.player["Player"].check_adj_tile(self.gd_input.player["Player"].get_direct(self.gd_input.player["Player"].facing))
+        facing_tile = self.gd_input.player["Player"].check_adj_tile(self.gd_input.player["Player"].facing)
         object_filling = facing_tile.object_filling
         filling_type = facing_tile.filling_type
         full = facing_tile.full

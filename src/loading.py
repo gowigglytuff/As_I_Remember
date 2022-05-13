@@ -6,7 +6,7 @@ from key_items import *
 from ss_outfits import *
 
 
-def init_game(gd_input, gc_input):
+def init_game(gd_input, gc_input, gst_input):
     '''
     :type gc_input: GameController
     :type gd_input: GameData
@@ -18,7 +18,7 @@ def init_game(gd_input, gc_input):
     pygame.display.set_caption('As I Remember')
     pygame.key.set_repeat()
 
-    start_music(gc_input, gd_input)
+    # start_music(gc_input, gd_input)
 
     # Load all the different keyboard modes that you encounter when in different things like the menus and stuff
     load_keyboard_managers(gc_input, gd_input)
@@ -29,7 +29,7 @@ def init_game(gd_input, gc_input):
     load_goals(gc_input, gd_input)
     load_tileset(gc_input, gd_input)
     load_player(gc_input, gd_input)
-    init_all_rooms(gc_input, gd_input)
+    init_all_rooms(gc_input, gd_input, gst_input)
     load_spreadsheets(gc_input, gd_input)
     load_all_saved_data(gc_input, gd_input)
 
@@ -188,9 +188,9 @@ initiate the rooms following this process:
     room using: a for loop and GameData.character_list[character].activate_timers()
 """
 
-def init_all_rooms(gc_input, gd_input):
+def init_all_rooms(gc_input, gd_input, gst_input):
 
-    gd_input.add_room("Ringside", Ringside(gc_input, gd_input))
+    gd_input.add_room("Ringside", Ringside(gc_input, gd_input, gst_input))
     gd_input.room_list["Ringside"].activate_room()
 
     gd_input.add_room("Sandpiper", Sandpiper(gc_input, gd_input))

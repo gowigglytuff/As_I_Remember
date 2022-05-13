@@ -8,6 +8,7 @@ from menus import *
 
 gd = GameData()
 gs = GameSettings(gd)
+gst = GameState(gd)
 gc = GameController(gd)
 mm = MenuManager(gd, gc)
 gc.set_menu_manager(mm)
@@ -20,7 +21,7 @@ gm = GoalManager(gd, gc)
 
 
 def main():
-    init_game(gd, gc)
+    init_game(gd, gc, gst)
     run_game_loop()
 
 def run_game_loop():

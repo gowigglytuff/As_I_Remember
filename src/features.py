@@ -152,7 +152,7 @@ class Player(Feature):
             self.y += 1
         self.gd_input.positioner_list[self.gc_input.current_room].fill_tile(self)
 
-    def walk_cycle1(self):
+    def walk_cycle(self):
         row = 0
         relevant_camera = None
         movement = 0
@@ -188,84 +188,8 @@ class Player(Feature):
             self.cur_img = 0
             self.set_image(0, row)
 
-    def walk_cycle(self):
-        if self.state == Direction.LEFT:
-            if 0 <= self.cur_img < 3:
-                self.cur_img += 1
-                self.set_image(self.cur_img, 3)
-                self.gc_input.camera[0] += 1 / 4
-
-            elif self.cur_img == (3):
-                self.cur_img = 0
-                self.set_image(self.cur_img, 3)
-                self.gc_input.camera[0] += 1 / 4
-                self.set_state("idle")
-
-            else:
-                self.cur_img = 0
-                self.set_image(0, 3)
-
-        elif self.state == Direction.RIGHT:
-            if 0 <= self.cur_img < 3:
-                self.cur_img += 1
-                self.set_image(self.cur_img, 2)
-                self.gc_input.camera[0] -= 1 / 4
-
-            elif self.cur_img == (3):
-                self.cur_img = 0
-                self.set_image(self.cur_img, 2)
-                self.gc_input.camera[0] -= 1 / 4
-                self.set_state("idle")
-
-            else:
-                self.cur_img = 0
-                self.set_image(0, 2)
-
-        elif self.state == Direction.DOWN:
-            if 0 <= self.cur_img < 3:
-                self.cur_img += 1
-                self.set_image(self.cur_img, 0)
-                self.gc_input.camera[1] -= 1 / 4
-
-            elif self.cur_img == (3):
-                self.cur_img = 0
-                self.set_image(self.cur_img, 0)
-                self.gc_input.camera[1] -= 1 / 4
-                self.set_state("idle")
-
-            else:
-                self.cur_img = 0
-                self.set_image(0, 0)
-
-
-        elif self.state == Direction.UP:
-            if 0 <= self.cur_img < 3:
-                self.cur_img += 1
-                self.set_image(self.cur_img, 1)
-
-                self.gc_input.camera[1] += 1 / 4
-
-            elif self.cur_img == (3):
-                self.cur_img = 0
-                self.set_image(self.cur_img, 1)
-                self.gc_input.camera[1] += 1 / 4
-                self.set_state("idle")
-
-            else:
-                self.cur_img = 0
-                self.set_image(0, 1)
-
     def continue_walking(self):
-        if self.state == Direction.LEFT:
-            self.walk_cycle()
-
-        elif self.state == Direction.RIGHT:
-            self.walk_cycle()
-
-        elif self.state == Direction.UP:
-            self.walk_cycle()
-
-        elif self.state == Direction.DOWN:
+        if self.state in [Direction.LEFT, Direction.RIGHT, Direction.UP, Direction.DOWN]:
             self.walk_cycle()
 
     def check_if_walking(self):
@@ -277,22 +201,19 @@ class Player(Feature):
     def check_adj_tile(self, direction_to_check):
         self.direction_to_check = direction_to_check
 
-        adj_tile_y = 0
-        adj_tile_x = 0
+        adj_tile_y = int(self.y)
+        adj_tile_x = int(self.x)
+
         if direction_to_check == Direction.UP:
             adj_tile_y = int(self.y - 1)
-            adj_tile_x = int(self.x)
 
         elif direction_to_check == Direction.DOWN:
             adj_tile_y = int(self.y + 1)
-            adj_tile_x = int(self.x)
 
         elif direction_to_check == Direction.LEFT:
-            adj_tile_y = int(self.y)
             adj_tile_x = int(self.x - 1)
 
         elif direction_to_check == Direction.RIGHT:
-            adj_tile_y = int(self.y)
             adj_tile_x = int(self.x + 1)
 
         adj_tile = self.gd_input.room_list[self.gc_input.current_room].tiles_array[adj_tile_x][adj_tile_y]
@@ -301,13 +222,12 @@ class Player(Feature):
 
     def interact_with(self):
         print("I'm interacting")
-        facing_tile = self.check_adj_tile(self.get_direct(self.facing))
+        facing_tile = self.check_adj_tile(self.facing)
         object_filling = facing_tile.object_filling
         filling_type = facing_tile.filling_type
         full = facing_tile.full
 
         if full:
-
             if filling_type in ["Generic_NPC", "NPC"]:
                 self.gd_input.character_list[object_filling].get_interacted_with()
 
@@ -316,25 +236,12 @@ class Player(Feature):
 
             elif filling_type == "Door":
                 pass
+
             else:
                 pass
 
     def set_state(self, state_to_set):
         self.state = state_to_set
-
-    def get_direct(self, direct):
-        choice = direct
-        returning_direction = None
-        if choice == Direction.LEFT:
-            returning_direction = Direction.LEFT
-        elif choice == Direction.RIGHT:
-            returning_direction = Direction.RIGHT
-        elif choice == Direction.DOWN:
-            returning_direction = Direction.DOWN
-        elif choice == Direction.UP:
-            returning_direction = Direction.UP
-
-        return returning_direction
 
     def perform_diagnostic(self):
         # Player Image Location:
@@ -358,31 +265,29 @@ class NPC(Feature):
         super().__init__(x, y, gc_input, gd_input)
         self.width = 32
         self.height = 40
-        self.set_state("idle")
         self.initiate = pygame.USEREVENT + NPC.NPC_TIMER_ID
         self.action_clock = pygame.USEREVENT + NPC.NPC_TIMER_ID + 1
         self.drawing_priority = 2
-        self.friendship = 0
         self.feature_type = "NPC"
         self.offset_y = 16
-
-        self.imagex = x
-        self.imagey = y
-
         self.spritesheet = spritesheet
         self.name = name
         self.phrase = phrase
         self.walk_pattern = walk_pattern
-        self.facing = start_facing
-        self.turn_npc(self.facing)
         self.face_image = face_image.get_image(0, 0)
-
         self.room = room
         self.gd_input.room_list[self.room].add_room_character(self.name)
-        self.current_step_number = 0
         self.get_step()
         self.phrase_thanks = "Hey, thanks!"
-        NPC.NPC_TIMER_ID += 2
+
+        self.friendship = 0
+        self.state = "idle"
+        self.imagex = x
+        self.imagey = y
+        self.facing = start_facing
+        self.turn_npc(self.facing)
+        self.current_step_number = 0
+
         assert self.state in self.AVAILABLE_STATES
 
 
@@ -658,6 +563,70 @@ class GenericNPC(NPC):
             reaction = "bad"
         return reaction
 
+class Maggie(NPC):
+    WALK_LEFT = "walk_left"
+    WALK_RIGHT = "walk_right"
+    WALK_FRONT = "walk_front"
+    WALK_BACK = "walk_back"
+    TURNING_LEFT = "turning_left"
+    TURNING_FRONT = "turning_front"
+    TURNING_RIGHT = "turning_right"
+    TURNING_BACK = "turning_back"
+    IDLE = "idle"
+    AVAILABLE_STATES = [WALK_BACK, WALK_RIGHT, WALK_BACK, WALK_FRONT, TURNING_BACK, TURNING_RIGHT, TURNING_FRONT, TURNING_LEFT, IDLE]
+
+    def __init__(self, x, y, gc_input, gd_input, spritesheet, name, room, phrase, walk_pattern, start_facing, face_image, gst_input):
+        super().__init__(x, y, gc_input, gd_input, spritesheet, name, room, phrase, walk_pattern, start_facing, face_image)
+        assert self.state in self.AVAILABLE_STATES
+        self.gst_input = gst_input
+        self.gift_reactions = {'bad': ["Cheese", "Bread"],
+                               'good': ["Book 1", "Book 2", "Book 3"]}
+
+    def activate_timers(self):
+        pygame.time.set_timer(self.initiate, 1000)
+        pygame.time.set_timer(self.action_clock, 80)
+
+    def get_interacted_with(self):
+        if self.state == "idle":
+            self.npc_face_player()
+            # TODO: Fix this to not be a string
+            self.gd_input.menu_list[ConversationOptionsMenu.NAME].set_menu(self.name)
+            self.set_state("talking")
+            self.gc_input.update_game_dialogue("You talked to " + self.name)
+        else:
+            pass
+
+    def receive_gift(self, gift_name):
+        reaction = self.parse_gift(gift_name)
+        if reaction == "good":
+            self.friendship += 5
+        elif reaction == "bad":
+            self.friendship -= 1
+        else:
+            self.friendship += 1
+        get_phrase = self.gd_input.spreadsheet_list["Thanks"].spreadsheet_get_phrase(self.name, reaction)
+        return get_phrase
+
+    def parse_gift(self, gift_name):
+        reaction = "neutral"
+        if gift_name in self.gift_reactions["good"]:
+            reaction = "good"
+        if gift_name in self.gift_reactions["bad"]:
+            reaction = "bad"
+        return reaction
+
+    def write_to_gamestate(self):
+        self.gst_input.character_states[self.name]["x"] = self.x
+        self.gst_input.character_states[self.name]["y"] = self.y
+        self.gst_input.character_states[self.name]["imagex"] = self.imagex
+        self.gst_input.character_states[self.name]["imagey"] = self.imagey
+        self.gst_input.character_states[self.name]["friendship"] = self.friendship
+        self.gst_input.character_states[self.name]["state"] = self.state
+        self.gst_input.character_states[self.name]["facing"] = self.facing
+        self.gst_input.character_states[self.name]["current step number"] = self.current_step_number
+
+
+        print(self.gst_input.character_states)
 
 class GameMaster(NPC):
     WALK_LEFT = "walk_left"
