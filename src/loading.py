@@ -21,7 +21,7 @@ def init_game(gd_input, gc_input, gst_input):
     # start_music(gc_input, gd_input)
 
     # Load all the different keyboard modes that you encounter when in different things like the menus and stuff
-    load_keyboard_managers(gc_input, gd_input)
+    load_keyboard_managers(gc_input, gd_input, gst_input)
     load_menus2(gc_input, gd_input)
     load_items(gc_input, gd_input)
     load_outfits(gc_input, gd_input)
@@ -31,7 +31,9 @@ def init_game(gd_input, gc_input, gst_input):
     load_player(gc_input, gd_input)
     init_all_rooms(gc_input, gd_input, gst_input)
     load_spreadsheets(gc_input, gd_input)
-    load_all_saved_data(gc_input, gd_input)
+    gc_input.read_all_states()
+
+
 
 def start_music(GameController, GameData):
     pygame.mixer.init()
@@ -54,9 +56,9 @@ def load_spreadsheets(GameController, GameData):
     GameData.add_spreadsheet(PlayerLocationSheet.NAME, PlayerLocationSheet(GameController, GameData))
 
 
-def load_keyboard_managers(GameController, GameData):
+def load_keyboard_managers(GameController, GameData, gst_input):
     # load all keyboard managers
-    GameData.add_keyboard_manager(InGame.ID, InGame(GameController, GameData))
+    GameData.add_keyboard_manager(InGame.ID, InGame(GameController, GameData, gst_input))
     GameData.add_keyboard_manager(InMenu.ID, InMenu(GameController, GameData))
 
     # sets the initial Keyboard Manager to be the InGame Manager
@@ -193,27 +195,23 @@ def init_all_rooms(gc_input, gd_input, gst_input):
     gd_input.add_room("Ringside", Ringside(gc_input, gd_input, gst_input))
     gd_input.room_list["Ringside"].activate_room()
 
-    gd_input.add_room("Sandpiper", Sandpiper(gc_input, gd_input))
+    gd_input.add_room("Sandpiper", Sandpiper(gc_input, gd_input, gst_input))
     gd_input.room_list["Sandpiper"].activate_room()
 
-    gd_input.add_room("computer_centre", ComputerCentreRoom(gc_input, gd_input))
+    gd_input.add_room("computer_centre", ComputerCentreRoom(gc_input, gd_input, gst_input))
     gd_input.room_list["computer_centre"].activate_room()
 
-    gd_input.add_room("hornby_creative", HornbyCreativeRoom(gc_input, gd_input))
+    gd_input.add_room("hornby_creative", HornbyCreativeRoom(gc_input, gd_input, gst_input))
     gd_input.room_list["hornby_creative"].activate_room()
 
-    gd_input.add_room("to_the_moon", ToTheMoon(gc_input, gd_input))
+    gd_input.add_room("to_the_moon", ToTheMoon(gc_input, gd_input, gst_input))
     gd_input.room_list["to_the_moon"].activate_room()
 
-    gd_input.add_room("hornby_realestate", HornbyRealestate(gc_input, gd_input))
+    gd_input.add_room("hornby_realestate", HornbyRealestate(gc_input, gd_input, gst_input))
     gd_input.room_list["hornby_realestate"].activate_room()
 
-    gd_input.add_room("island_potters", IslandPotters(gc_input, gd_input))
+    gd_input.add_room("island_potters", IslandPotters(gc_input, gd_input, gst_input))
     gd_input.room_list["island_potters"].activate_room()
 
-    gd_input.add_room("bike_shop", BikeShop(gc_input, gd_input))
+    gd_input.add_room("bike_shop", BikeShop(gc_input, gd_input, gst_input))
     gd_input.room_list["bike_shop"].activate_room()
-
-def load_all_saved_data(gc_input, gd_input):
-    gd_input.player["Player"].load_location()
-    gc_input.load_saved_data()

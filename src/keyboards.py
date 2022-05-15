@@ -4,6 +4,8 @@ from enum import Enum
 import pygame
 
 # from menus import *
+from data import *
+import pickle
 
 
 class Direction(Enum):
@@ -138,9 +140,10 @@ class KeyboardManager():
 class InGame(KeyboardManager):
     ID = "IG_Keyer"
 
-    def __init__(self, GameController, GameData):
-        self.GameController = GameController
-        self.GameData = GameData
+    def __init__(self, GameController, GameData, gst_input):
+        self.GameController = GameController  # type: GameController
+        self.GameData = GameData  # type: GameData
+        self.gst_input = gst_input  # type: GameState
         self.current_direction_key = None
         self.associated_menu = None
 
@@ -160,7 +163,6 @@ class InGame(KeyboardManager):
 
     def key_space(self):
         self.GameData.player["Player"].perform_diagnostic()
-        self.GameData.character_list["Maggie"].write_to_gamestate()
 
     def key_control(self):
 
@@ -172,9 +174,9 @@ class InGame(KeyboardManager):
         # self.GameData.player["Player"].teleport_to_sandpiper()
         self.GameData.key_item_list[self.GameController.inventory.selected_tool].use_item()
 
-
     def key_caps(self):
-        self.GameData.menu_list["hitchiking_menu"].set_menu()
+        pass
+
 
 class InMenu(KeyboardManager):
     ID = "IM_Keyer"

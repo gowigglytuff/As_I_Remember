@@ -512,58 +512,59 @@ class NPC(Feature):
                     self.current_step_number += 1
 
 
+# class GenericNPC(NPC):
+#     WALK_LEFT = "walk_left"
+#     WALK_RIGHT = "walk_right"
+#     WALK_FRONT = "walk_front"
+#     WALK_BACK = "walk_back"
+#     TURNING_LEFT = "turning_left"
+#     TURNING_FRONT = "turning_front"
+#     TURNING_RIGHT = "turning_right"
+#     TURNING_BACK = "turning_back"
+#     IDLE = "idle"
+#     AVAILABLE_STATES = [WALK_BACK, WALK_RIGHT, WALK_BACK, WALK_FRONT, TURNING_BACK, TURNING_RIGHT, TURNING_FRONT, TURNING_LEFT, IDLE]
+#
+#     def __init__(self, x, y, gc_input, gd_input, spritesheet, name, room, phrase, walk_pattern, start_facing, face_image):
+#         super().__init__(x, y, gc_input, gd_input, spritesheet, name, room, phrase, walk_pattern, start_facing, face_image)
+#         assert self.state in self.AVAILABLE_STATES
+#         self.gift_reactions = {'bad': ["Cheese", "Bread"],
+#                                'good': ["Book 1", "Book 2", "Book 3"]}
+#
+#     def activate_timers(self):
+#         pygame.time.set_timer(self.initiate, 1000)
+#         pygame.time.set_timer(self.action_clock, 80)
+#
+#     def get_interacted_with(self):
+#         if self.state == "idle":
+#             self.npc_face_player()
+#             # TODO: Fix this to not be a string
+#             self.gd_input.menu_list[ConversationOptionsMenu.NAME].set_menu(self.name)
+#             self.set_state("talking")
+#             self.gc_input.update_game_dialogue("You talked to " + self.name)
+#         else:
+#             pass
+#
+#     def receive_gift(self, gift_name):
+#         reaction = self.parse_gift(gift_name)
+#         if reaction == "good":
+#             self.friendship += 5
+#         elif reaction == "bad":
+#             self.friendship -= 1
+#         else:
+#             self.friendship += 1
+#         get_phrase = self.gd_input.spreadsheet_list["Thanks"].spreadsheet_get_phrase(self.name, reaction)
+#         return get_phrase
+#
+#     def parse_gift(self, gift_name):
+#         reaction = "neutral"
+#         if gift_name in self.gift_reactions["good"]:
+#             reaction = "good"
+#         if gift_name in self.gift_reactions["bad"]:
+#             reaction = "bad"
+#         return reaction
+
+
 class GenericNPC(NPC):
-    WALK_LEFT = "walk_left"
-    WALK_RIGHT = "walk_right"
-    WALK_FRONT = "walk_front"
-    WALK_BACK = "walk_back"
-    TURNING_LEFT = "turning_left"
-    TURNING_FRONT = "turning_front"
-    TURNING_RIGHT = "turning_right"
-    TURNING_BACK = "turning_back"
-    IDLE = "idle"
-    AVAILABLE_STATES = [WALK_BACK, WALK_RIGHT, WALK_BACK, WALK_FRONT, TURNING_BACK, TURNING_RIGHT, TURNING_FRONT, TURNING_LEFT, IDLE]
-
-    def __init__(self, x, y, gc_input, gd_input, spritesheet, name, room, phrase, walk_pattern, start_facing, face_image):
-        super().__init__(x, y, gc_input, gd_input, spritesheet, name, room, phrase, walk_pattern, start_facing, face_image)
-        assert self.state in self.AVAILABLE_STATES
-        self.gift_reactions = {'bad': ["Cheese", "Bread"],
-                               'good': ["Book 1", "Book 2", "Book 3"]}
-
-    def activate_timers(self):
-        pygame.time.set_timer(self.initiate, 1000)
-        pygame.time.set_timer(self.action_clock, 80)
-
-    def get_interacted_with(self):
-        if self.state == "idle":
-            self.npc_face_player()
-            # TODO: Fix this to not be a string
-            self.gd_input.menu_list[ConversationOptionsMenu.NAME].set_menu(self.name)
-            self.set_state("talking")
-            self.gc_input.update_game_dialogue("You talked to " + self.name)
-        else:
-            pass
-
-    def receive_gift(self, gift_name):
-        reaction = self.parse_gift(gift_name)
-        if reaction == "good":
-            self.friendship += 5
-        elif reaction == "bad":
-            self.friendship -= 1
-        else:
-            self.friendship += 1
-        get_phrase = self.gd_input.spreadsheet_list["Thanks"].spreadsheet_get_phrase(self.name, reaction)
-        return get_phrase
-
-    def parse_gift(self, gift_name):
-        reaction = "neutral"
-        if gift_name in self.gift_reactions["good"]:
-            reaction = "good"
-        if gift_name in self.gift_reactions["bad"]:
-            reaction = "bad"
-        return reaction
-
-class Maggie(NPC):
     WALK_LEFT = "walk_left"
     WALK_RIGHT = "walk_right"
     WALK_FRONT = "walk_front"
@@ -616,6 +617,7 @@ class Maggie(NPC):
         return reaction
 
     def write_to_gamestate(self):
+        self.gst_input.character_states[self.name] = {}
         self.gst_input.character_states[self.name]["x"] = self.x
         self.gst_input.character_states[self.name]["y"] = self.y
         self.gst_input.character_states[self.name]["imagex"] = self.imagex
@@ -625,8 +627,6 @@ class Maggie(NPC):
         self.gst_input.character_states[self.name]["facing"] = self.facing
         self.gst_input.character_states[self.name]["current step number"] = self.current_step_number
 
-
-        print(self.gst_input.character_states)
 
 class GameMaster(NPC):
     WALK_LEFT = "walk_left"

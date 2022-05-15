@@ -8,8 +8,12 @@ from menus import *
 
 gd = GameData()
 gs = GameSettings(gd)
-gst = GameState(gd)
-gc = GameController(gd)
+
+pickle_in = open("gamestate.pickle", "rb")
+gst = pickle.load(pickle_in)  # type: GameState
+pickle_in.close()
+print(gst.player_state)
+gc = GameController(gd, gst)
 mm = MenuManager(gd, gc)
 gc.set_menu_manager(mm)
 em = EventsManager(gd, gc)
@@ -19,6 +23,15 @@ gc.set_inventory(inv)
 up = Updater(gd, gc)
 gm = GoalManager(gd, gc)
 
+
+# pickle_out = open("gamestatebase.pickle", "wb")
+# pickle.dump(gst, pickle_out)
+# pickle_out.close()
+#
+# pickle_in = open("gamestatebase.pickle", "rb")
+# g = pickle.load(pickle_in)
+# print(g.game_controls)
+# pickle_in.close()
 
 def main():
     init_game(gd, gc, gst)
@@ -44,6 +57,7 @@ def run_game_loop():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 gc.save_game()
+                gc.pickle_gamestate()
                 running = False
 
             if event.type == pygame.KEYDOWN:

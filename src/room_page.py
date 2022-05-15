@@ -6,9 +6,10 @@ from prop_page import *
 
 
 class Room(object):
-    def __init__(self, gc_input, gd_input):
+    def __init__(self, gc_input, gd_input, gst_input):
         self.gc_input = gc_input
         self.gd_input = gd_input
+        self.gst_input = gst_input
 
         self.name = None
         self.room_width = 0
@@ -116,8 +117,8 @@ class Room(object):
 
 
 class Sandpiper(Room):
-    def __init__(self, gc_input, gd_input):
-        super().__init__(gc_input, gd_input)
+    def __init__(self, gc_input, gd_input, gst_input):
+        super().__init__(gc_input, gd_input, gst_input)
         self.terrain_map = None
         self.obstacle_map = "assets/room_maps/sandpiper_fill_1_1.csv"
 
@@ -146,7 +147,7 @@ class Sandpiper(Room):
         pass
 
     def add_room_characters(self):
-        self.gd_input.add_character("Ian_2", GenericNPC(70, 49, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Ian_CS.png", 32, 40), "Ian_2", self.name, "Where the heck is my house?", "stay_front", Direction.DOWN, Spritesheet("assets/NPC_sprites/faces/IanFace.png", 150, 150)))
+        self.gd_input.add_character("Ian_2", GenericNPC(70, 49, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Ian_CS.png", 32, 40), "Ian_2", self.name, "Where the heck is my house?", "stay_front", Direction.DOWN, Spritesheet("assets/NPC_sprites/faces/IanFace.png", 150, 150), self.gst_input))
         pass
 
     def add_room_props(self):
@@ -162,12 +163,12 @@ class Sandpiper(Room):
             self.gd_input.add_prop(SignPost.assign_dict_key(), SignPost(28, 6, self.gc_input, self.gd_input, self.name, "---- Sandpipder Rd."))
             self.gd_input.add_prop(SignPost.assign_dict_key(), SignPost(92, 65, self.gc_input, self.gd_input, self.name, "---- Sandpipder Rd."))
 
+
 class Ringside(Room):
     def __init__(self, gc_input, gd_input, gst_input):
-        super().__init__(gc_input, gd_input)
+        super().__init__(gc_input, gd_input, gst_input)
         self.terrain_map = None
         self.obstacle_map = None
-        self.gst_input =gst_input
 
         self.name = "Ringside"
         self.room_width = 55* 2
@@ -204,16 +205,16 @@ class Ringside(Room):
         self.gd_input.room_list[self.name].add_room_door("ringside_to_bike_shop", Door("Ringside", "bike_shop", 40+55, 91, 2, 6, "ringside_to_bike_shop", [Direction.UP]))
 
     def add_room_characters(self):
-        self.gd_input.add_character("Deb", GenericNPC(30+55, 76, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Deb_CS.png", 32, 40), "Deb", self.name, "Something strange is going on around here, have you heard about the children disapearing? Their parents couldn't even remember their names...", "stay_left", Direction.LEFT, Spritesheet("assets/NPC_sprites/faces/DebFace.png", 150, 150)))
-        self.gd_input.add_character("Alex", Maggie(17+55, 70, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/alex_lamont_CS.png", 32, 40), "Alex", self.name, "Hey Shuma, I feel like I haven't seen you in a long time... but didn't we just go to the beach togther on Friday? I seem to be losing track of time so much recently...", "square", Direction.DOWN, Spritesheet("assets/NPC_sprites/faces/AlexFace.png", 150, 150), self.gst_input))
-        self.gd_input.add_character("Jamara", GenericNPC(31+55, 90, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Jamara_CS.png", 32, 40), "Jamara", self.name, "What do you think the greatest joy in life is? I haven't figured it out yet... I enjoy a whole lot of stuff, but I feel like nothing I've done so far is quite it.", "pace", Direction.DOWN, Spritesheet("assets/NPC_sprites/faces/JamaraFace.png", 150, 150)))
-        self.gd_input.add_character("Donna", GenericNPC(39+55, 78, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Donna_Tuelle_CS.png", 32, 40), "Donna", self.name, "You know, it's the strangest thing, my daughter Alex showed up the other day to ask me to watch her kids... but I don't remember having grandkids. I watched them anyway, but I swear I've never met them...", "left_right", Direction.DOWN, Spritesheet("assets/NPC_sprites/faces/DonnaFace.png", 150, 150)))
-        self.gd_input.add_character("Clair", GenericNPC(30+55, 60, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Clair_CS.png", 32, 40), "Clair", self.name, "I love this place but sometimes I feel like I should just pack everything up and run far away...", "square", Direction.DOWN, Spritesheet("assets/NPC_sprites/faces/ClairFace.png", 150, 150)))
-        self.gd_input.add_character("Clayton", GenericNPC(23+55, 72, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Clayton_CS.png", 32, 40), "Clayton", self.name, "Nyah! Why is everybody on this island so weird?? And have you seen the cost of icecream??? Of all the days to forget my boomerang at home...", "spin", Direction.DOWN, Spritesheet("assets/NPC_sprites/faces/ClaytonFace.png", 150, 150)))
-        self.gd_input.add_character("Marilyn", GenericNPC(29+55, 76, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Marilyn_CS.png", 32, 40), "Marilyn", self.name, "Have you seen my son around? He's always running off and getting up to mischief", "stay_right", Direction.RIGHT, Spritesheet("assets/NPC_sprites/faces/MarilynFace.png", 150, 150)))
-        self.gd_input.add_character("Maggie", Maggie(21+55, 82, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Maggie.png", 32, 40), "Maggie", self.name, "This outfit makes me feel really cool and powerful, so I've decided I'm going to wear it everywhere.", "stand_still", Direction.DOWN, Spritesheet("assets/NPC_sprites/faces/MaggieFace.png", 150, 150), self.gst_input))
-        self.gd_input.add_character("Laurie", GenericNPC(32+55, 101, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Laurie.png", 32, 40), "Laurie", self.name, "Have you seen my drink anywhere?", "square", Direction.DOWN, Spritesheet("assets/NPC_sprites/faces/LaurieFace.png", 150, 150)))
-        self.gd_input.add_character("Ian", GenericNPC(23+55, 59, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Ian_CS.png", 32, 40), "Ian", self.name, "Shoot, I left my wallet in the farm truck, guess I'll be paying in charm again...", "stay_front", Direction.DOWN, Spritesheet("assets/NPC_sprites/faces/IanFace.png", 150, 150)))
+        self.gd_input.add_character("Deb", GenericNPC(30+55, 76, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Deb_CS.png", 32, 40), "Deb", self.name, "Something strange is going on around here, have you heard about the children disapearing? Their parents couldn't even remember their names...", "stay_left", Direction.LEFT, Spritesheet("assets/NPC_sprites/faces/DebFace.png", 150, 150), self.gst_input))
+        self.gd_input.add_character("Alex", GenericNPC(17+55, 70, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/alex_lamont_CS.png", 32, 40), "Alex", self.name, "Hey Shuma, I feel like I haven't seen you in a long time... but didn't we just go to the beach togther on Friday? I seem to be losing track of time so much recently...", "square", Direction.DOWN, Spritesheet("assets/NPC_sprites/faces/AlexFace.png", 150, 150), self.gst_input))
+        self.gd_input.add_character("Jamara", GenericNPC(31+55, 90, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Jamara_CS.png", 32, 40), "Jamara", self.name, "What do you think the greatest joy in life is? I haven't figured it out yet... I enjoy a whole lot of stuff, but I feel like nothing I've done so far is quite it.", "pace", Direction.DOWN, Spritesheet("assets/NPC_sprites/faces/JamaraFace.png", 150, 150), self.gst_input))
+        self.gd_input.add_character("Donna", GenericNPC(39+55, 78, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Donna_Tuelle_CS.png", 32, 40), "Donna", self.name, "You know, it's the strangest thing, my daughter Alex showed up the other day to ask me to watch her kids... but I don't remember having grandkids. I watched them anyway, but I swear I've never met them...", "left_right", Direction.DOWN, Spritesheet("assets/NPC_sprites/faces/DonnaFace.png", 150, 150), self.gst_input))
+        self.gd_input.add_character("Clair", GenericNPC(30+55, 60, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Clair_CS.png", 32, 40), "Clair", self.name, "I love this place but sometimes I feel like I should just pack everything up and run far away...", "square", Direction.DOWN, Spritesheet("assets/NPC_sprites/faces/ClairFace.png", 150, 150), self.gst_input))
+        self.gd_input.add_character("Clayton", GenericNPC(23+55, 72, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Clayton_CS.png", 32, 40), "Clayton", self.name, "Nyah! Why is everybody on this island so weird?? And have you seen the cost of icecream??? Of all the days to forget my boomerang at home...", "spin", Direction.DOWN, Spritesheet("assets/NPC_sprites/faces/ClaytonFace.png", 150, 150), self.gst_input))
+        self.gd_input.add_character("Marilyn", GenericNPC(29+55, 76, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Marilyn_CS.png", 32, 40), "Marilyn", self.name, "Have you seen my son around? He's always running off and getting up to mischief", "stay_right", Direction.RIGHT, Spritesheet("assets/NPC_sprites/faces/MarilynFace.png", 150, 150), self.gst_input))
+        self.gd_input.add_character("Maggie", GenericNPC(21+55, 82, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Maggie.png", 32, 40), "Maggie", self.name, "This outfit makes me feel really cool and powerful, so I've decided I'm going to wear it everywhere.", "stand_still", Direction.DOWN, Spritesheet("assets/NPC_sprites/faces/MaggieFace.png", 150, 150), self.gst_input))
+        self.gd_input.add_character("Laurie", GenericNPC(32+55, 101, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Laurie.png", 32, 40), "Laurie", self.name, "Have you seen my drink anywhere?", "square", Direction.DOWN, Spritesheet("assets/NPC_sprites/faces/LaurieFace.png", 150, 150), self.gst_input))
+        self.gd_input.add_character("Ian", GenericNPC(23+55, 59, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Ian_CS.png", 32, 40), "Ian", self.name, "Shoot, I left my wallet in the farm truck, guess I'll be paying in charm again...", "stay_front", Direction.DOWN, Spritesheet("assets/NPC_sprites/faces/IanFace.png", 150, 150), self.gst_input))
         self.gd_input.add_character("Grandma", GameMaster(28+55, 70, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Grandma_CS.png", 32, 40), "Grandma", self.name, "Hi squirt, how's it going?", "stay_front", Direction.DOWN, Spritesheet("assets/NPC_sprites/faces/GrandmaFace.png", 150, 150)))
 
     def add_room_props(self):
@@ -261,8 +262,8 @@ class Ringside(Room):
 
 
 class ComputerCentreRoom(Room):
-    def __init__(self, gc_input, gd_input):
-        super().__init__(gc_input, gd_input)
+    def __init__(self, gc_input, gd_input, gst_input):
+        super().__init__(gc_input, gd_input, gst_input)
 
         self.terrain_map = None
         self.obstacle_map = None
@@ -292,9 +293,9 @@ class ComputerCentreRoom(Room):
         self.gd_input.room_list[self.name].add_room_door("computer_centre_to_ringside", Door("computer_centre", "Ringside",  3, 4, 11+55, 85, "computer_centre_to_ringside", [Direction.DOWN]))
 
     def add_room_characters(self):
-        self.gd_input.add_character("CC_Guy2", GenericNPC(2, 2, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Sub_CS.png", 32, 40), "CC_Guy2", self.name, "You have such strange customs here, what in the world is a yurt?", "stay_left", Direction.LEFT, Spritesheet("assets/NPC_sprites/faces/NeutralFace.png", 150, 150)))
-        self.gd_input.add_character("CC_Guy3", GenericNPC(4, 2, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Sub_CS.png", 32, 40), "CC_Guy3", self.name, "Leave me alone human!.. I mean... dude", "stay_left", Direction.LEFT, Spritesheet("assets/NPC_sprites/faces/NeutralFace.png", 150, 150)))
-        self.gd_input.add_character("CC_Guy1", GenericNPC(6, 2, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Sub_CS.png", 32, 40), "CC_Guy1", self.name, "Do you know what this strange box is?", "stay_front", Direction.DOWN, Spritesheet("assets/NPC_sprites/faces/NeutralFace.png", 150, 150)))
+        self.gd_input.add_character("CC_Guy2", GenericNPC(2, 2, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Sub_CS.png", 32, 40), "CC_Guy2", self.name, "You have such strange customs here, what in the world is a yurt?", "stay_left", Direction.LEFT, Spritesheet("assets/NPC_sprites/faces/NeutralFace.png", 150, 150), self.gst_input))
+        self.gd_input.add_character("CC_Guy3", GenericNPC(4, 2, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Sub_CS.png", 32, 40), "CC_Guy3", self.name, "Leave me alone human!.. I mean... dude", "stay_left", Direction.LEFT, Spritesheet("assets/NPC_sprites/faces/NeutralFace.png", 150, 150), self.gst_input))
+        self.gd_input.add_character("CC_Guy1", GenericNPC(6, 2, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Sub_CS.png", 32, 40), "CC_Guy1", self.name, "Do you know what this strange box is?", "stay_front", Direction.DOWN, Spritesheet("assets/NPC_sprites/faces/NeutralFace.png", 150, 150), self.gst_input))
 
     def add_room_props(self):
         self.gd_input.add_prop(ComputerRight.assign_dict_key(), ComputerRight(3, 2, self.gc_input, self.gd_input, "computer_centre"))
@@ -303,8 +304,8 @@ class ComputerCentreRoom(Room):
 
 
 class HornbyCreativeRoom(Room):
-    def __init__(self, gc_input, gd_input):
-        super().__init__(gc_input, gd_input)
+    def __init__(self, gc_input, gd_input, gst_input):
+        super().__init__(gc_input, gd_input, gst_input)
 
         self.terrain_map = None
         self.obstacle_map = None
@@ -344,8 +345,8 @@ class HornbyCreativeRoom(Room):
 
 
 class ToTheMoon(Room):
-    def __init__(self, gc_input, gd_input):
-        super().__init__(gc_input, gd_input)
+    def __init__(self, gc_input, gd_input, gst_input):
+        super().__init__(gc_input, gd_input, gst_input)
 
         self.terrain_map = None
         self.obstacle_map = None
@@ -384,8 +385,8 @@ class ToTheMoon(Room):
 
 
 class HornbyRealestate(Room):
-    def __init__(self, gc_input, gd_input):
-        super().__init__(gc_input, gd_input)
+    def __init__(self, gc_input, gd_input, gst_input):
+        super().__init__(gc_input, gd_input, gst_input)
 
         self.terrain_map = None
         self.obstacle_map = None
@@ -415,16 +416,17 @@ class HornbyRealestate(Room):
         self.gd_input.room_list[self.name].add_room_door("hornby_realestate_to_ringside", Door("hornby_realestate", "Ringside", 1, 4, 39+55, 76, "hornby_realestate_to_ringside", [Direction.DOWN]))
 
     def add_room_characters(self):
-        self.gd_input.add_character("Guy4", GenericNPC(2, 2, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Sub_CS.png", 32, 40), "Guy4", self.name, "Sorry, Jenessa's out for the day.", "stay_left", Direction.LEFT, Spritesheet("assets/NPC_sprites/faces/NeutralFace.png", 150, 150)))
-        self.gd_input.add_character("Guy5", GenericNPC(4, 2, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Sub_CS.png", 32, 40), "Guy5", self.name, "Sorry, Donna's out for the day.", "stay_front", Direction.DOWN, Spritesheet("assets/NPC_sprites/faces/NeutralFace.png", 150, 150)))
+        self.gd_input.add_character("Guy4", GenericNPC(2, 2, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Sub_CS.png", 32, 40), "Guy4", self.name, "Sorry, Jenessa's out for the day.", "stay_left", Direction.LEFT, Spritesheet("assets/NPC_sprites/faces/NeutralFace.png", 150, 150), self.gst_input))
+        self.gd_input.add_character("Guy5", GenericNPC(4, 2, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Sub_CS.png", 32, 40), "Guy5", self.name, "Sorry, Donna's out for the day.", "stay_front", Direction.DOWN, Spritesheet("assets/NPC_sprites/faces/NeutralFace.png", 150, 150), self.gst_input))
+
     def add_room_props(self):
         self.gd_input.add_prop(ComputerRight.assign_dict_key(), ComputerRight(1, 2, self.gc_input, self.gd_input, self.name))
         self.gd_input.add_prop(ComputerBack.assign_dict_key(), ComputerBack(4, 3, self.gc_input, self.gd_input, self.name))
 
 
 class IslandPotters(Room):
-    def __init__(self, gc_input, gd_input):
-        super().__init__(gc_input, gd_input)
+    def __init__(self, gc_input, gd_input, gst_input):
+        super().__init__(gc_input, gd_input, gst_input)
 
         self.terrain_map = None
         self.obstacle_map = None
@@ -455,15 +457,15 @@ class IslandPotters(Room):
         self.gd_input.room_list[self.name].add_room_door("island_potters_to_ringside_2", Door("island_potters", "Ringside", 4, 4, 41+55, 64, "island_potters_to_ringside_2", [Direction.DOWN]))
 
     def add_room_characters(self):
-        self.gd_input.add_character("IP_Guy1", GenericNPC(5, 2, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Sub_CS.png", 32, 40), "IP_Guy1", self.name, "I never understood this pottery stuff, now whittling, that I like", "stay_front", Direction.DOWN, Spritesheet("assets/NPC_sprites/faces/NeutralFace.png", 150, 150)))
+        self.gd_input.add_character("IP_Guy1", GenericNPC(5, 2, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Sub_CS.png", 32, 40), "IP_Guy1", self.name, "I never understood this pottery stuff, now whittling, that I like", "stay_front", Direction.DOWN, Spritesheet("assets/NPC_sprites/faces/NeutralFace.png", 150, 150), self.gst_input))
 
     def add_room_props(self):
         self.gd_input.add_prop(Counter.assign_dict_key(), Counter(4, 2, self.gc_input, self.gd_input, self.name))
 
 
 class BikeShop(Room):
-    def __init__(self, gc_input, gd_input):
-        super().__init__(gc_input, gd_input)
+    def __init__(self, gc_input, gd_input, gst_input):
+        super().__init__(gc_input, gd_input, gst_input)
 
         self.terrain_map = None
         self.obstacle_map = None
@@ -493,7 +495,7 @@ class BikeShop(Room):
         self.gd_input.room_list[self.name].add_room_door("bike_shop_to_ringside", Door("bike_sho", "Ringside", 2, 7, 40+55, 92, "bike_shop_to_ringside", [Direction.DOWN]))
 
     def add_room_characters(self):
-        self.gd_input.add_character("BS_Guy1", GenericNPC(2, 2, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Sub_CS.png", 32, 40), "BS_Guy1", self.name, "You don't look like you'd know how to ride a bike...", "stay_front", Direction.DOWN, Spritesheet("assets/NPC_sprites/faces/NeutralFace.png", 150, 150)))
+        self.gd_input.add_character("BS_Guy1", GenericNPC(2, 2, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Sub_CS.png", 32, 40), "BS_Guy1", self.name, "You don't look like you'd know how to ride a bike...", "stay_front", Direction.DOWN, Spritesheet("assets/NPC_sprites/faces/NeutralFace.png", 150, 150), self.gst_input))
 
 
     def add_room_props(self):

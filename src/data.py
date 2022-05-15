@@ -2,6 +2,7 @@ import pygame
 
 from inventory import *
 from menus import *
+import pickle
 
 
 class Game(object):
@@ -96,9 +97,11 @@ class GameSettings(object):
         self.gd_input = gd_input
 
 
+
 class GameController(object):
-    def __init__(self, gd_input):
-        self.gd_input = gd_input
+    def __init__(self, gd_input, gst_input):
+        self.gst_input = gst_input  # type: GameState
+        self.gd_input = gd_input  # type: GameData
         self.inventory = None # type: Inventory
         self.menu_manager = None # type: MenuManager
         self.screen = pygame.display.set_mode(gd_input.settings["resolution"])
@@ -108,28 +111,114 @@ class GameController(object):
         self.current_menu = None # type: Menu
         self.clock = pygame.time.Clock()
         self.night_filter = pygame.Surface(pygame.Rect((0, 0, self.gd_input.settings["resolution"][0], self.gd_input.settings["resolution"][1])).size)
-        self.night_filter.set_alpha(0)
+
         self.number_of_sky_change_hours = 6
         self.fully_dark_hours = 4
+
+        # self.read_all_controls()
 
 
         self.current_room = "Ringside"
         self.camera = [-79, -79]
-        self.your_coins = 127 # type: int
-        self.your_seeds = 24 # type: int
-        self.day_of_summer = 12 # type: int
-        self.time_of_day = 14 # type: int
+        self.your_coins = 127  # type: int
+        self.your_seeds = 24  # type: int
+        self.day_of_summer = 12  # type: int
+        self.time_of_day = 14  # type: int
         self.night_filter_current_alpha = 0
 
-    # save stuff
-    def load_saved_data(self):
-        ss_data = self.gd_input.spreadsheet_list["player_location"].spreadsheet_load_location()
-        self.camera[0] = ss_data["camera_x"]
-        self.camera[1] = ss_data["camera_y"]
-        self.current_room = ss_data["current_room"]
+        self.night_filter.set_alpha(self.night_filter_current_alpha)
 
-    def save_game(self):
-        self.gd_input.spreadsheet_list["player_location"].write_to_workbook(self.gd_input.player["Player"].x, self.gd_input.player["Player"].y, self.camera[0], self.camera[1], self.current_room)
+    def write_all_to_gamestate(self):
+        self.write_all_controls()
+        self.write_all_characters()
+        self.write_all_player()
+
+    def write_all_player(self):
+        player_state_dict = {}
+        player_state_dict["player_x"] = self.gd_input.player["Player"].x
+        player_state_dict["player_y"] = self.gd_input.player["Player"].y
+        player_state_dict["player_image_x"] = self.gd_input.player["Player"].imagex
+        player_state_dict["player_image_y"] = self.gd_input.player["Player"].imagey
+        self.gst_input.player_state = player_state_dict
+
+    def write_all_controls(self):
+        states_dict = {}
+        states_dict["game_data"] = {}
+        states_dict["game_data"]["your_coins"] = self.your_coins
+        states_dict["game_data"]["camera"] = self.camera
+        states_dict["game_data"]["current_room"] = self.current_room
+        states_dict["game_data"]["your_seeds"] = self.your_seeds
+        states_dict["game_data"]["day_of_summer"] = self.day_of_summer
+        states_dict["game_data"]["time_of_day"] = self.time_of_day
+        states_dict["game_data"]["night_filter_current_alpha"] = self.night_filter_current_alpha
+        self.gst_input.game_controls = states_dict
+
+    def write_all_characters(self):
+        characters_dict = {}
+        for character in self.gd_input.character_list:
+            try:
+                characters_dict[self.gd_input.character_list[character].name] = {}
+                characters_dict[self.gd_input.character_list[character].name]["x"] = self.gd_input.character_list[character].x
+                characters_dict[self.gd_input.character_list[character].name]["y"] = self.gd_input.character_list[character].y
+                characters_dict[self.gd_input.character_list[character].name]["imagex"] = self.gd_input.character_list[character].imagex
+                characters_dict[self.gd_input.character_list[character].name]["imagey"] = self.gd_input.character_list[character].imagey
+                characters_dict[self.gd_input.character_list[character].name]["friendship"] = self.gd_input.character_list[character].friendship
+                characters_dict[self.gd_input.character_list[character].name]["state"] = self.gd_input.character_list[character].state
+                characters_dict[self.gd_input.character_list[character].name]["facing"] = self.gd_input.character_list[character].facing
+                characters_dict[self.gd_input.character_list[character].name]["current step number"] = self.gd_input.character_list[character].current_step_number
+                print("Wrote " + character)
+            except:
+                print("An error occured for " + character)
+
+        self.gst_input.character_states = characters_dict
+
+    def pickle_gamestate(self):
+        self.write_all_controls()
+        self.write_all_player()
+
+        pickle_out = open("gamestate.pickle", "wb")
+        pickle.dump(self.gst_input, pickle_out)
+        pickle_out.close()
+
+        # save stuff
+    def read_all_states(self):
+        self.read_all_controls()
+        self.read_all_player()
+        self.read_all_characters()
+
+    def read_all_controls(self):
+        states_dict = self.gst_input.game_controls
+        self.your_coins = states_dict["game_data"]["your_coins"]
+        self.camera = states_dict["game_data"]["camera"]
+        self.current_room = states_dict["game_data"]["current_room"]
+        self.your_seeds = states_dict["game_data"]["your_seeds"]
+        self.day_of_summer = states_dict["game_data"]["day_of_summer"]
+        self.time_of_day = states_dict["game_data"]["time_of_day"]
+        self.night_filter_current_alpha = states_dict["game_data"]["night_filter_current_alpha"]
+
+        self.night_filter.set_alpha(self.night_filter_current_alpha)
+
+    def read_all_characters(self):
+        characters_dict = self.gst_input.character_states
+        for character in self.gd_input.character_list:
+            try:
+                self.gd_input.character_list[character].x = characters_dict[self.gd_input.character_list[character].name]["x"]
+                self.gd_input.character_list[character].y = characters_dict[self.gd_input.character_list[character].name]["y"]
+                self.gd_input.character_list[character].imagex = characters_dict[self.gd_input.character_list[character].name]["imagex"]
+                self.gd_input.character_list[character].imagey = characters_dict[self.gd_input.character_list[character].name]["imagey"]
+                self.gd_input.character_list[character].friendship = characters_dict[self.gd_input.character_list[character].name]["friendship"]
+                self.gd_input.character_list[character].state = characters_dict[self.gd_input.character_list[character].name]["state"]
+                self.gd_input.character_list[character].facing = characters_dict[self.gd_input.character_list[character].name]["facing"]
+                self.gd_input.character_list[character].current_step_number = characters_dict[self.gd_input.character_list[character].name]["current step number"]
+                print("Read " + character)
+            except:
+                print("An error occured while reading " + character)
+
+    def read_all_player(self):
+        self.gd_input.player["Player"].x = self.gst_input.player_state["player_x"]
+        self.gd_input.player["Player"].y = self.gst_input.player_state["player_y"]
+        self.gd_input.player["Player"].imagex = self.gst_input.player_state["player_image_x"]
+        self.gd_input.player["Player"].imagey = self.gst_input.player_state["player_image_y"]
 
     # setters
     def set_current_keyboard_manager(self, active_manager):
@@ -211,11 +300,33 @@ class GameController(object):
 
 
 class GameState(object):
-    def __init__(self, gd_input):
-        self.gd_input = gd_input
-        self.character_states = {"Maggie": {"x": 17, "y": 17, "friendship": 1}}
+    def __init__(self):
+        self.player_state = {}
+        self.game_controls = {}
+        self.character_states = {}
+        self.prop_states = {}
 
+    def pickle_characters(self):
+        pickle_out = open("character_states.pickle", "wb")
+        pickle.dump(self.character_states, pickle_out)
+        pickle_out.close()
 
+    def unpickle_characters(self):
+        pickle_in = open("character_states.pickle", "rb")
+        self.character_states = pickle.load(pickle_in)
+        print(self.character_states)
+        pickle_in.close()
+
+    def pickle_self(self):
+        pickle_out = open("GAMESTATE.pickle", "wb")
+        pickle.dump(GameState, pickle_out)
+        pickle_out.close()
+
+    def unpickle_self(self):
+        pickle_in = open("GAMESTATE.pickle", "rb")
+        g = pickle.load(pickle_in)
+        print(g.game_controls)
+        pickle_in.close()
 
 class Updater(object):
     def __init__(self, gd_input, gc_input):
