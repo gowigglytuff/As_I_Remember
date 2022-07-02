@@ -31,6 +31,7 @@ def init_game(gd_input, gc_input, gst_input):
     load_player(gc_input, gd_input)
     init_all_rooms(gc_input, gd_input, gst_input)
     load_spreadsheets(gc_input, gd_input)
+
     gc_input.read_all_states()
 
 
@@ -215,3 +216,5 @@ def init_all_rooms(gc_input, gd_input, gst_input):
 
     gd_input.add_room("bike_shop", BikeShop(gc_input, gd_input, gst_input))
     gd_input.room_list["bike_shop"].activate_room()
+
+    gd_input.positioner_list[gc_input.current_room].fill_obstacles(gc_input.current_room)

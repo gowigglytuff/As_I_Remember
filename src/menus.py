@@ -649,19 +649,47 @@ class MapMenu(MenuTemporary):
         super().__init__(gc_input, gd_input)
         gd_input.add_overlay(self.OVERLAYNAME, Overlay(gc_input, gd_input, self.OVERLAYNAME, 250, 200, Spritesheet("assets/menu_images/hornby_map.png", 500, 400)))
         self.overlay = self.OVERLAYNAME
-        self.x = self.gd_input.overlay_list[self.overlay].x + self.offset_x
-        self.y = self.gd_input.overlay_list[self.overlay].y + self.offset_y
+        self.x = self.gd_input.overlay_list[self.overlay].x
+        self.y = self.gd_input.overlay_list[self.overlay].y
         self.menu_type = "base"
+        self.cursor = Spritesheet("assets/menu_images/map_cursor.png", 20, 20).get_image(0, 0)
+        self.cursor_x = 1
+        self.cursor_y = 1
+
 
     def display_menu(self):
         self.gd_input.overlay_list[self.overlay].display_overlay()
+        self.display_cursor()
 
     def do_option(self):
+        print(self.cursor_x, self.cursor_y)
         self.exit_all_menus()
 
     def choose_option(self):
         self.do_option()
 
+    def cursor_down(self):
+        if self.cursor_y < 18:
+            self.cursor_y += 1
+
+    def cursor_up(self):
+        if self.cursor_y > 1:
+            self.cursor_y -= 1
+
+    def cursor_left(self):
+        if self.cursor_x > 1:
+            self.cursor_x -= 1
+
+    def cursor_right(self):
+        if self.cursor_x < 23:
+            self.cursor_x += 1
+
+    def reset_cursor(self):
+        self.cursor_x = 1
+        self.cursor_y = 1
+
+    def display_cursor(self):
+        self.screen.blit(self.cursor, (self.x + self.cursor_x * 20, self.y + self.cursor_y * 20))
 
 # Additional Type Menus
 class UseMenu(MenuTemporary):

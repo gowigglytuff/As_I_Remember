@@ -9,7 +9,7 @@ class Inventory(object):
         self.current_key_items = []
         self.bag_slots = ["inventory_menu_2", "key_inventory_menu_2"]
         self.current_bag_slot = 0
-        self.selected_tool = "Hitching Thumb"
+        self.selected_tool = "Shovel"
 
     def bag_left(self):
         self.bag_slots.append(self.bag_slots.pop(self.bag_slots.index(self.bag_slots[0])))

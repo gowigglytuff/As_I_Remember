@@ -109,11 +109,11 @@ class Room(object):
 
         #TODO: make this uses the plots csv instead of the rooms
         if self.obstacle_map is not None:
-            self.gd_input.positioner_list[self.name].fill_obstacles(self.obstacle_map, self.name)
+            self.gd_input.positioner_list[self.name].fill_obstacles(self.name)
 
 
         if self.terrain_map is not None:
-            self.gd_input.positioner_list[self.name].fill_terrain(self.terrain_map, self.name)
+            self.gd_input.positioner_list[self.name].fill_terrain(self.name)
 
 
 class Sandpiper(Room):
@@ -179,7 +179,7 @@ class Ringside(Room):
         self.right_edge_x = self.left_edge_x + self.room_width - 1
         self.bottom_edge_y = self.top_edge_y + self.room_height - 1
 
-        self.map_style = "image"
+        self.map_style = "csv"
 
         self.total_plots_x = 2
         self.total_plots_y = 1
@@ -188,11 +188,11 @@ class Ringside(Room):
 
     def add_room_and_plots(self):
         ringside_map = TileMap("assets/room_maps/ringside_map_1_1.csv", self.gd_input.tiles_img_dict)
-        self.gd_input.room_list["Ringside"].add_room_plot("Ringside_1_1", Plot("Coop", 1, 1, ringside_map.return_map(), self.gc_input, self.gd_input, "assets/room_maps/ringside_map_1_1.csv"))
+        self.gd_input.room_list["Ringside"].add_room_plot("Ringside_1_1", Plot("Coop", 1, 1, ringside_map.return_map(), self.gc_input, self.gd_input, "assets/room_maps/ringside_fill_1_1.csv"))
         self.gd_input.room_list[self.name].activate_plot("Ringside_1_1")
 
         ringside_map_2 = TileMap("assets/room_maps/ringside_map_tester.csv", self.gd_input.tiles_img_dict)
-        self.gd_input.room_list[self.name].add_room_plot("Ringside_1_2", Plot("Coop", 2, 1, ringside_map_2.return_map(), self.gc_input, self.gd_input, "assets/room_maps/ringside_map_tester.csv"))
+        self.gd_input.room_list[self.name].add_room_plot("Ringside_1_2", Plot("Coop", 2, 1, ringside_map_2.return_map(), self.gc_input, self.gd_input, "assets/room_maps/ringside_fill_tester.csv"))
         self.gd_input.room_list[self.name].activate_plot("Ringside_1_2")
 
     def add_room_doors(self):
@@ -208,6 +208,7 @@ class Ringside(Room):
         self.gd_input.add_character("Deb", GenericNPC(30+55, 76, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Deb_CS.png", 32, 40), "Deb", self.name, "Something strange is going on around here, have you heard about the children disapearing? Their parents couldn't even remember their names...", "stay_left", Direction.LEFT, Spritesheet("assets/NPC_sprites/faces/DebFace.png", 150, 150), self.gst_input))
         self.gd_input.add_character("Alex", GenericNPC(17+55, 70, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/alex_lamont_CS.png", 32, 40), "Alex", self.name, "Hey Shuma, I feel like I haven't seen you in a long time... but didn't we just go to the beach togther on Friday? I seem to be losing track of time so much recently...", "square", Direction.DOWN, Spritesheet("assets/NPC_sprites/faces/AlexFace.png", 150, 150), self.gst_input))
         self.gd_input.add_character("Jamara", GenericNPC(31+55, 90, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Jamara_CS.png", 32, 40), "Jamara", self.name, "What do you think the greatest joy in life is? I haven't figured it out yet... I enjoy a whole lot of stuff, but I feel like nothing I've done so far is quite it.", "pace", Direction.DOWN, Spritesheet("assets/NPC_sprites/faces/JamaraFace.png", 150, 150), self.gst_input))
+        # self.gd_input.add_character("Jamara", Jamara(self.gc_input, self.gd_input, self.gst_input, Spritesheet("assets/NPC_sprites/Jamara_CS.png", 32, 40), "Jamara", self.name, "What do you think the greatest joy in life is? I haven't figured it out yet... I enjoy a whole lot of stuff, but I feel like nothing I've done so far is quite it.", "pace", Direction.DOWN, Spritesheet("assets/NPC_sprites/faces/JamaraFace.png", 150, 150)))
         self.gd_input.add_character("Donna", GenericNPC(39+55, 78, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Donna_Tuelle_CS.png", 32, 40), "Donna", self.name, "You know, it's the strangest thing, my daughter Alex showed up the other day to ask me to watch her kids... but I don't remember having grandkids. I watched them anyway, but I swear I've never met them...", "left_right", Direction.DOWN, Spritesheet("assets/NPC_sprites/faces/DonnaFace.png", 150, 150), self.gst_input))
         self.gd_input.add_character("Clair", GenericNPC(30+55, 60, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Clair_CS.png", 32, 40), "Clair", self.name, "I love this place but sometimes I feel like I should just pack everything up and run far away...", "square", Direction.DOWN, Spritesheet("assets/NPC_sprites/faces/ClairFace.png", 150, 150), self.gst_input))
         self.gd_input.add_character("Clayton", GenericNPC(23+55, 72, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Clayton_CS.png", 32, 40), "Clayton", self.name, "Nyah! Why is everybody on this island so weird?? And have you seen the cost of icecream??? Of all the days to forget my boomerang at home...", "spin", Direction.DOWN, Spritesheet("assets/NPC_sprites/faces/ClaytonFace.png", 150, 150), self.gst_input))
@@ -218,7 +219,7 @@ class Ringside(Room):
         self.gd_input.add_character("Grandma", GameMaster(28+55, 70, self.gc_input, self.gd_input, Spritesheet("assets/NPC_sprites/Grandma_CS.png", 32, 40), "Grandma", self.name, "Hi squirt, how's it going?", "stay_front", Direction.DOWN, Spritesheet("assets/NPC_sprites/faces/GrandmaFace.png", 150, 150)))
 
     def add_room_props(self):
-            self.gd_input.add_prop("Coop_Building", Building(10+55, 8, self.gc_input, self.gd_input, 832, 1632, "assets/prop_sprites/Buildings/Coop_Building.png", "Coop_Building", 26, 51, self.name, "assets/prop_sprites/Buildings/building_csv/coop_fill_csv.csv"))
+            self.gd_input.add_prop("Coop_Building", BuildingComplex(10+55, 8, self.gc_input, self.gd_input, 832, 1632, "assets/prop_sprites/Buildings/Coop_Building.png", "Coop_Building", 26, 51, self.name, "assets/prop_sprites/Buildings/building_csv/coop_fill_csv.csv", "assets/prop_sprites/Buildings/building_priority_csv/coop_priority_csv.csv"))
             self.gd_input.add_prop("Computer_Centre", Building(9+55, 82, self.gc_input, self.gd_input, 192, 128, "assets/prop_sprites/Buildings/computer_centre.png", "Computer_Centre", 6, 4, self.name, "assets/prop_sprites/Buildings/building_csv/computer_centre_fill_map.csv"))
             self.gd_input.add_prop("Hornby_Creative", Building(9+55, 74, self.gc_input, self.gd_input, 192, 128, "assets/prop_sprites/Buildings/hornby_creative.png", "Hornby_Creative", 6, 4, self.name, "assets/prop_sprites/Buildings/building_csv/hornby_creative_fill_map.csv"))
             self.gd_input.add_prop("Island_Potters", Building(38+55, 61, self.gc_input, self.gd_input, 160, 96, "assets/prop_sprites/Buildings/island_potters.png", "Island_Potters", 5, 3, self.name, "assets/prop_sprites/Buildings/building_csv/island_potters_fill_map.csv"))
@@ -248,6 +249,7 @@ class Ringside(Room):
             self.gd_input.add_prop(LargeStone.assign_dict_key(), LargeStone(30+55, 89, self.gc_input, self.gd_input, self.name))
             self.gd_input.add_prop(LargeStone.assign_dict_key(), LargeStone(41+55, 83, self.gc_input, self.gd_input, self.name))
             self.gd_input.add_prop(Planter.assign_dict_key(), Planter(32+55,77, self.gc_input, self.gd_input, self.name))
+            self.gd_input.add_prop(Hole.assign_dict_key(), Hole(32 + 55, 78, self.gc_input, self.gd_input, self.name))
 
             #self.gd_input.add_prop(Tree.assign_dict_key(), Tree(37, 69, self.gc_input, self.gd_input, self.name))
             self.gd_input.add_prop(PlumTree.assign_dict_key(), PlumTree(29+55, 74, self.gc_input, self.gd_input, self.name))

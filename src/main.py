@@ -6,22 +6,22 @@ from loading import *
 from menus import *
 
 
-gd = GameData()
-gs = GameSettings(gd)
+gd = GameData()  # type: GameData
+gs = GameSettings(gd)  # type: GameSettings
 
 pickle_in = open("gamestate.pickle", "rb")
 gst = pickle.load(pickle_in)  # type: GameState
 pickle_in.close()
 print(gst.player_state)
-gc = GameController(gd, gst)
-mm = MenuManager(gd, gc)
+gc = GameController(gd, gst)  # type: GameController
+mm = MenuManager(gd, gc)  # type: MenuManager
 gc.set_menu_manager(mm)
-em = EventsManager(gd, gc)
-Picaso = Picaso(gd, gc)
-inv = Inventory(gd, gc)
+em = EventsManager(gd, gc)  # type: EventsManager
+Picaso = Picaso(gd, gc)  # type: Picaso
+inv = Inventory(gd, gc)  # type: Inventory
 gc.set_inventory(inv)
-up = Updater(gd, gc)
-gm = GoalManager(gd, gc)
+up = Updater(gd, gc)  # type: Updater
+gm = GoalManager(gd, gc)  # type: GoalManager
 
 
 # pickle_out = open("gamestatebase.pickle", "wb")
@@ -56,7 +56,6 @@ def run_game_loop():
         pygame.draw.rect(gc.screen, (0, 0, 0), (0, 0, 1000, 10000))
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                gc.save_game()
                 gc.pickle_gamestate()
                 running = False
 
@@ -92,6 +91,8 @@ def run_game_loop():
             if gc.current_keyboard_manager.current_direction_key is not None:
                 if not gd.player["Player"].check_if_walking():
                     gd.player["Player"].try_walk(gc.current_keyboard_manager.current_direction_key)
+
+
 
         gm.check_goals()
         up.run_updates()

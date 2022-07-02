@@ -4,6 +4,7 @@ import os
 from features import Feature
 from spritesheet import Spritesheet
 
+
 class Decoration(Feature):
     def __init__(self, x, y, gc_input, gd_input, width, height, spritesheet, name, size_x, size_y, location_list, room):
         super().__init__(x, y, gc_input, gd_input)
@@ -26,6 +27,7 @@ class Decoration(Feature):
             screen.blit(self.img, [((location[0] + self.gc_input.camera[0]) * self.gd_input.square_size[
                             0]) + self.gd_input.base_locator_x, (((location[1] + self.gc_input.camera[1]) *
                                                                   self.gd_input.square_size[1]) - self.offset_y) + self.gd_input.base_locator_y])
+
 
 class Prop(Feature):
     _TYPENAME = "generic"
@@ -90,6 +92,7 @@ class Prop(Feature):
         # self.gd_input.prop_list
         self.gd_input.room_list[self.room].prop_list.remove(self.name)
         self.gd_input.positioner_list[self.room].empty_tile(self)
+
 
 class GenericProp(Feature):
     _TYPENAME = "generic"
@@ -182,6 +185,39 @@ class Building(GenericProp):
                                                                 * self.gd_input.square_size[1] - self.offset_y) + self.gd_input.base_locator_y+((int(strip-1))*32)])
 
     def read_csv(self, filename):
+        map = []
+        with open(os.path.join(filename)) as data:
+            data = csv.reader(data, delimiter=',')
+            for row in data:
+                map.append(list(row))
+        return map
+
+
+class BuildingComplex(Building):
+    def __init__(self, x, y, gc_input, gd_input, width, height, img_location, name, size_x, size_y, room_name, fill_csv, priority_csv):
+        super().__init__(x, y, gc_input, gd_input, width, height, img_location, name, size_x, size_y, room_name, fill_csv)
+        self.priority_csv = self.read_priority_csv(priority_csv)
+
+    def set_priority(self):
+        player_location = [self.gd_input.player["Player"].x, self.gd_input.player["Player"].y]
+        building_location = [self.x, self.y]
+        player_on_building = [(player_location[0]-building_location[0]), (player_location[1]-building_location[1])]
+
+        print(self.priority_csv[player_on_building[1]][player_on_building[0]])
+
+        if self.priority_csv[player_on_building[1]][player_on_building[0]] == "1":
+            self.drawing_priority = 1
+        elif self.priority_csv[player_on_building[1]][player_on_building[0]] == "0":
+            self.drawing_priority = 3
+
+
+        print(self.drawing_priority)
+        print(self.gd_input.player["Player"].drawing_priority)
+
+
+
+
+    def read_priority_csv(self, filename):
         map = []
         with open(os.path.join(filename)) as data:
             data = csv.reader(data, delimiter=',')
@@ -414,3 +450,20 @@ class SignPost(Prop):
         self.address = address
     def get_interacted_with(self):
         self.gc_input.update_game_dialogue("Address: " + self.address)
+
+class Hole(Prop):
+    _TYPENAME = "hole"
+    _serial_number = 1
+
+    def __init__(self, x, y, gc_input, gd_input, room_name):
+        super().__init__(x, y, gc_input, gd_input)
+        self.width = (1*32)
+        self.height = (1*32)
+        self.offset_y = 0
+        self.img_location = "assets/prop_sprites/ground_hole.png"
+        self.size_x = 1
+        self.size_y = 1
+        self.fill_out_initiation(room_name)
+
+    def get_interacted_with(self):
+        self.gc_input.update_game_dialogue("It's an empty hole...")

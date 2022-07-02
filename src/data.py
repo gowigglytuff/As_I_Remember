@@ -14,7 +14,7 @@ class Game(object):
 class GameData(object):
     def __init__(self):
         self.settings = {}
-        self.settings["resolution"] = (900, 1000)
+        self.settings["resolution"] = (1000, 1000)
         self.settings["FPS"] = 30
         self.square_size = [32, 32]
         self.base_locator_x = self.settings["resolution"][0]/2 - self.square_size[0]/2
@@ -114,17 +114,20 @@ class GameController(object):
 
         self.number_of_sky_change_hours = 6
         self.fully_dark_hours = 4
-
+        self.sky_darkening_degree = 15
+        self.new_game = True # type: bool
         # self.read_all_controls()
 
 
-        self.current_room = "Ringside"
+        self.current_room = "Ringside" # type: str
         self.camera = [-79, -79]
         self.your_coins = 127  # type: int
         self.your_seeds = 24  # type: int
+        self.total_seeds_found = 26 # type: int
+        self.total_seeds_findable = 100  # type: int
         self.day_of_summer = 12  # type: int
         self.time_of_day = 14  # type: int
-        self.night_filter_current_alpha = 0
+        self.night_filter_current_alpha = 0 # type: int
 
         self.night_filter.set_alpha(self.night_filter_current_alpha)
 
@@ -140,6 +143,7 @@ class GameController(object):
         player_state_dict["player_image_x"] = self.gd_input.player["Player"].imagex
         player_state_dict["player_image_y"] = self.gd_input.player["Player"].imagey
         self.gst_input.player_state = player_state_dict
+        print(self.gst_input.player_state)
 
     def write_all_controls(self):
         states_dict = {}
@@ -152,6 +156,7 @@ class GameController(object):
         states_dict["game_data"]["time_of_day"] = self.time_of_day
         states_dict["game_data"]["night_filter_current_alpha"] = self.night_filter_current_alpha
         self.gst_input.game_controls = states_dict
+        print(self.gst_input.game_controls)
 
     def write_all_characters(self):
         characters_dict = {}
@@ -166,6 +171,7 @@ class GameController(object):
                 characters_dict[self.gd_input.character_list[character].name]["state"] = self.gd_input.character_list[character].state
                 characters_dict[self.gd_input.character_list[character].name]["facing"] = self.gd_input.character_list[character].facing
                 characters_dict[self.gd_input.character_list[character].name]["current step number"] = self.gd_input.character_list[character].current_step_number
+                characters_dict[self.gd_input.character_list[character].name]["cur_img"] = self.gd_input.character_list[character].cur_img
                 print("Wrote " + character)
             except:
                 print("An error occured for " + character)
@@ -175,7 +181,7 @@ class GameController(object):
     def pickle_gamestate(self):
         self.write_all_controls()
         self.write_all_player()
-
+        self.write_all_characters()
         pickle_out = open("gamestate.pickle", "wb")
         pickle.dump(self.gst_input, pickle_out)
         pickle_out.close()
@@ -184,7 +190,7 @@ class GameController(object):
     def read_all_states(self):
         self.read_all_controls()
         self.read_all_player()
-        self.read_all_characters()
+        # self.read_all_characters()
 
     def read_all_controls(self):
         states_dict = self.gst_input.game_controls
@@ -202,17 +208,18 @@ class GameController(object):
         characters_dict = self.gst_input.character_states
         for character in self.gd_input.character_list:
             try:
-                self.gd_input.character_list[character].x = characters_dict[self.gd_input.character_list[character].name]["x"]
-                self.gd_input.character_list[character].y = characters_dict[self.gd_input.character_list[character].name]["y"]
-                self.gd_input.character_list[character].imagex = characters_dict[self.gd_input.character_list[character].name]["imagex"]
-                self.gd_input.character_list[character].imagey = characters_dict[self.gd_input.character_list[character].name]["imagey"]
-                self.gd_input.character_list[character].friendship = characters_dict[self.gd_input.character_list[character].name]["friendship"]
-                self.gd_input.character_list[character].state = characters_dict[self.gd_input.character_list[character].name]["state"]
-                self.gd_input.character_list[character].facing = characters_dict[self.gd_input.character_list[character].name]["facing"]
-                self.gd_input.character_list[character].current_step_number = characters_dict[self.gd_input.character_list[character].name]["current step number"]
-                print("Read " + character)
+                self.gd_input.character_list[self.gd_input.character_list[character].name].x = characters_dict[self.gd_input.character_list[character].name]["x"]
+                self.gd_input.character_list[self.gd_input.character_list[character].name].y = characters_dict[self.gd_input.character_list[character].name]["y"]
+                self.gd_input.character_list[self.gd_input.character_list[character].name].imagex = characters_dict[self.gd_input.character_list[character].name]["imagex"]
+                self.gd_input.character_list[self.gd_input.character_list[character].name].imagey = characters_dict[self.gd_input.character_list[character].name]["imagey"]
+                self.gd_input.character_list[self.gd_input.character_list[character].name].friendship = characters_dict[self.gd_input.character_list[character].name]["friendship"]
+                self.gd_input.character_list[self.gd_input.character_list[character].name].state = characters_dict[self.gd_input.character_list[character].name]["state"]
+                self.gd_input.character_list[self.gd_input.character_list[character].name].facing = characters_dict[self.gd_input.character_list[character].name]["facing"]
+                self.gd_input.character_list[self.gd_input.character_list[character].name].current_step_number = characters_dict[self.gd_input.character_list[character].name]["current step number"]
+                self.gd_input.character_list[character].cur_img = characters_dict[self.gd_input.character_list[character].name]["cur_img"]
+                print("Read " + self.gd_input.character_list[character].name)
             except:
-                print("An error occured while reading " + character)
+                print("An error occured while reading " + self.gd_input.character_list[character].name)
 
     def read_all_player(self):
         self.gd_input.player["Player"].x = self.gst_input.player_state["player_x"]
@@ -279,11 +286,11 @@ class GameController(object):
         surface.blit(self.night_filter, (0, 0, self.gd_input.settings["resolution"][0], self.gd_input.settings["resolution"][1]))
 
     def darken_sky(self):
-        self.night_filter_current_alpha += 20
+        self.night_filter_current_alpha += self.sky_darkening_degree
         self.night_filter.set_alpha(self.night_filter_current_alpha)
 
     def lighten_sky(self):
-        self.night_filter_current_alpha -= 20
+        self.night_filter_current_alpha -= self.sky_darkening_degree
         self.night_filter.set_alpha(self.night_filter_current_alpha)
 
     def tick_hour(self):
@@ -367,10 +374,15 @@ class Picaso(object):
 
         drawing_order = []
 
+        # for drawable in drawables_list:
+        #     for height in range(drawable.size_y):
+        #         height += 1
+        #         drawing_order.append((drawable.name, drawable.y + height, drawable.drawing_priority, height))
+
         for drawable in drawables_list:
-            for height in range(drawable.size_y):
-                height += 1
-                drawing_order.append((drawable.name, drawable.y+height, drawable.drawing_priority, height))
+            rect_base = [drawable.x, drawable.y, drawable.size_x, drawable.size_y]
+            drawing_order.append((drawable.name, drawable.y, drawable.drawing_priority))
+            print(rect_base)
 
         drawing_order = sorted(drawing_order, key=lambda x: (x[1], x[2]))
 
@@ -379,7 +391,7 @@ class Picaso(object):
         for drawable in drawing_order:
             for drawabl2 in drawables_list:
                 if drawabl2.name == drawable[0]:
-                    final_drawing_list.append([drawabl2, drawable[3]])
+                    final_drawing_list.append([drawabl2])
 
 
         # drawables_list = sorted(drawables_list, key=lambda x: (x.y, x.drawing_priority))

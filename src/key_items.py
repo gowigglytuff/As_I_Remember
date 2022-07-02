@@ -1,3 +1,8 @@
+import pygame
+
+from prop_page import Hole
+
+
 class KeyItem(object):
     def __init__(self, gd_input, gc_input):
         self.gc_input = gc_input
@@ -31,28 +36,53 @@ class Shovel(KeyItem):
 
     def __init__(self, gd_input, gc_input):
         super().__init__(gd_input, gc_input)
+        self.use_sound = pygame.mixer.Sound("assets/sound_effects/shovel.mp3")
+
+
+
+
 
     def item_use(self):
-        # TODO: Give this a use
+        facing_tile = self.gd_input.player["Player"].check_adj_tile(self.gd_input.player["Player"].facing)
+        object_filling = facing_tile.object_filling
+        filling_type = facing_tile.filling_type
+        full = facing_tile.full
+
+
+        if full:
+            if filling_type == "Prop":
+                if self.gd_input.prop_list[object_filling]._TYPENAME in ["hole"]:
+                    self.gd_input.prop_list[object_filling].dissolve()
+                    self.gc_input.update_game_dialogue("You filled in the hole!")
+                else:
+                    pass
+            else:
+                pass
+        elif not full:
+            name = Hole.assign_dict_key()
+            self.gd_input.add_prop(name, Hole(facing_tile.x, facing_tile.y, self.gc_input, self.gd_input, self.gc_input.current_room))
+            self.gd_input.positioner_list[self.gc_input.current_room].fill_tile(self.gd_input.prop_list[name])
+            self.gc_input.update_game_dialogue("You dug a nice hole!")
+            self.use_sound.play()
+        else:
+            pass
+
+    def check_if_can_use_item(self):
+        result = False
         facing_tile = self.gd_input.player["Player"].check_adj_tile(self.gd_input.player["Player"].facing)
         object_filling = facing_tile.object_filling
         filling_type = facing_tile.filling_type
         full = facing_tile.full
 
         if full:
-            if object_filling == "rock":
-                pass
-
-
-    def check_if_can_use_item(self):
-            result = False
-            facing_tile = self.gd_input.player["Player"].check_adj_tile(self.gd_input.player["Player"].facing)
-            filling_type = facing_tile.filling_type
-            if filling_type == "Rock":
-                result = True
-            else:
-                pass
-            return result
+            if filling_type == "Prop":
+                if self.gd_input.prop_list[object_filling]._TYPENAME in ["hole"]:
+                    result = True
+        elif not full:
+            result = True
+        else:
+            pass
+        return result
 
     def fail_to_use_item(self):
         self.gc_input.update_game_dialogue("You can't use that now...")
@@ -111,6 +141,7 @@ class SeedPouch(KeyItem):
     def item_use(self):
         # TODO: Give this a use
         self.gc_input.update_game_dialogue("You keep your Time Seeds in there!")
+        self.gc_input.update_game_dialogue("You've collected " + str(self.gc_input.total_seeds_found) +  " of " + str(self.gc_input.total_seeds_findable) + " known seeds!")
 
     def check_if_can_use_item(self):
         result = True

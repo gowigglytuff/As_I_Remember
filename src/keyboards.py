@@ -160,6 +160,7 @@ class InGame(KeyboardManager):
         # interacts with the feature that is in the tile that the player is facing
 
         self.GameData.player["Player"].interact_with()
+        self.GameData.prop_list["Coop_Building"].set_priority()
 
     def key_space(self):
         self.GameData.player["Player"].perform_diagnostic()

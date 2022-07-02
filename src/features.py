@@ -14,6 +14,7 @@ class Feature(object):
         self.imagex = None
         self.imagey = None
         self.name = None
+
         self.img_width = None
         self.img_height = None
         self.cur_img = 0
@@ -27,6 +28,7 @@ class Feature(object):
         self.offset_y = None
         self.size_y = 1
         self.size_x = 1
+
 
     def set_image(self, img_x, img_y):
         self.img = self.spritesheet.get_image(img_x, img_y)
@@ -246,6 +248,7 @@ class Player(Feature):
     def perform_diagnostic(self):
         # Player Image Location:
         print("PlayerImg: " + "(" + str(self.imagex) + ", " + str(self.imagey) + ")", "Camera: " +"(" + str(self.gc_input.camera[0]) + ", " + str(self.gc_input.camera[1]) + ")", "Player: " + "(" + str(self.x) + ", " + str(self.y) + ")")
+        print("CharacterImg: " + "(" + str(self.gd_input.character_list["Jamara"].imagex) + ", " + str(self.gd_input.character_list["Jamara"].imagey) + ")", "Character: " + "(" + str(self.gd_input.character_list["Jamara"].x) + ", " + str(self.gd_input.character_list["Jamara"].y) + ")")
 
 
 class NPC(Feature):
@@ -323,6 +326,7 @@ class NPC(Feature):
     def try_npc_walk_direction(self, direction):
         success = False
         self.facing = direction
+
         can_walk = self.gd_input.positioner_list[self.room].can_move_NPC(self)
         if can_walk:
             self.npc_walk_direction(self.facing)
@@ -480,6 +484,9 @@ class NPC(Feature):
     def do_activity(self):
         if self.state == "idle":
             result = self.step[self.current_step_number]
+            if self.name == "Jamara":
+                print(self.state)
+                print(result)
             success = False
             if result == "rest":
                 pass
@@ -512,59 +519,7 @@ class NPC(Feature):
                     self.current_step_number += 1
 
 
-# class GenericNPC(NPC):
-#     WALK_LEFT = "walk_left"
-#     WALK_RIGHT = "walk_right"
-#     WALK_FRONT = "walk_front"
-#     WALK_BACK = "walk_back"
-#     TURNING_LEFT = "turning_left"
-#     TURNING_FRONT = "turning_front"
-#     TURNING_RIGHT = "turning_right"
-#     TURNING_BACK = "turning_back"
-#     IDLE = "idle"
-#     AVAILABLE_STATES = [WALK_BACK, WALK_RIGHT, WALK_BACK, WALK_FRONT, TURNING_BACK, TURNING_RIGHT, TURNING_FRONT, TURNING_LEFT, IDLE]
-#
-#     def __init__(self, x, y, gc_input, gd_input, spritesheet, name, room, phrase, walk_pattern, start_facing, face_image):
-#         super().__init__(x, y, gc_input, gd_input, spritesheet, name, room, phrase, walk_pattern, start_facing, face_image)
-#         assert self.state in self.AVAILABLE_STATES
-#         self.gift_reactions = {'bad': ["Cheese", "Bread"],
-#                                'good': ["Book 1", "Book 2", "Book 3"]}
-#
-#     def activate_timers(self):
-#         pygame.time.set_timer(self.initiate, 1000)
-#         pygame.time.set_timer(self.action_clock, 80)
-#
-#     def get_interacted_with(self):
-#         if self.state == "idle":
-#             self.npc_face_player()
-#             # TODO: Fix this to not be a string
-#             self.gd_input.menu_list[ConversationOptionsMenu.NAME].set_menu(self.name)
-#             self.set_state("talking")
-#             self.gc_input.update_game_dialogue("You talked to " + self.name)
-#         else:
-#             pass
-#
-#     def receive_gift(self, gift_name):
-#         reaction = self.parse_gift(gift_name)
-#         if reaction == "good":
-#             self.friendship += 5
-#         elif reaction == "bad":
-#             self.friendship -= 1
-#         else:
-#             self.friendship += 1
-#         get_phrase = self.gd_input.spreadsheet_list["Thanks"].spreadsheet_get_phrase(self.name, reaction)
-#         return get_phrase
-#
-#     def parse_gift(self, gift_name):
-#         reaction = "neutral"
-#         if gift_name in self.gift_reactions["good"]:
-#             reaction = "good"
-#         if gift_name in self.gift_reactions["bad"]:
-#             reaction = "bad"
-#         return reaction
-
-
-class GenericNPC(NPC):
+class GenericNPC2(NPC):
     WALK_LEFT = "walk_left"
     WALK_RIGHT = "walk_right"
     WALK_FRONT = "walk_front"
@@ -626,6 +581,97 @@ class GenericNPC(NPC):
         self.gst_input.character_states[self.name]["state"] = self.state
         self.gst_input.character_states[self.name]["facing"] = self.facing
         self.gst_input.character_states[self.name]["current step number"] = self.current_step_number
+        self.gst_input.character_states[self.name]["cur_img"] = self.cur_img
+
+
+class GenericNPC(NPC):
+    WALK_LEFT = "walk_left"
+    WALK_RIGHT = "walk_right"
+    WALK_FRONT = "walk_front"
+    WALK_BACK = "walk_back"
+    TURNING_LEFT = "turning_left"
+    TURNING_FRONT = "turning_front"
+    TURNING_RIGHT = "turning_right"
+    TURNING_BACK = "turning_back"
+    IDLE = "idle"
+    AVAILABLE_STATES = [WALK_BACK, WALK_RIGHT, WALK_BACK, WALK_FRONT, TURNING_BACK, TURNING_RIGHT, TURNING_FRONT, TURNING_LEFT, IDLE]
+
+    def __init__(self, x, y, gc_input, gd_input, spritesheet, name, room, phrase, walk_pattern, start_facing, face_image, gst_input):
+        super().__init__(x, y, gc_input, gd_input, spritesheet, name, room, phrase, walk_pattern, start_facing, face_image)
+        self.gst_input = gst_input
+        self.gift_reactions = {'bad': ["Cheese", "Bread"],
+                               'good': ["Book 1", "Book 2", "Book 3"]}
+        if self.gc_input.new_game:
+            self.iniate_first_positioning(x, y, start_facing)
+        elif not self.gc_input.new_game:
+            self.read_from_gamestate()
+
+    def iniate_first_positioning(self, x, y, start_facing):
+        self.current_step_number = 0
+        self.facing = start_facing
+        self.y = y
+        self.x = x
+        self.imagey = y
+        self.imagex = x
+        self.state = "idle"
+        self.friendship = 0
+
+    def read_from_gamestate(self):
+        self.x = self.gst_input.character_states[self.name]["x"]
+        self.y = self.gst_input.character_states[self.name]["y"]
+        self.friendship = self.gst_input.character_states[self.name]["friendship"]
+        self.state = self.gst_input.character_states[self.name]["state"]
+        self.imagex = self.gst_input.character_states[self.name]["imagex"]
+        self.imagey = self.gst_input.character_states[self.name]["imagey"]
+        self.facing = self.gst_input.character_states[self.name]["facing"]
+        self.current_step_number = self.gst_input.character_states[self.name]["current step number"]
+        self.cur_img = self.gst_input.character_states[self.name]["cur_img"]
+        self.turn_npc(self.facing)
+
+    def activate_timers(self):
+        pygame.time.set_timer(self.initiate, 1000)
+        pygame.time.set_timer(self.action_clock, 80)
+
+    def get_interacted_with(self):
+        if self.state == "idle":
+            self.npc_face_player()
+            # TODO: Fix this to not be a string
+            self.gd_input.menu_list[ConversationOptionsMenu.NAME].set_menu(self.name)
+            self.set_state("talking")
+            self.gc_input.update_game_dialogue("You talked to " + self.name)
+        else:
+            pass
+
+    def receive_gift(self, gift_name):
+        reaction = self.parse_gift(gift_name)
+        if reaction == "good":
+            self.friendship += 5
+        elif reaction == "bad":
+            self.friendship -= 1
+        else:
+            self.friendship += 1
+        get_phrase = self.gd_input.spreadsheet_list["Thanks"].spreadsheet_get_phrase(self.name, reaction)
+        return get_phrase
+
+    def parse_gift(self, gift_name):
+        reaction = "neutral"
+        if gift_name in self.gift_reactions["good"]:
+            reaction = "good"
+        if gift_name in self.gift_reactions["bad"]:
+            reaction = "bad"
+        return reaction
+
+    def write_to_gamestate(self):
+        self.gst_input.character_states[self.name] = {}
+        self.gst_input.character_states[self.name]["x"] = self.x
+        self.gst_input.character_states[self.name]["y"] = self.y
+        self.gst_input.character_states[self.name]["imagex"] = self.imagex
+        self.gst_input.character_states[self.name]["imagey"] = self.imagey
+        self.gst_input.character_states[self.name]["friendship"] = self.friendship
+        self.gst_input.character_states[self.name]["state"] = self.state
+        self.gst_input.character_states[self.name]["facing"] = self.facing
+        self.gst_input.character_states[self.name]["current step number"] = self.current_step_number
+        self.gst_input.character_states[self.name]["cur_img"] = self.cur_img
 
 
 class GameMaster(NPC):
